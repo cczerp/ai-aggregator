@@ -125,8 +125,13 @@ class PolygonArbBot:
                     "net_profit_usd": 0
                 }
             
-            # Estimate gas cost (Polygon is cheap: ~400k gas @ 40 gwei @ POL=$0.40)
-            estimated_gas_cost_usd = 0.15
+            # Estimate gas cost dynamically (Polygon: ~400k gas @ 40 gwei)
+            # Using POL price of $0.40 (can be made dynamic with price oracle)
+            estimated_gas_units = 400000
+            gas_price_gwei = 40
+            gas_cost_pol = (estimated_gas_units * gas_price_gwei) / 1e9
+            pol_price_usd = 0.40  # Can be fetched from oracle if available
+            estimated_gas_cost_usd = gas_cost_pol * pol_price_usd
             net_profit = profit_usd - estimated_gas_cost_usd
             
             if net_profit < 0.5:

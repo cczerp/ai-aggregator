@@ -201,77 +201,80 @@ class AggregatorMEVEngine:
                 token_in_price_usd = self.oracle.get_price(token_in_symbol)
                 if not token_in_price_usd:
                     continue
-                
-                # Use a reasonable test amount (e.g., $10k worth)
-                test_value_usd = 10000
-                trade_size_tokens = test_value_usd / token_in_price_usd
-                
-                # Convert to wei
-                decimals = get_token_decimals(token_in_symbol)
-                amount_in_wei = int(trade_size_tokens * (10 ** decimals))
-                
-                # Get best buy price (token_in -> token_out)
-                buy_quote = self.get_best_quote(token_in_addr, token_out_addr, amount_in_wei)
-                
-                if not buy_quote:
-                    continue
-                
-                # Get best sell price (token_out -> token_in)
-                sell_quote = self.get_best_quote(token_out_addr, token_in_addr, buy_quote['to_amount'])
-                
-                if not sell_quote:
-                    continue
-                
-                # Calculate profit
-                amount_back = sell_quote['to_amount']
-                profit_wei = amount_back - amount_in_wei
-                
-                if profit_wei <= 0:
-                    continue
-                
-                # Convert profit to USD
-                profit_tokens = profit_wei / (10 ** decimals)
-                profit_usd = profit_tokens * token_in_price_usd
-                
-                # Calculate fees
-                flashloan_fee_usd = test_value_usd * self.flashloan_providers['AAVE_V3']['fee']
-                
-                # Estimate gas cost
-                total_gas = buy_quote['estimated_gas'] + sell_quote['estimated_gas'] + 100000  # +flashloan overhead
-                gas_price_gwei = self.w3.eth.gas_price / 1e9
-                gas_cost_eth = (total_gas * gas_price_gwei) / 1e9
-                eth_price = self.oracle.get_price("ETH") or 2000
-                gas_cost_usd = gas_cost_eth * eth_price
-                
-                # Net profit
-                net_profit_usd = profit_usd - flashloan_fee_usd - gas_cost_usd
-                net_profit_pct = (net_profit_usd / test_value_usd) * 100
-                
-                # Check if profitable
-                if net_profit_usd >= self.min_profit_usd and net_profit_pct >= self.min_profit_percentage:
-                    opportunity = {
-                        "type": "2-pool-aggregator",
-                        "token_in": token_in_symbol,
-                        "token_out": token_out_symbol,
-                        "token_in_addr": token_in_addr,
-                        "token_out_addr": token_out_addr,
-                        "amount_in_wei": amount_in_wei,
-                        "buy_quote": buy_quote,
-                        "sell_quote": sell_quote,
-                        "trade_size": trade_size_tokens,
-                        "profit_calculation": {
-                            "trade_value_usd": test_value_usd,
-                            "gross_profit_usd": profit_usd,
-                            "flashloan_fee_usd": flashloan_fee_usd,
-                            "gas_cost_usd": gas_cost_usd,
-                            "net_profit_usd": net_profit_usd,
-                            "net_profit_pct": net_profit_pct
-                        },
-                        "timestamp": time.time()
-                    }
-                    
-                    opportunities.append(opportunity)
-                    self._print_opportunity(opportunity)
+
+                # Test multiple loan amounts: $1k, $10k, $100k
+                for test_value_usd in [1000, 10000, 100000]:
+                    if test_value_usd > self.max_borrow_usd:
+                        continue
+
+                    trade_size_tokens = test_value_usd / token_in_price_usd
+
+                    # Convert to wei
+                    decimals = get_token_decimals(token_in_symbol)
+                    amount_in_wei = int(trade_size_tokens * (10 ** decimals))
+
+                    # Get best buy price (token_in -> token_out)
+                    buy_quote = self.get_best_quote(token_in_addr, token_out_addr, amount_in_wei)
+
+                    if not buy_quote:
+                        continue
+
+                    # Get best sell price (token_out -> token_in)
+                    sell_quote = self.get_best_quote(token_out_addr, token_in_addr, buy_quote['to_amount'])
+
+                    if not sell_quote:
+                        continue
+
+                    # Calculate profit
+                    amount_back = sell_quote['to_amount']
+                    profit_wei = amount_back - amount_in_wei
+
+                    if profit_wei <= 0:
+                        continue
+
+                    # Convert profit to USD
+                    profit_tokens = profit_wei / (10 ** decimals)
+                    profit_usd = profit_tokens * token_in_price_usd
+
+                    # Calculate fees
+                    flashloan_fee_usd = test_value_usd * self.flashloan_providers['AAVE_V3']['fee']
+
+                    # Estimate gas cost (using POL price for Polygon network)
+                    total_gas = buy_quote['estimated_gas'] + sell_quote['estimated_gas'] + 100000  # +flashloan overhead
+                    gas_price_gwei = self.w3.eth.gas_price / 1e9
+                    gas_cost_pol = (total_gas * gas_price_gwei) / 1e9
+                    pol_price = self.oracle.get_price("POL") or self.oracle.get_price("MATIC") or 0.40
+                    gas_cost_usd = gas_cost_pol * pol_price
+
+                    # Net profit
+                    net_profit_usd = profit_usd - flashloan_fee_usd - gas_cost_usd
+                    net_profit_pct = (net_profit_usd / test_value_usd) * 100
+
+                    # Check if profitable
+                    if net_profit_usd >= self.min_profit_usd and net_profit_pct >= self.min_profit_percentage:
+                        opportunity = {
+                            "type": "2-pool-aggregator",
+                            "token_in": token_in_symbol,
+                            "token_out": token_out_symbol,
+                            "token_in_addr": token_in_addr,
+                            "token_out_addr": token_out_addr,
+                            "amount_in_wei": amount_in_wei,
+                            "buy_quote": buy_quote,
+                            "sell_quote": sell_quote,
+                            "trade_size": trade_size_tokens,
+                            "profit_calculation": {
+                                "trade_value_usd": test_value_usd,
+                                "gross_profit_usd": profit_usd,
+                                "flashloan_fee_usd": flashloan_fee_usd,
+                                "gas_cost_usd": gas_cost_usd,
+                                "net_profit_usd": net_profit_usd,
+                                "net_profit_pct": net_profit_pct
+                            },
+                            "timestamp": time.time()
+                        }
+
+                        opportunities.append(opportunity)
+                        self._print_opportunity(opportunity)
         
         return opportunities
     

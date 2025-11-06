@@ -112,8 +112,8 @@ class FlashbotsTxBuilder:
         print(f"   Token Out: {token_out}")
         print(f"   DEX 1:     {dex1}")
         print(f"   DEX 2:     {dex2}")
-        print(f"   Amount:    {amount_in_wei / 1e18:.6f}")
-        print(f"   Min Profit: {min_profit_wei / 1e6:.2f} USDC")
+        print(f"   Amount:    {amount_in_wei:,} wei")
+        print(f"   Min Profit: {min_profit_wei:,} wei")
         
         # Get current gas prices (Polygon)
         try:
