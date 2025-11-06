@@ -140,12 +140,11 @@ export class ArbitrageScanner {
       tokenA.decimals
     );
     
-    // Apply sell DEX fee
-    const sellFee = new BigNumber(0.997); // 0.3% fee = 0.997 multiplier
-    const finalWithFee = finalAmount.multipliedBy(sellFee).integerValue(BigNumber.ROUND_DOWN);
+    // The sellPrice already includes the DEX fee calculation from getPrice()
+    // So we don't need to apply it again here
 
     return {
-      finalAmount: finalWithFee,
+      finalAmount,
       tokenBAmount
     };
   }

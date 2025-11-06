@@ -149,10 +149,10 @@ export class FlashloanManager {
   static estimateGasCost(
     gasPrice: BigNumber,
     tokenPrice: BigNumber,
-    tokenDecimals: number
+    tokenDecimals: number,
+    estimatedGasUnits: number = 300000 // Configurable gas estimate
   ): BigNumber {
-    // Estimate ~300k gas for a typical flashloan arbitrage
-    const estimatedGas = new BigNumber(300000);
+    const estimatedGas = new BigNumber(estimatedGasUnits);
     
     // Gas cost in ETH (wei)
     const gasCostWei = estimatedGas.multipliedBy(gasPrice);

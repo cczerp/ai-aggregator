@@ -195,13 +195,22 @@ export class ArbitrageBot {
     const gasPrice = await this.bundler.getGasPrice();
     const priorityGasPrice = this.bundler.calculatePriorityFee(gasPrice, CONFIG.GAS_PRICE_MULTIPLIER);
     
-    // Assume 1 ETH = 2000 USDC for gas cost estimation (in production, fetch real price)
+    // TODO: Fetch real-time ETH price from a price feed or DEX
+    // For now, use a conservative estimate
+    // In production, this should query Chainlink or get spot price from Uniswap
     const ethPriceInToken = new BigNumber(2000);
+    
+    // Estimate gas based on complexity:
+    // - Simple swap: ~150k gas
+    // - Flashloan + 2 swaps: ~300k gas
+    // - Complex routes: ~500k gas
+    const estimatedGasUnits = 300000; // Default for flashloan arbitrage
     
     return FlashloanManager.estimateGasCost(
       priorityGasPrice,
       ethPriceInToken,
-      opportunity.tokenA.decimals
+      opportunity.tokenA.decimals,
+      estimatedGasUnits
     );
   }
 
