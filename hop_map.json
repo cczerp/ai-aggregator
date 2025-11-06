@@ -1,0 +1,8 @@
+{
+  "CAKE": ["WETH", "USDC", "USDT"],
+  "YFI": ["WETH", "USDC", "USDT"],
+  "QUICK": ["WMATIC", "USDC", "USDT"],
+  "UNI": ["WETH", "USDC"],
+  "SNX": ["WETH", "USDC"],
+  "AAVE": ["WETH", "USDC"]
+}

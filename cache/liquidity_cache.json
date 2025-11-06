@@ -1,0 +1,3130 @@
+{
+  "Uniswap_V3:0xe6ba22265aefe9dc392f544437acce2aedf8ef36": {
+    "timestamp": 1762216351.6157136,
+    "data": {
+      "liquidity": 101531026990,
+      "sqrt_price_x96": 2578207960834918034193468064003,
+      "token0": "WBTC",
+      "token1": "USDC",
+      "token0_address": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "token1_address": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "decimals0": 8,
+      "decimals1": 6,
+      "price0": 105964,
+      "price1": 0.999805,
+      "tvl_usd": 207.33997930561478,
+      "type": "v3"
+    }
+  },
+  "SushiSwap:0x386d5b630abe3d0b57f1610ffb171042ca7c2593": {
+    "timestamp": 1762216370.1748526,
+    "data": {
+      "reserve0": 6842209355976664349,
+      "reserve1": 523326007215015565,
+      "token0": "LINK",
+      "token1": "AAVE",
+      "token0_address": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "token1_address": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 15.13,
+      "price1": 198.39,
+      "tvl_usd": 207.34527412731387,
+      "type": "v2"
+    }
+  },
+  "SushiSwap:0x429b932fab6f85aa41abdf65c0095c910d3a65dd": {
+    "timestamp": 1762216371.1116242,
+    "data": {
+      "reserve0": 4975287460594911640,
+      "reserve1": 10889706149119195,
+      "token0": "SUSHI",
+      "token1": "AAVE",
+      "token0_address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+      "token1_address": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 0.446504,
+      "price1": 198.39,
+      "tvl_usd": 4.381894555229227,
+      "type": "v2"
+    }
+  },
+  "SushiSwap:0x580850020637a4478a40b757006bd1dc70a50e9e": {
+    "timestamp": 1762216371.992378,
+    "data": {
+      "reserve0": 2578603362178558316,
+      "reserve1": 66308963192063745,
+      "token0": "UNI",
+      "token1": "AAVE",
+      "token0_address": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+      "token1_address": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 5.18,
+      "price1": 198.39,
+      "tvl_usd": 26.512200623758456,
+      "type": "v2"
+    }
+  },
+  "SushiSwap:0xa543ba3fd79a03788e5521a0ce48b3f2bf93b2c1": {
+    "timestamp": 1762216372.905982,
+    "data": {
+      "reserve0": 34261732,
+      "reserve1": 169675489756316990,
+      "token0": "USDT",
+      "token1": "AAVE",
+      "token0_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "token1_address": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "decimals0": 6,
+      "decimals1": 18,
+      "price0": 0.999932,
+      "price1": 198.39,
+      "tvl_usd": 67.92132261497973,
+      "type": "v2"
+    }
+  },
+  "SushiSwap:0x5f3eeceead64ee34b78e80cd574496e82e537541": {
+    "timestamp": 1762216376.9675071,
+    "data": {
+      "reserve0": 71896328122686139,
+      "reserve1": 35422522197386615,
+      "token0": "CRV",
+      "token1": "DAI",
+      "token0_address": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+      "token1_address": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 0.42742,
+      "price1": 0.999519,
+      "tvl_usd": 0.06613541253040818,
+      "type": "v2"
+    }
+  },
+  "SushiSwap:0x5e365db1a7213c0c5739129d80e95e64e6ed088e": {
+    "timestamp": 1762216377.8143477,
+    "data": {
+      "reserve0": 1099473590219452,
+      "reserve1": 51981706834275,
+      "token0": "CRV",
+      "token1": "LINK",
+      "token0_address": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+      "token1_address": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 0.42742,
+      "price1": 15.13,
+      "tvl_usd": 0.001256420226334179,
+      "type": "v2"
+    }
+  },
+  "SushiSwap:0xf2ffa11a11695b23bd7a26d587ee28039576d60f": {
+    "timestamp": 1762216378.8439913,
+    "data": {
+      "reserve0": 143980575496246352,
+      "reserve1": 152260872848687661,
+      "token0": "SUSHI",
+      "token1": "CRV",
+      "token0_address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+      "token1_address": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 0.446504,
+      "price1": 0.42742,
+      "tvl_usd": 0.12936724515436207,
+      "type": "v2"
+    }
+  },
+  "SushiSwap:0xb97977b27a3ea8b4ceed1c738eca671a0ddad5e8": {
+    "timestamp": 1762216381.9512155,
+    "data": {
+      "reserve0": 2928032838881038,
+      "reserve1": 48138744293334669,
+      "token0": "LINK",
+      "token1": "DAI",
+      "token0_address": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "token1_address": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 15.13,
+      "price1": 0.999519,
+      "tvl_usd": 0.09241672640959968,
+      "type": "v2"
+    }
+  },
+  "SushiSwap:0x177e42f6b3da3ffdda3dcbb6010f00a380c3cb05": {
+    "timestamp": 1762216382.7973952,
+    "data": {
+      "reserve0": 29931636490333075981,
+      "reserve1": 13319936290209176485,
+      "token0": "SUSHI",
+      "token1": "DAI",
+      "token0_address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+      "token1_address": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 0.446504,
+      "price1": 0.999519,
+      "tvl_usd": 26.678124820333267,
+      "type": "v2"
+    }
+  },
+  "SushiSwap:0x519890fb51b1b10a114c97aa03b0985d896b6764": {
+    "timestamp": 1762216383.7466936,
+    "data": {
+      "reserve0": 2015092620397582938,
+      "reserve1": 371555196413620547,
+      "token0": "DAI",
+      "token1": "UNI",
+      "token0_address": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "token1_address": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 0.999519,
+      "price1": 5.18,
+      "tvl_usd": 3.938779278269726,
+      "type": "v2"
+    }
+  },
+  "SushiSwap:0x9758668cd2b5586911b19c91f42e3e9958bc5de2": {
+    "timestamp": 1762216384.6617417,
+    "data": {
+      "reserve0": 38,
+      "reserve1": 37364251444657,
+      "token0": "USDC",
+      "token1": "DAI",
+      "token0_address": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "token1_address": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "decimals0": 6,
+      "decimals1": 18,
+      "price0": 0.999805,
+      "price1": 0.999519,
+      "tvl_usd": 7.533886923971213e-05,
+      "type": "v2"
+    }
+  },
+  "SushiSwap:0x6ff62bfb8c12109e8000935a6de54dad83a4f39f": {
+    "timestamp": 1762216387.852216,
+    "data": {
+      "reserve0": 14491341845623055685,
+      "reserve1": 51869117665617377380401,
+      "token0": "WETH",
+      "token1": "DAI",
+      "token0_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "token1_address": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 3575.21,
+      "price1": 0.999519,
+      "tvl_usd": 103653.75889991023,
+      "type": "v2"
+    }
+  },
+  "SushiSwap:0x4eab9556bd46f552691fe75c16d1c2ed1622df51": {
+    "timestamp": 1762216389.7831762,
+    "data": {
+      "reserve0": 18839196108003969274,
+      "reserve1": 549091808977406586,
+      "token0": "SUSHI",
+      "token1": "LINK",
+      "token0_address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+      "token1_address": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 0.446504,
+      "price1": 15.13,
+      "tvl_usd": 16.719535488836364,
+      "type": "v2"
+    }
+  },
+  "SushiSwap:0x43c355d9ce77f91b7e1a314e258246d155100be9": {
+    "timestamp": 1762216390.66351,
+    "data": {
+      "reserve0": 3629411565527292838,
+      "reserve1": 55027764,
+      "token0": "LINK",
+      "token1": "USDT",
+      "token0_address": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 18,
+      "decimals1": 6,
+      "price0": 15.13,
+      "price1": 0.999932,
+      "tvl_usd": 109.93701909847594,
+      "type": "v2"
+    }
+  },
+  "SushiSwap:0x116ff0d1caa91a6b94276b3471f33dbeb52073e7": {
+    "timestamp": 1762216393.822952,
+    "data": {
+      "reserve0": 6340840081916978314543,
+      "reserve1": 1582177242544607027,
+      "token0": "SNX",
+      "token1": "WETH",
+      "token0_address": "0x50B728D8D964fd00C2d0AAD81718b71311feF68a",
+      "token1_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 0.891698,
+      "price1": 3575.21,
+      "tvl_usd": 11310.730318683109,
+      "type": "v2"
+    }
+  },
+  "SushiSwap:0x7b415c1c0e8e17f26105a1d1fb50d46bdb9643bc": {
+    "timestamp": 1762216395.6468277,
+    "data": {
+      "reserve0": 2707710845927460272,
+      "reserve1": 233214384596263579,
+      "token0": "SUSHI",
+      "token1": "UNI",
+      "token0_address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+      "token1_address": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 0.446504,
+      "price1": 5.18,
+      "tvl_usd": 2.41705423575864,
+      "type": "v2"
+    }
+  },
+  "SushiSwap:0xf19144bc9b66bd9b999167b41ccb17d473419d1d": {
+    "timestamp": 1762216396.512018,
+    "data": {
+      "reserve0": 132833326927658711743,
+      "reserve1": 58901125,
+      "token0": "SUSHI",
+      "token1": "USDT",
+      "token0_address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 18,
+      "decimals1": 6,
+      "price0": 0.446504,
+      "price1": 0.999932,
+      "tvl_usd": 118.20773153000732,
+      "type": "v2"
+    }
+  },
+  "SushiSwap:0x1f7b93a86c393d7ff285332e77fdca6c0df2f249": {
+    "timestamp": 1762216400.5661404,
+    "data": {
+      "reserve0": 8519760329642669,
+      "reserve1": 51229,
+      "token0": "UNI",
+      "token1": "USDT",
+      "token0_address": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 18,
+      "decimals1": 6,
+      "price0": 5.18,
+      "price1": 0.999932,
+      "tvl_usd": 0.09535787493554902,
+      "type": "v2"
+    }
+  },
+  "SushiSwap:0x2bf45b61821783047c70c0573eb8e06a2ab1f4f5": {
+    "timestamp": 1762216402.408918,
+    "data": {
+      "reserve0": 15509761,
+      "reserve1": 15502833,
+      "token0": "USDC",
+      "token1": "USDT",
+      "token0_address": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 6,
+      "decimals1": 6,
+      "price0": 0.999805,
+      "price1": 0.999932,
+      "tvl_usd": 31.008515403961,
+      "type": "v2"
+    }
+  },
+  "SushiSwap:0xe62ec2e799305e0d367b0cc3ee2cda135bf89816": {
+    "timestamp": 1762216407.35864,
+    "data": {
+      "reserve0": 334949528,
+      "reserve1": 99153319773837034670,
+      "token0": "WBTC",
+      "token1": "WETH",
+      "token0_address": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "token1_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "decimals0": 8,
+      "decimals1": 18,
+      "price0": 105964,
+      "price1": 3575.21,
+      "tvl_usd": 709419.8582385399,
+      "type": "v2"
+    }
+  },
+  "SushiSwap_V3:0x59ee3b0da2636e34b2d66a04cb1ac51486d42149": {
+    "timestamp": 1762216442.2152584,
+    "data": {
+      "liquidity": 290323218109,
+      "sqrt_price_x96": 55438961523833388252158,
+      "token0": "CRV",
+      "token1": "USDT",
+      "token0_address": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 18,
+      "decimals1": 6,
+      "price0": 0.42742,
+      "price1": 0.999932,
+      "tvl_usd": 0.7540095560747277,
+      "type": "v3"
+    }
+  },
+  "SushiSwap:0xba9c0286fd6d2535c5b3cca5353743a8bfe45241": {
+    "timestamp": 1762216959.7570424,
+    "data": {
+      "reserve0": 294,
+      "reserve1": 1363943893603385,
+      "token0": "WBTC",
+      "token1": "AAVE",
+      "token0_address": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "token1_address": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "decimals0": 8,
+      "decimals1": 18,
+      "price0": 106688,
+      "price1": 201.07,
+      "tvl_usd": 0.5879109186868325,
+      "type": "v2"
+    }
+  },
+  "SushiSwap:0x2813d43463c374a680f235c428fb1d7f08de0b69": {
+    "timestamp": 1762216960.7022004,
+    "data": {
+      "reserve0": 31719488347880168638,
+      "reserve1": 569986367998192081860,
+      "token0": "WETH",
+      "token1": "AAVE",
+      "token0_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "token1_address": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 3628.63,
+      "price1": 201.07,
+      "tvl_usd": 229705.4460171649,
+      "type": "v2"
+    }
+  },
+  "SushiSwap:0x5c26e61c6153805b073beb185319de61adbdcb98": {
+    "timestamp": 1762216962.280928,
+    "data": {
+      "reserve0": 169744265590693139371,
+      "reserve1": 72164980,
+      "token0": "CRV",
+      "token1": "USDT",
+      "token0_address": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 18,
+      "decimals1": 6,
+      "price0": 0.434259,
+      "price1": 0.999966,
+      "tvl_usd": 145.8755014218288,
+      "type": "v2"
+    }
+  },
+  "SushiSwap:0x7a1d5e67c3a273274766e241363e3e98e721e456": {
+    "timestamp": 1762216965.401379,
+    "data": {
+      "reserve0": 500,
+      "reserve1": 528858209069948634,
+      "token0": "WBTC",
+      "token1": "DAI",
+      "token0_address": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "token1_address": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "decimals0": 8,
+      "decimals1": 18,
+      "price0": 106688,
+      "price1": 0.999816,
+      "tvl_usd": 1.0622008991594798,
+      "type": "v2"
+    }
+  },
+  "SushiSwap:0x67a81a470cc17257363e38afc412a45b756fc6f9": {
+    "timestamp": 1762216967.0825846,
+    "data": {
+      "reserve0": 31,
+      "reserve1": 1594436806743678,
+      "token0": "WBTC",
+      "token1": "LINK",
+      "token0_address": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "token1_address": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "decimals0": 8,
+      "decimals1": 18,
+      "price0": 106688,
+      "price1": 15.37,
+      "tvl_usd": 0.057579773719650326,
+      "type": "v2"
+    }
+  },
+  "SushiSwap:0xb5846453b67d0b4b4ce655930cf6e4129f4416d7": {
+    "timestamp": 1762216971.1859186,
+    "data": {
+      "reserve0": 11842074126405987521918,
+      "reserve1": 1484477000554323590,
+      "token0": "SUSHI",
+      "token1": "WETH",
+      "token0_address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+      "token1_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 0.45511,
+      "price1": 3628.63,
+      "tvl_usd": 10776.064134190063,
+      "type": "v2"
+    }
+  },
+  "SushiSwap:0x939d0d41d8bb1c80150553374e401a8d58326745": {
+    "timestamp": 1762216973.8915205,
+    "data": {
+      "reserve0": 303,
+      "reserve1": 338008,
+      "token0": "WBTC",
+      "token1": "USDC",
+      "token0_address": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "token1_address": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "decimals0": 8,
+      "decimals1": 6,
+      "price0": 106688,
+      "price1": 0.999805,
+      "tvl_usd": 0.6612067284400001,
+      "type": "v2"
+    }
+  },
+  "SushiSwap:0x3b31bb4b6ba4f67f4ef54e78bcb0aaa4f53dc7ff": {
+    "timestamp": 1762217476.5340364,
+    "data": {
+      "reserve0": 1016647416448899477418,
+      "reserve1": 1016812055,
+      "token0": "DAI",
+      "token1": "USDT",
+      "token0_address": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 18,
+      "decimals1": 6,
+      "price0": 0.999036,
+      "price1": 0.999968,
+      "tvl_usd": 2032.4468853536828,
+      "type": "v2"
+    }
+  },
+  "SushiSwap:0x27e2929315ced73060bb7eccb1d160b30c1bc041": {
+    "timestamp": 1762217482.5837414,
+    "data": {
+      "reserve0": 15463,
+      "reserve1": 4136059768011,
+      "token0": "USDC",
+      "token1": "WETH",
+      "token0_address": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "token1_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "decimals0": 6,
+      "decimals1": 18,
+      "price0": 0.999801,
+      "price1": 3626.94,
+      "tvl_usd": 0.030461163477989817,
+      "type": "v2"
+    }
+  },
+  "Uniswap_V3:0xa8e0ed3d29b92433e21348eb8e2290f71e312cdf": {
+    "timestamp": 1762218346.9054058,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 79228162514264334008320,
+      "token0": "USDC",
+      "token1": "UNI",
+      "token0_address": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "token1_address": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+      "decimals0": 6,
+      "decimals1": 18,
+      "price0": 0.999803,
+      "price1": 5.24,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "SushiSwap:0xdc22c3c23d94cf60ce61f7ac73c05caab0ed4668": {
+    "timestamp": 1762218366.7093146,
+    "data": {
+      "reserve0": 61251796844351435192,
+      "reserve1": 304736261119756887,
+      "token0": "DAI",
+      "token1": "AAVE",
+      "token0_address": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "token1_address": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 0.999765,
+      "price1": 201.05,
+      "tvl_usd": 122.50462797022013,
+      "type": "v2"
+    }
+  },
+  "SushiSwap:0x3bffd4ca16197ad48dc610c41a022664905b7ffc": {
+    "timestamp": 1762218372.4328468,
+    "data": {
+      "reserve0": 181473774830522472074,
+      "reserve1": 76491,
+      "token0": "SUSHI",
+      "token1": "WBTC",
+      "token0_address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+      "token1_address": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "decimals0": 18,
+      "decimals1": 8,
+      "price0": 0.452436,
+      "price1": 106497,
+      "tvl_usd": 163.5658890592223,
+      "type": "v2"
+    }
+  },
+  "QuickSwap_V2:0x32c415a82a9901dbd2835f04a6875fe134d0eefc": {
+    "timestamp": 1762280046.9275389,
+    "data": {
+      "reserve0": 10755543718,
+      "reserve1": 47224088,
+      "token0": "CRV",
+      "token1": "AAVE",
+      "token0_address": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+      "token1_address": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 0.414145,
+      "price1": 189.76,
+      "tvl_usd": 1.341559759197111e-08,
+      "type": "v2"
+    }
+  },
+  "QuickSwap_V2:0xf06e03b4fd658e26a78175da9ecd5b5b78422f45": {
+    "timestamp": 1762280048.40161,
+    "data": {
+      "reserve0": 45248732356781927,
+      "reserve1": 218312626836098,
+      "token0": "DAI",
+      "token1": "AAVE",
+      "token0_address": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "token1_address": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 0.999352,
+      "price1": 189.76,
+      "tvl_usd": 0.08664641524663269,
+      "type": "v2"
+    }
+  },
+  "QuickSwap_V2:0xbdb7b4eba07c23cd2c7513b1d33726aa79739a22": {
+    "timestamp": 1762280049.7325044,
+    "data": {
+      "reserve0": 38012862120340273,
+      "reserve1": 2956684675085247,
+      "token0": "LINK",
+      "token1": "AAVE",
+      "token0_address": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "token1_address": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 14.46,
+      "price1": 189.76,
+      "tvl_usd": 1.110726470204297,
+      "type": "v2"
+    }
+  },
+  "QuickSwap_V2:0xc889a46436f0a021cfa1f54abb3030e5825cf795": {
+    "timestamp": 1762280051.2341673,
+    "data": {
+      "reserve0": 12349550786215488,
+      "reserve1": 31803446331079,
+      "token0": "SUSHI",
+      "token1": "AAVE",
+      "token0_address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+      "token1_address": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 0.424091,
+      "price1": 189.76,
+      "tvl_usd": 0.011272355318262463,
+      "type": "v2"
+    }
+  },
+  "QuickSwap_V2:0x90bc3e68ba8393a3bf2d79309365089975341a43": {
+    "timestamp": 1762280056.0343099,
+    "data": {
+      "reserve0": 11276991388142967598,
+      "reserve1": 199135576625994215004,
+      "token0": "WETH",
+      "token1": "AAVE",
+      "token0_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "token1_address": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 3355.22,
+      "price1": 189.76,
+      "tvl_usd": 75624.75406587371,
+      "type": "v2"
+    }
+  },
+  "QuickSwap_V2:0xf16ad36077422b7579814660b691eac1eb73290b": {
+    "timestamp": 1762280057.817899,
+    "data": {
+      "reserve0": 353290729057469055731,
+      "reserve1": 147212568876150962403,
+      "token0": "CRV",
+      "token1": "DAI",
+      "token0_address": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+      "token1_address": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 0.414145,
+      "price1": 0.999352,
+      "tvl_usd": 293.43076411702475,
+      "type": "v2"
+    }
+  },
+  "QuickSwap_V2:0x41de7cf3ad3e977fb1eda30a26d393f49a2e7ca1": {
+    "timestamp": 1762280058.8637178,
+    "data": {
+      "reserve0": 10934567115977272,
+      "reserve1": 398316082598985,
+      "token0": "CRV",
+      "token1": "LINK",
+      "token0_address": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+      "token1_address": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 0.414145,
+      "price1": 14.46,
+      "tvl_usd": 0.01028814685262773,
+      "type": "v2"
+    }
+  },
+  "QuickSwap_V2:0xab4f7a3199b2cd7a8bfb425941ead08facb6d617": {
+    "timestamp": 1762280062.3436308,
+    "data": {
+      "reserve0": 787910708536282150970,
+      "reserve1": 96441432610198204,
+      "token0": "CRV",
+      "token1": "WETH",
+      "token0_address": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+      "token1_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 0.414145,
+      "price1": 3355.22,
+      "tvl_usd": 649.8915039091478,
+      "type": "v2"
+    }
+  },
+  "QuickSwap_V2:0xfba51e1ea2d46c4d5e98f27e1f5333969d2222d7": {
+    "timestamp": 1762280064.2191288,
+    "data": {
+      "reserve0": 44592227571633067,
+      "reserve1": 701375524051174035,
+      "token0": "LINK",
+      "token1": "DAI",
+      "token0_address": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "token1_address": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 14.46,
+      "price1": 0.999352,
+      "tvl_usd": 1.345724643397403,
+      "type": "v2"
+    }
+  },
+  "QuickSwap_V2:0xda12716eae93a83a1f4e2789640b1e9b55c0cdbb": {
+    "timestamp": 1762280065.291877,
+    "data": {
+      "reserve0": 804090312828606725,
+      "reserve1": 50522876918151623612,
+      "token0": "DAI",
+      "token1": "QUICK",
+      "token0_address": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "token1_address": "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 0.999352,
+      "price1": 0.01590748,
+      "tvl_usd": 1.6072609164238525,
+      "type": "v2"
+    }
+  },
+  "QuickSwap_V2:0x59153f27eefe07e5ece4f9304ebba1da6f53ca88": {
+    "timestamp": 1762280068.9197943,
+    "data": {
+      "reserve0": 856145995032284534408768,
+      "reserve1": 856125154642,
+      "token0": "DAI",
+      "token1": "USDT",
+      "token0_address": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 18,
+      "decimals1": 6,
+      "price0": 0.999352,
+      "price1": 0.999574,
+      "tvl_usd": 1711351.6577536261,
+      "type": "v2"
+    }
+  },
+  "QuickSwap_V2:0xfb7910710f8288143445912c575b9f4b37564351": {
+    "timestamp": 1762280070.0849888,
+    "data": {
+      "reserve0": 14655,
+      "reserve1": 14721942769389943974,
+      "token0": "WBTC",
+      "token1": "DAI",
+      "token0_address": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "token1_address": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "decimals0": 8,
+      "decimals1": 18,
+      "price0": 100898,
+      "price1": 0.999352,
+      "tvl_usd": 29.49900485047538,
+      "type": "v2"
+    }
+  },
+  "QuickSwap_V2:0x4a35582a710e1f4b2030a3f826da20bfb6703c09": {
+    "timestamp": 1762280071.032316,
+    "data": {
+      "reserve0": 13429944585871162814,
+      "reserve1": 45042955130504323561058,
+      "token0": "WETH",
+      "token1": "DAI",
+      "token0_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "token1_address": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 3355.22,
+      "price1": 0.999352,
+      "tvl_usd": 90074.18596898639,
+      "type": "v2"
+    }
+  },
+  "QuickSwap_V2:0xe2fee46bd868c85a99c79f18d6c3ff441d0e3cd6": {
+    "timestamp": 1762280075.3902814,
+    "data": {
+      "reserve0": 22205124629333767,
+      "reserve1": 325822,
+      "token0": "LINK",
+      "token1": "USDT",
+      "token0_address": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 18,
+      "decimals1": 6,
+      "price0": 14.46,
+      "price1": 0.999574,
+      "tvl_usd": 0.6467693019681662,
+      "type": "v2"
+    }
+  },
+  "QuickSwap_V2:0x75e90ac3e5dd5cc30a418f0cd1e15c8c89c9076a": {
+    "timestamp": 1762280076.2834585,
+    "data": {
+      "reserve0": 143797,
+      "reserve1": 10015395760468592125,
+      "token0": "WBTC",
+      "token1": "LINK",
+      "token0_address": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "token1_address": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "decimals0": 8,
+      "decimals1": 18,
+      "price0": 100898,
+      "price1": 14.46,
+      "tvl_usd": 289.91091975637585,
+      "type": "v2"
+    }
+  },
+  "QuickSwap_V2:0x5ca6ca6c3709e1e6cfe74a50cf6b2b6ba2dadd67": {
+    "timestamp": 1762280077.1835275,
+    "data": {
+      "reserve0": 8301077997301608905084,
+      "reserve1": 35803078477723051068,
+      "token0": "LINK",
+      "token1": "WETH",
+      "token0_address": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "token1_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 14.46,
+      "price1": 3355.22,
+      "tvl_usd": 240160.79281100718,
+      "type": "v2"
+    }
+  },
+  "QuickSwap_V2:0xd58b4586dce5c39909d3284836e09faec2955eb6": {
+    "timestamp": 1762280081.5549724,
+    "data": {
+      "reserve0": 310,
+      "reserve1": 20516146039754405588,
+      "token0": "WBTC",
+      "token1": "QUICK",
+      "token0_address": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "token1_address": "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
+      "decimals0": 8,
+      "decimals1": 18,
+      "price0": 100898,
+      "price1": 0.01590748,
+      "tvl_usd": 0.6391439828044725,
+      "type": "v2"
+    }
+  },
+  "QuickSwap_V2:0x60e70705b52a4a5bdc1d8614426ba5016a68ab38": {
+    "timestamp": 1762280082.5021205,
+    "data": {
+      "reserve0": 1413705313169029655,
+      "reserve1": 299746307676864542942039,
+      "token0": "WETH",
+      "token1": "QUICK",
+      "token0_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "token1_address": "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 3355.22,
+      "price1": 0.01590748,
+      "tvl_usd": 9511.500735294561,
+      "type": "v2"
+    }
+  },
+  "QuickSwap_V2:0x61a32c45d2ecc1af08eb3faf033245ae3841642c": {
+    "timestamp": 1762280084.2559402,
+    "data": {
+      "reserve0": 2478344959234029,
+      "reserve1": 630130214837,
+      "token0": "SNX",
+      "token1": "WETH",
+      "token0_address": "0x50B728D8D964fd00C2d0AAD81718b71311feF68a",
+      "token1_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 0.852964,
+      "price1": 3355.22,
+      "tvl_usd": 0.004228164529233493,
+      "type": "v2"
+    }
+  },
+  "QuickSwap_V2:0xd283b6ce5cd06b6669e88e0e87597ac2fc294990": {
+    "timestamp": 1762280087.9075284,
+    "data": {
+      "reserve0": 11212394421511672,
+      "reserve1": 5505,
+      "token0": "SUSHI",
+      "token1": "USDC",
+      "token0_address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+      "token1_address": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "decimals0": 18,
+      "decimals1": 6,
+      "price0": 0.424091,
+      "price1": 0.999762,
+      "tvl_usd": 0.010258765372613306,
+      "type": "v2"
+    }
+  },
+  "QuickSwap_V2:0xdaa4745705cdc72fdf274e5d75d0c22b109104d2": {
+    "timestamp": 1762280088.8000605,
+    "data": {
+      "reserve0": 99057942847808570,
+      "reserve1": 54260,
+      "token0": "SUSHI",
+      "token1": "USDT",
+      "token0_address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 18,
+      "decimals1": 6,
+      "price0": 0.424091,
+      "price1": 0.999574,
+      "tvl_usd": 0.09624646728026998,
+      "type": "v2"
+    }
+  },
+  "QuickSwap_V2:0x49e7d82dafcc415a6edd6e20f1710f3f024e964e": {
+    "timestamp": 1762280089.7814858,
+    "data": {
+      "reserve0": 683156308961593641,
+      "reserve1": 93108539648929,
+      "token0": "SUSHI",
+      "token1": "WETH",
+      "token0_address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+      "token1_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 0.424091,
+      "price1": 3355.22,
+      "tvl_usd": 0.6021200766247108,
+      "type": "v2"
+    }
+  },
+  "QuickSwap_V2:0xf7135272a5584eb116f5a77425118a8b4a2ddfdb": {
+    "timestamp": 1762280094.3273623,
+    "data": {
+      "reserve0": 2713415154531513246,
+      "reserve1": 1826525633581341434161,
+      "token0": "WETH",
+      "token1": "UNI",
+      "token0_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "token1_address": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 3355.22,
+      "price1": 5.0,
+      "tvl_usd": 18236.73296269393,
+      "type": "v2"
+    }
+  },
+  "QuickSwap_V2:0xe43ab6540c0929ef29d216a34ab1f0eacc5c3825": {
+    "timestamp": 1762280096.1197174,
+    "data": {
+      "reserve0": 1638397138,
+      "reserve1": 1642139034,
+      "token0": "USDC",
+      "token1": "USDT",
+      "token0_address": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 6,
+      "decimals1": 6,
+      "price0": 0.999762,
+      "price1": 0.999574,
+      "tvl_usd": 3279.446682252672,
+      "type": "v2"
+    }
+  },
+  "QuickSwap_V2:0xf8889c3b46b26153887de2e5b41331af60d156f1": {
+    "timestamp": 1762280097.024385,
+    "data": {
+      "reserve0": 3331,
+      "reserve1": 3454881,
+      "token0": "WBTC",
+      "token1": "USDC",
+      "token0_address": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "token1_address": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "decimals0": 8,
+      "decimals1": 6,
+      "price0": 100898,
+      "price1": 0.999762,
+      "tvl_usd": 6.814971118321999,
+      "type": "v2"
+    }
+  },
+  "QuickSwap_V2:0x7847350b4c25f564b5a165389fdceea99e1ed3bd": {
+    "timestamp": 1762280100.5050192,
+    "data": {
+      "reserve0": 115953,
+      "reserve1": 117442915,
+      "token0": "WBTC",
+      "token1": "USDT",
+      "token0_address": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 8,
+      "decimals1": 6,
+      "price0": 100898,
+      "price1": 0.999574,
+      "tvl_usd": 234.38714225821,
+      "type": "v2"
+    }
+  },
+  "QuickSwap_V2:0xf6422b997c7f54d1c6a6e103bcb1499eea0a7046": {
+    "timestamp": 1762280101.4193935,
+    "data": {
+      "reserve0": 26044420448243289054,
+      "reserve1": 87486794190,
+      "token0": "WETH",
+      "token1": "USDT",
+      "token0_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 18,
+      "decimals1": 6,
+      "price0": 3355.22,
+      "price1": 0.999574,
+      "tvl_usd": 174834.2851920299,
+      "type": "v2"
+    }
+  },
+  "QuickSwap_V2:0xdc9232e2df177d7a12fdff6ecbab114e2231198d": {
+    "timestamp": 1762280103.5137553,
+    "data": {
+      "reserve0": 298305602,
+      "reserve1": 89722052529530535521,
+      "token0": "WBTC",
+      "token1": "WETH",
+      "token0_address": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "token1_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "decimals0": 8,
+      "decimals1": 18,
+      "price0": 100898,
+      "price1": 3355.22,
+      "tvl_usd": 602021.6113940913,
+      "type": "v2"
+    }
+  },
+  "QuickSwap_V2:0xfb5e6eb1c844b04924121fb0bf6b9623fc0b9f4d": {
+    "timestamp": 1762280107.088923,
+    "data": {
+      "reserve0": 409021497900437351,
+      "reserve1": 329471456309655362,
+      "token0": "WETH",
+      "token1": "YFI",
+      "token0_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "token1_address": "0xDA537104D6A5edd53c6fBba9A898708E465260b6",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 3355.22,
+      "price1": 4393.16,
+      "tvl_usd": 2819.7779331868305,
+      "type": "v2"
+    }
+  },
+  "Uniswap_V3:0x027be85ff9481399ec5c6b854c77d5e5ca98905b": {
+    "timestamp": 1762280109.3122628,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 5768774213163012467588085664,
+      "token0": "CRV",
+      "token1": "AAVE",
+      "token0_address": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+      "token1_address": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 0.414145,
+      "price1": 189.76,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0xd20f057b05f1d62c1fe306f6ee77ab4c8fd7e2fb": {
+    "timestamp": 1762280110.509414,
+    "data": {
+      "liquidity": 2233545780319453971,
+      "sqrt_price_x96": 5721444409851371180200845793,
+      "token0": "DAI",
+      "token1": "AAVE",
+      "token0_address": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "token1_address": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 0.999352,
+      "price1": 189.76,
+      "tvl_usd": 4.0959834718616854e-08,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x284e88102b1b05125052b01a0a68e0e0517b3a9d": {
+    "timestamp": 1762280114.5984783,
+    "data": {
+      "liquidity": 710169993862068398992,
+      "sqrt_price_x96": 21836591416603645840976660889,
+      "token0": "LINK",
+      "token1": "AAVE",
+      "token0_address": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "token1_address": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 14.46,
+      "price1": 189.76,
+      "tvl_usd": 2.7875398904958633e-06,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0xfae91e08188332ed6ea09b314bbe3fc6cd1432c1": {
+    "timestamp": 1762280115.8099122,
+    "data": {
+      "liquidity": 16043659793738523812855,
+      "sqrt_price_x96": 21765532955679105287843696338,
+      "token0": "LINK",
+      "token1": "AAVE",
+      "token0_address": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "token1_address": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 14.46,
+      "price1": 189.76,
+      "tvl_usd": 1.320614652493321e-05,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x14bda96767398575323955da16014e82cb757cdf": {
+    "timestamp": 1762280117.0384142,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 877939858440514102534911198,
+      "token0": "QUICK",
+      "token1": "AAVE",
+      "token0_address": "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
+      "token1_address": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 0.01590748,
+      "price1": 189.76,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x3dac94757a68e6ba6cc89371eab9748328bbef64": {
+    "timestamp": 1762280118.1089878,
+    "data": {
+      "liquidity": 40290599955117946608,
+      "sqrt_price_x96": 3781029549608035070220630704,
+      "token0": "SUSHI",
+      "token1": "AAVE",
+      "token0_address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+      "token1_address": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 0.424091,
+      "price1": 189.76,
+      "tvl_usd": 1.149653649469417e-07,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x44823816ef34963f9321da649c950ea94013075a": {
+    "timestamp": 1762280122.0946484,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 23230803035705724116407029377,
+      "token0": "UNI",
+      "token1": "AAVE",
+      "token0_address": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+      "token1_address": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 5.0,
+      "price1": 189.76,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x3b4f239fc871ed2f63fd42b0a2dbaa627e5f286a": {
+    "timestamp": 1762280123.2430406,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 6720531000302187653966671209696241,
+      "token0": "USDC",
+      "token1": "AAVE",
+      "token0_address": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "token1_address": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "decimals0": 6,
+      "decimals1": 18,
+      "price0": 0.999762,
+      "price1": 189.76,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0xc42bf5cd16d9eb1e892b66bb32a3892dcb7bb75c": {
+    "timestamp": 1762280124.5023448,
+    "data": {
+      "liquidity": 10904409761220870,
+      "sqrt_price_x96": 5755721540626875501285843212457141,
+      "token0": "USDC",
+      "token1": "AAVE",
+      "token0_address": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "token1_address": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "decimals0": 6,
+      "decimals1": 18,
+      "price0": 0.999762,
+      "price1": 189.76,
+      "tvl_usd": 2.879094632230349e-09,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x22c2f649d8233e43f13c24448d1e72e6d84f32b0": {
+    "timestamp": 1762280125.669217,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 4383788980175026539624376217888532,
+      "token0": "USDC",
+      "token1": "AAVE",
+      "token0_address": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "token1_address": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "decimals0": 6,
+      "decimals1": 18,
+      "price0": 0.999762,
+      "price1": 189.76,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x948989e14111d072f592d3309a6e3b1654f5d783": {
+    "timestamp": 1762280129.503964,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 4295128740,
+      "token0": "USDT",
+      "token1": "AAVE",
+      "token0_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "token1_address": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "decimals0": 6,
+      "decimals1": 18,
+      "price0": 0.999574,
+      "price1": 189.76,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0xaef2426aab13589cfeb3ebb201d75601c34bb137": {
+    "timestamp": 1762280130.621432,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 136856613596163631624829623342029630,
+      "token0": "WBTC",
+      "token1": "AAVE",
+      "token0_address": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "token1_address": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "decimals0": 8,
+      "decimals1": 18,
+      "price0": 100898,
+      "price1": 189.76,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x141688f5eab27cba15b5588f011bdefc25f9eae6": {
+    "timestamp": 1762280131.8244283,
+    "data": {
+      "liquidity": 32802373178108,
+      "sqrt_price_x96": 182589046774316400669612609247781623,
+      "token0": "WBTC",
+      "token1": "AAVE",
+      "token0_address": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "token1_address": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "decimals0": 8,
+      "decimals1": 18,
+      "price0": 100898,
+      "price1": 189.76,
+      "tvl_usd": 5.009362236594182e-08,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x8918b4cfa6bffbe00c43bbb83b308f5003f7524c": {
+    "timestamp": 1762280132.8551517,
+    "data": {
+      "liquidity": 1552735107,
+      "sqrt_price_x96": 183730937468814246158734520821377121,
+      "token0": "WBTC",
+      "token1": "AAVE",
+      "token0_address": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "token1_address": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "decimals0": 8,
+      "decimals1": 18,
+      "price0": 100898,
+      "price1": 189.76,
+      "tvl_usd": 3.468055674387293e-10,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x313821e1cec96e4bc48acb9ad94e9978de7300df": {
+    "timestamp": 1762280136.6640034,
+    "data": {
+      "liquidity": 4020315235717046755,
+      "sqrt_price_x96": 331427139838265400147680593069,
+      "token0": "WETH",
+      "token1": "AAVE",
+      "token0_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "token1_address": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 3355.22,
+      "price1": 189.76,
+      "tvl_usd": 3.1832680215217922e-06,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x8af70918b4b570dd310cc0a101dd32616cf32984": {
+    "timestamp": 1762280144.19822,
+    "data": {
+      "liquidity": 2661360508326171116206,
+      "sqrt_price_x96": 404396977377778219697837153915,
+      "token0": "CRV",
+      "token1": "QUICK",
+      "token0_address": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+      "token1_address": "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 0.414145,
+      "price1": 0.01590748,
+      "tvl_usd": 8.377444372132661e-09,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x09d17750523d90989f66c4b4bb087d8ab8550c34": {
+    "timestamp": 1762280145.373923,
+    "data": {
+      "liquidity": 56304575385669854027,
+      "sqrt_price_x96": 81188176859812706729045019855,
+      "token0": "SUSHI",
+      "token1": "CRV",
+      "token0_address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+      "token1_address": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 0.424091,
+      "price1": 0.414145,
+      "tvl_usd": 6.368944542893725e-09,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x226d1f412bc11586930ee75bc174666bdd4cacfe": {
+    "timestamp": 1762280146.5423627,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 18964084984380434061980386045,
+      "token0": "CRV",
+      "token1": "UNI",
+      "token0_address": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+      "token1_address": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 0.414145,
+      "price1": 5.0,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x6215668753577a37886dc763c8dba4d74c57cb60": {
+    "timestamp": 1762280147.6192589,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 30805103191007708595162030039,
+      "token0": "CRV",
+      "token1": "UNI",
+      "token0_address": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+      "token1_address": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 0.414145,
+      "price1": 5.0,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0xa0ddc32e8b2e4326673a623d42a6bf2abf0dcb63": {
+    "timestamp": 1762280151.5498135,
+    "data": {
+      "liquidity": 22145605229,
+      "sqrt_price_x96": 54051224458141836907810,
+      "token0": "CRV",
+      "token1": "USDT",
+      "token0_address": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 18,
+      "decimals1": 6,
+      "price0": 0.414145,
+      "price1": 0.999574,
+      "tvl_usd": 0.20296197333359553,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x1c8e2278401946c4b40ba84d6a79d9dc6bd62d3d": {
+    "timestamp": 1762280152.5629811,
+    "data": {
+      "liquidity": 607535631309558,
+      "sqrt_price_x96": 56180521747002558050013,
+      "token0": "CRV",
+      "token1": "USDT",
+      "token0_address": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 18,
+      "decimals1": 6,
+      "price0": 0.414145,
+      "price1": 0.999574,
+      "tvl_usd": 34.9411350022415,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x15729e1eab9c8c4e4cbde4a510552d221a298d9d": {
+    "timestamp": 1762280153.5992935,
+    "data": {
+      "liquidity": 661607324977,
+      "sqrt_price_x96": 54740383436392620623249,
+      "token0": "CRV",
+      "token1": "USDT",
+      "token0_address": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 18,
+      "decimals1": 6,
+      "price0": 0.414145,
+      "price1": 0.999574,
+      "tvl_usd": 1.1235007085322681,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x4730dcb24f08c2967c2685f70d7fc38f21ea0b3a": {
+    "timestamp": 1762280154.6852236,
+    "data": {
+      "liquidity": 2857925,
+      "sqrt_price_x96": 79224253767016489810214999,
+      "token0": "CRV",
+      "token1": "WBTC",
+      "token0_address": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+      "token1_address": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "decimals0": 18,
+      "decimals1": 8,
+      "price0": 0.414145,
+      "price1": 100898,
+      "tvl_usd": 341.1273500399475,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0xc48054895f205598b40bc74fd234dfd03166d462": {
+    "timestamp": 1762280158.3353984,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 1846974499637903782149595602,
+      "token0": "CRV",
+      "token1": "WETH",
+      "token0_address": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+      "token1_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 0.414145,
+      "price1": 3355.22,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0xfc99d1c02d27de07dfe0dcd878cde86ee59c5f6b": {
+    "timestamp": 1762280159.4517891,
+    "data": {
+      "liquidity": 1473817072846615606267,
+      "sqrt_price_x96": 880602714620086304132121095,
+      "token0": "CRV",
+      "token1": "WETH",
+      "token0_address": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+      "token1_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 0.414145,
+      "price1": 3355.22,
+      "tvl_usd": 2.863342011078706e-06,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x3b60d952db8cc40b709df5587a6a9f76ff036be7": {
+    "timestamp": 1762280160.5971212,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 4295128740,
+      "token0": "CRV",
+      "token1": "WETH",
+      "token0_address": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+      "token1_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 0.414145,
+      "price1": 3355.22,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x229d17f5e473c1acf944be18ab72c533fe6e77f5": {
+    "timestamp": 1762280165.5326786,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 298796646166601350701684818337,
+      "token0": "LINK",
+      "token1": "DAI",
+      "token0_address": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "token1_address": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 14.46,
+      "price1": 0.999352,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x153d9ecfbe79ffecdb2aacfab5abc4756f5f0cf0": {
+    "timestamp": 1762280166.821952,
+    "data": {
+      "liquidity": 637792138901664687593,
+      "sqrt_price_x96": 301129096524908770846366332308,
+      "token0": "LINK",
+      "token1": "DAI",
+      "token0_address": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "token1_address": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 14.46,
+      "price1": 0.999352,
+      "tvl_usd": 1.9184973340576232e-07,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0xabfba24fbfa7af2985036bf9d0a2fd7209cf76f6": {
+    "timestamp": 1762280167.881144,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 1461446703485210103287273052203988822378723970341,
+      "token0": "LINK",
+      "token1": "DAI",
+      "token0_address": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "token1_address": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 14.46,
+      "price1": 0.999352,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x0d7a582cf0608ef5fddce0ba561dfb38168444ef": {
+    "timestamp": 1762280168.8833404,
+    "data": {
+      "liquidity": 13771521322591512,
+      "sqrt_price_x96": 61089098940633648240081854433,
+      "token0": "SUSHI",
+      "token1": "DAI",
+      "token0_address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+      "token1_address": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 0.424091,
+      "price1": 0.999352,
+      "tvl_usd": 1.808521086030469e-10,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x23bb918dc4c9c968b01ac87858880e14a7c89188": {
+    "timestamp": 1762280173.0079668,
+    "data": {
+      "liquidity": 4481814798136993614,
+      "sqrt_price_x96": 35331501310058106770929471041,
+      "token0": "DAI",
+      "token1": "UNI",
+      "token0_address": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "token1_address": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 0.999352,
+      "price1": 5.0,
+      "tvl_usd": 9.440814432810688e-09,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x82fabd8d39b0fc7aa91a6b060807a483e9b7391f": {
+    "timestamp": 1762280174.451912,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 33194241721620620682793759756,
+      "token0": "DAI",
+      "token1": "UNI",
+      "token0_address": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "token1_address": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 0.999352,
+      "price1": 5.0,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0xe023d2bd6a787b4d31494770fc9badc5726fcaae": {
+    "timestamp": 1762280175.6363795,
+    "data": {
+      "liquidity": 115263575698795180,
+      "sqrt_price_x96": 79238833011079655757319748401446423,
+      "token0": "USDC",
+      "token1": "DAI",
+      "token0_address": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "token1_address": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "decimals0": 6,
+      "decimals1": 18,
+      "price0": 0.999762,
+      "price1": 0.999352,
+      "tvl_usd": 6.786611876448683e-10,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x02765eb2283a5c644c2bef51911e2f9039fc225b": {
+    "timestamp": 1762280176.6898787,
+    "data": {
+      "liquidity": 7676376554129535,
+      "sqrt_price_x96": 79243798938884492681110991326960559,
+      "token0": "USDC",
+      "token1": "DAI",
+      "token0_address": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "token1_address": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "decimals0": 6,
+      "decimals1": 18,
+      "price0": 0.999762,
+      "price1": 0.999352,
+      "tvl_usd": 1.7515087869580834e-10,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x88aaeed1fcfca2eda30749afa9ad45a75c80e292": {
+    "timestamp": 1762280180.4532115,
+    "data": {
+      "liquidity": 13515637337533036499,
+      "sqrt_price_x96": 79166141191744771478155,
+      "token0": "DAI",
+      "token1": "USDT",
+      "token0_address": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 18,
+      "decimals1": 6,
+      "price0": 0.999352,
+      "price1": 0.999574,
+      "tvl_usd": 7343.838279353654,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x9a4270d9da562780a6bb5d01dcb527eb8ec86da4": {
+    "timestamp": 1762280181.578373,
+    "data": {
+      "liquidity": 130484919020438,
+      "sqrt_price_x96": 79118359331896350021194,
+      "token0": "DAI",
+      "token1": "USDT",
+      "token0_address": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 18,
+      "decimals1": 6,
+      "price0": 0.999352,
+      "price1": 0.999574,
+      "tvl_usd": 22.80461769734967,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x5e575a7050ca806248e8f4341601847fde52d9ba": {
+    "timestamp": 1762280182.6510608,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 2030023161258248897715846167734379056,
+      "token0": "WBTC",
+      "token1": "DAI",
+      "token0_address": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "token1_address": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "decimals0": 8,
+      "decimals1": 18,
+      "price0": 100898,
+      "price1": 0.999352,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0xd0beb9570bc3d2af7fa461dfd3c75cc3a34f95e2": {
+    "timestamp": 1762280183.76848,
+    "data": {
+      "liquidity": 32653052101208,
+      "sqrt_price_x96": 2518259991601291355667480739612508841,
+      "token0": "WBTC",
+      "token1": "DAI",
+      "token0_address": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "token1_address": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "decimals0": 8,
+      "decimals1": 18,
+      "price0": 100898,
+      "price1": 0.999352,
+      "tvl_usd": 3.630206702392182e-09,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x6bad0f9a89ca403bb91d253d385cec1a2b6eca97": {
+    "timestamp": 1762280187.574689,
+    "data": {
+      "liquidity": 117238235477518250934,
+      "sqrt_price_x96": 4587627442945488435932261513566,
+      "token0": "WETH",
+      "token1": "DAI",
+      "token0_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "token1_address": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 3355.22,
+      "price1": 0.999352,
+      "tvl_usd": 1.2531171581801441e-06,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x3f82d2fe81904f0e74146a14904e5355ef476049": {
+    "timestamp": 1762280188.7874124,
+    "data": {
+      "liquidity": 735012116477510151,
+      "sqrt_price_x96": 4617744953164818585845808844449,
+      "token0": "WETH",
+      "token1": "DAI",
+      "token0_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "token1_address": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 3355.22,
+      "price1": 0.999352,
+      "tvl_usd": 9.987253867111523e-08,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x080a16fc4f2ad8ab536a83385524e9f553b8ae35": {
+    "timestamp": 1762280194.9578617,
+    "data": {
+      "liquidity": 2259329544120748611,
+      "sqrt_price_x96": 13539463556030252023279138568,
+      "token0": "SUSHI",
+      "token1": "LINK",
+      "token0_address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+      "token1_address": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 0.424091,
+      "price1": 14.46,
+      "tvl_usd": 7.428650959557807e-09,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0xc1d402ecc78cd5a06213bef614934f6966c83957": {
+    "timestamp": 1762280196.126628,
+    "data": {
+      "liquidity": 981129060453486880451,
+      "sqrt_price_x96": 134786155546702842874777804996,
+      "token0": "LINK",
+      "token1": "UNI",
+      "token0_address": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "token1_address": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 14.46,
+      "price1": 5.0,
+      "tvl_usd": 5.328792044222911e-07,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x089e923496033b8fcd578423ea37aa69c083bd83": {
+    "timestamp": 1762280197.4197016,
+    "data": {
+      "liquidity": 10102194466580888467058,
+      "sqrt_price_x96": 134963915073169538861493304559,
+      "token0": "LINK",
+      "token1": "UNI",
+      "token0_address": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "token1_address": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 14.46,
+      "price1": 5.0,
+      "tvl_usd": 1.7121663064583738e-06,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x052c9b8f41f3855225495e78532aaad0f22a925c": {
+    "timestamp": 1762280198.871706,
+    "data": {
+      "liquidity": 88068523069774,
+      "sqrt_price_x96": 19272536836487448480828691247464182,
+      "token0": "USDC",
+      "token1": "LINK",
+      "token0_address": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "token1_address": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "decimals0": 6,
+      "decimals1": 18,
+      "price0": 0.999762,
+      "price1": 14.46,
+      "tvl_usd": 6.601884862179506e-11,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x4953593c5706534719a9404cec8542be97c31a99": {
+    "timestamp": 1762280203.4851975,
+    "data": {
+      "liquidity": 7821147216246,
+      "sqrt_price_x96": 310756775395615729437998,
+      "token0": "LINK",
+      "token1": "USDT",
+      "token0_address": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 18,
+      "decimals1": 6,
+      "price0": 14.46,
+      "price1": 0.999574,
+      "tvl_usd": 21.929119775752753,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x3c92bd9596e6aca8cfa29ec733ebe0c189bec1f3": {
+    "timestamp": 1762280204.6468256,
+    "data": {
+      "liquidity": 8548765012315386,
+      "sqrt_price_x96": 300931518149745220119418,
+      "token0": "LINK",
+      "token1": "USDT",
+      "token0_address": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 18,
+      "decimals1": 6,
+      "price0": 14.46,
+      "price1": 0.999574,
+      "tvl_usd": 702.0769725614858,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x2d8e5f3bbb21e1a3b52df89007b0cc8b09ba8523": {
+    "timestamp": 1762280205.8143742,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 332010873113169622336935,
+      "token0": "LINK",
+      "token1": "USDT",
+      "token0_address": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 18,
+      "decimals1": 6,
+      "price0": 14.46,
+      "price1": 0.999574,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0xa21c391c746b3b86058537cfa7d52aa2ccb71479": {
+    "timestamp": 1762280206.9680963,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 498467547979881514268631760685789059,
+      "token0": "WBTC",
+      "token1": "LINK",
+      "token0_address": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "token1_address": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "decimals0": 8,
+      "decimals1": 18,
+      "price0": 100898,
+      "price1": 14.46,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x3dc10d7bfb94eeb009203e84a653e5764f71771d": {
+    "timestamp": 1762280210.8568468,
+    "data": {
+      "liquidity": 4642955136494496666632,
+      "sqrt_price_x96": 5197376454899773495452667950,
+      "token0": "LINK",
+      "token1": "WETH",
+      "token0_address": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "token1_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 14.46,
+      "price1": 3355.22,
+      "tvl_usd": 2.9995273904520755e-05,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x3e31ab7f37c048fc6574189135d108df80f0ea26": {
+    "timestamp": 1762280211.987112,
+    "data": {
+      "liquidity": 11626365954662043572395,
+      "sqrt_price_x96": 5203344121644022275438399627,
+      "token0": "LINK",
+      "token1": "WETH",
+      "token0_address": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "token1_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 14.46,
+      "price1": 3355.22,
+      "tvl_usd": 4.751994802987587e-05,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x5cb7076245a3134f7072f8395045e31c037aeb08": {
+    "timestamp": 1762280213.3098226,
+    "data": {
+      "liquidity": 4052587307889309,
+      "sqrt_price_x96": 5146548520395341121893512446,
+      "token0": "LINK",
+      "token1": "WETH",
+      "token0_address": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "token1_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 14.46,
+      "price1": 3355.22,
+      "tvl_usd": 2.774940499284245e-08,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0xbd73941455fe6d4e4981d361a96b9f067369ef8e": {
+    "timestamp": 1762280218.3729029,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 792281450588715864645680365646,
+      "token0": "SUSHI",
+      "token1": "QUICK",
+      "token0_address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+      "token1_address": "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 0.424091,
+      "price1": 0.01590748,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x23cef324ef00330e5d6b98476db7d43cacca39cb": {
+    "timestamp": 1762280219.57721,
+    "data": {
+      "liquidity": 1546115953094649905882,
+      "sqrt_price_x96": 416541408086955857382657071431,
+      "token0": "SUSHI",
+      "token1": "QUICK",
+      "token0_address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+      "token1_address": "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 0.424091,
+      "price1": 0.01590748,
+      "tvl_usd": 6.5770479676059276e-09,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0xbb0687d706c47184b3592c67de0a38e83245f6b6": {
+    "timestamp": 1762280220.7563787,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 579827695474484742234542353182796965,
+      "token0": "USDC",
+      "token1": "QUICK",
+      "token0_address": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "token1_address": "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
+      "decimals0": 6,
+      "decimals1": 18,
+      "price0": 0.999762,
+      "price1": 0.01590748,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x02a8593a8a8d82495bb7f4d1038fb61c6a39996a": {
+    "timestamp": 1762280221.9028783,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 1461446703485210103287273052203988822378723970341,
+      "token0": "USDC",
+      "token1": "QUICK",
+      "token0_address": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "token1_address": "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
+      "decimals0": 6,
+      "decimals1": 18,
+      "price0": 0.999762,
+      "price1": 0.01590748,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0xf4efb3df8c658983798b2e7b5cb910a732c6d1ac": {
+    "timestamp": 1762280225.5753357,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 13054655921114457177365,
+      "token0": "QUICK",
+      "token1": "USDT",
+      "token0_address": "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 18,
+      "decimals1": 6,
+      "price0": 0.01590748,
+      "price1": 0.999574,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x98909ae0aab112b583f744485bc020be369a7d66": {
+    "timestamp": 1762280226.7364883,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 15836408910748028512875799098212,
+      "token0": "WETH",
+      "token1": "QUICK",
+      "token0_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "token1_address": "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 3355.22,
+      "price1": 0.01590748,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x396a8cc713103126b0c94523e5a1f394478e65d6": {
+    "timestamp": 1762280232.5913117,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 74255350854806013510991505878455296,
+      "token0": "USDC",
+      "token1": "SNX",
+      "token0_address": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "token1_address": "0x50B728D8D964fd00C2d0AAD81718b71311feF68a",
+      "decimals0": 6,
+      "decimals1": 18,
+      "price0": 0.999762,
+      "price1": 0.852964,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x5a0e114262ce69a373fb1dbc2129458651daf11a": {
+    "timestamp": 1762280233.6506538,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 137910570009483405005447,
+      "token0": "SNX",
+      "token1": "USDT",
+      "token0_address": "0x50B728D8D964fd00C2d0AAD81718b71311feF68a",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 18,
+      "decimals1": 6,
+      "price0": 0.852964,
+      "price1": 0.999574,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0xe8c16482ead6491c11a095396a4897a44a200906": {
+    "timestamp": 1762280234.7425885,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 139606305216706921209449,
+      "token0": "SNX",
+      "token1": "USDT",
+      "token0_address": "0x50B728D8D964fd00C2d0AAD81718b71311feF68a",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 18,
+      "decimals1": 6,
+      "price0": 0.852964,
+      "price1": 0.999574,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x3e270744a44444fe1bd18e3731b4fa2eff113fd9": {
+    "timestamp": 1762280236.5328226,
+    "data": {
+      "liquidity": 27777707834687,
+      "sqrt_price_x96": 81342135413647870516985,
+      "token0": "SNX",
+      "token1": "USDT",
+      "token0_address": "0x50B728D8D964fd00C2d0AAD81718b71311feF68a",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 18,
+      "decimals1": 6,
+      "price0": 0.852964,
+      "price1": 0.999574,
+      "tvl_usd": 10.817555581733972,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x21215246573e94d992e222506f82e70d5334630b": {
+    "timestamp": 1762280240.8206313,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 2592191540397737013596441891,
+      "token0": "SNX",
+      "token1": "WETH",
+      "token0_address": "0x50B728D8D964fd00C2d0AAD81718b71311feF68a",
+      "token1_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 0.852964,
+      "price1": 3355.22,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x56c2dfec99b72662f97ae03b1547ea7e3efeeac0": {
+    "timestamp": 1762280248.713294,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 103909436253066288488862,
+      "token0": "SUSHI",
+      "token1": "USDC",
+      "token0_address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+      "token1_address": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "decimals0": 18,
+      "decimals1": 6,
+      "price0": 0.424091,
+      "price1": 0.999762,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x1da267ff3903b17b0ff9d9d986bdfbbb675b57d5": {
+    "timestamp": 1762280249.8491895,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 83098857021393812589769,
+      "token0": "SUSHI",
+      "token1": "USDT",
+      "token0_address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 18,
+      "decimals1": 6,
+      "price0": 0.424091,
+      "price1": 0.999574,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0xdf1cd8d8c333f02db3de558ee057ba20e0726e80": {
+    "timestamp": 1762280250.8579357,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 68501044582804838965723,
+      "token0": "SUSHI",
+      "token1": "USDT",
+      "token0_address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 18,
+      "decimals1": 6,
+      "price0": 0.424091,
+      "price1": 0.999574,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x89f188cb56e6a2d29bf8d1102122734bf5b8ac6d": {
+    "timestamp": 1762280252.027807,
+    "data": {
+      "liquidity": 20057467962765,
+      "sqrt_price_x96": 52897913693237702578213,
+      "token0": "SUSHI",
+      "token1": "USDT",
+      "token0_address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 18,
+      "decimals1": 6,
+      "price0": 0.424091,
+      "price1": 0.999574,
+      "tvl_usd": 5.977807978375871,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x0312692e9cadd3ddaace2e112a4e36397bd2f18a": {
+    "timestamp": 1762280255.7443264,
+    "data": {
+      "liquidity": 299408121562355273598,
+      "sqrt_price_x96": 896342526500002594108094894,
+      "token0": "SUSHI",
+      "token1": "WETH",
+      "token0_address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+      "token1_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 0.424091,
+      "price1": 3355.22,
+      "tvl_usd": 1.3136425400825274e-06,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x374f98170f18d69c7d4a6242fffef7888c7687fa": {
+    "timestamp": 1762280256.8546593,
+    "data": {
+      "liquidity": 206854139954083,
+      "sqrt_price_x96": 1015372658359487167680396660,
+      "token0": "SUSHI",
+      "token1": "WETH",
+      "token0_address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+      "token1_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 0.424091,
+      "price1": 3355.22,
+      "tvl_usd": 1.2368840440773982e-09,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x35cbf36e817c56d483b5853e1562aab48eb273ed": {
+    "timestamp": 1762280262.8654218,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 19737078856946436657707749883897068,
+      "token0": "USDC",
+      "token1": "UNI",
+      "token0_address": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "token1_address": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+      "decimals0": 6,
+      "decimals1": 18,
+      "price0": 0.999762,
+      "price1": 5.0,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x242ae2dd4f734c44d2298b9f1b0b3125d36c24dd": {
+    "timestamp": 1762280263.8876588,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 1461446703485210103287273052203988822378723970341,
+      "token0": "UNI",
+      "token1": "USDT",
+      "token0_address": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 18,
+      "decimals1": 6,
+      "price0": 5.0,
+      "price1": 0.999574,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x7acf7fc43677739ea451aa561c44c80c59087391": {
+    "timestamp": 1762280265.0258842,
+    "data": {
+      "liquidity": 1141825413348475,
+      "sqrt_price_x96": 177095565529736165092802,
+      "token0": "UNI",
+      "token1": "USDT",
+      "token0_address": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 18,
+      "decimals1": 6,
+      "price0": 5.0,
+      "price1": 0.999574,
+      "tvl_usd": 150.9985935107715,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0xbb1f504259cf7078e447e24e55cf1d7a511a38a2": {
+    "timestamp": 1762280266.4783723,
+    "data": {
+      "liquidity": 8218543534541,
+      "sqrt_price_x96": 180191871521447701334297,
+      "token0": "UNI",
+      "token1": "USDT",
+      "token0_address": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 18,
+      "decimals1": 6,
+      "price0": 5.0,
+      "price1": 0.999574,
+      "tvl_usd": 13.034608427350188,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0xb5bf6b58a64c070c9a95c43644a90b07ad03e0a7": {
+    "timestamp": 1762280270.4245129,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 1461446703485210103287273052203988822378723970341,
+      "token0": "WETH",
+      "token1": "UNI",
+      "token0_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "token1_address": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 3355.22,
+      "price1": 5.0,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x357faf5843c7fd7fb4e34fbeabdac16eabe8a5bc": {
+    "timestamp": 1762280271.4847193,
+    "data": {
+      "liquidity": 2006312688136576636850,
+      "sqrt_price_x96": 2053058394732870305652492953036,
+      "token0": "WETH",
+      "token1": "UNI",
+      "token0_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "token1_address": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 3355.22,
+      "price1": 5.0,
+      "tvl_usd": 1.1607027895621444e-05,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x39cd971fdfbb2e11013b6e2b0a7865840c729cc9": {
+    "timestamp": 1762280272.5455647,
+    "data": {
+      "liquidity": 2257108725649962,
+      "sqrt_price_x96": 2008850227873630548497607261016,
+      "token0": "WETH",
+      "token1": "UNI",
+      "token0_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "token1_address": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 3355.22,
+      "price1": 5.0,
+      "tvl_usd": 1.2046037608564265e-08,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0xee95696f77693af4f9b93850a9f48b4ad8e7a30a": {
+    "timestamp": 1762280277.4593356,
+    "data": {
+      "liquidity": 36559940723480,
+      "sqrt_price_x96": 79247487250550099360157747205,
+      "token0": "USDC",
+      "token1": "USDT",
+      "token0_address": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 6,
+      "decimals1": 6,
+      "price0": 0.999762,
+      "price1": 0.999574,
+      "tvl_usd": 12.09076012834621,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x1cb770fc7c7367c6ad5e88d32072b7f4bf881304": {
+    "timestamp": 1762280278.7255144,
+    "data": {
+      "liquidity": 104922578800,
+      "sqrt_price_x96": 79256198647980666096630175355,
+      "token0": "USDC",
+      "token1": "USDT",
+      "token0_address": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 6,
+      "decimals1": 6,
+      "price0": 0.999762,
+      "price1": 0.999574,
+      "tvl_usd": 0.6477882700178719,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x03bc0fd2840516a863cbc5220e17d3764123ba24": {
+    "timestamp": 1762280279.831349,
+    "data": {
+      "liquidity": 3816017,
+      "sqrt_price_x96": 78825128100199003546775420729,
+      "token0": "USDC",
+      "token1": "USDT",
+      "token0_address": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 6,
+      "decimals1": 6,
+      "price0": 0.999762,
+      "price1": 0.999574,
+      "tvl_usd": 0.0038853951939991785,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x32fae204835e08b9374493d6b4628fd1f87dd045": {
+    "timestamp": 1762280280.9699953,
+    "data": {
+      "liquidity": 26456561438,
+      "sqrt_price_x96": 2511775997573436286751642987564,
+      "token0": "WBTC",
+      "token1": "USDC",
+      "token0_address": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "token1_address": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "decimals0": 8,
+      "decimals1": 6,
+      "price0": 100898,
+      "price1": 0.999762,
+      "tvl_usd": 103.10854125926109,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x19c5505638383337d2972ce68b493ad78e315147": {
+    "timestamp": 1762280284.8117495,
+    "data": {
+      "liquidity": 1605347181022632,
+      "sqrt_price_x96": 1369472272334681884967656791623588,
+      "token0": "USDC",
+      "token1": "WETH",
+      "token0_address": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "token1_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "decimals0": 6,
+      "decimals1": 18,
+      "price0": 0.999762,
+      "price1": 3355.22,
+      "tvl_usd": 4.647390246856501e-09,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x12bd7ae45acf2504bed144eabc6ff5bbebd91563": {
+    "timestamp": 1762280285.9456668,
+    "data": {
+      "liquidity": 63789509178678,
+      "sqrt_price_x96": 1365473110778622855605575241805166,
+      "token0": "USDC",
+      "token1": "WETH",
+      "token0_address": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "token1_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "decimals0": 6,
+      "decimals1": 18,
+      "price0": 0.999762,
+      "price1": 3355.22,
+      "tvl_usd": 9.236962838763817e-10,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x33016df701b323c33cc027146c6a9e0997b2a923": {
+    "timestamp": 1762280292.3611002,
+    "data": {
+      "liquidity": 26701654956,
+      "sqrt_price_x96": 2515219774345225459052209529767,
+      "token0": "WBTC",
+      "token1": "USDT",
+      "token0_address": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 8,
+      "decimals1": 6,
+      "price0": 100898,
+      "price1": 0.999574,
+      "tvl_usd": 103.7075540649504,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x8fc5e02d85891ba2855af1904dfc5cf1d82e4a44": {
+    "timestamp": 1762280293.5011902,
+    "data": {
+      "liquidity": 242253,
+      "sqrt_price_x96": 2574307370503130908487845504135,
+      "token0": "WBTC",
+      "token1": "USDT",
+      "token0_address": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 8,
+      "decimals1": 6,
+      "price0": 100898,
+      "price1": 0.999574,
+      "tvl_usd": 0.3197130364176021,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0xbb98b3d2b18aef63a3178023a920971cf5f29be4": {
+    "timestamp": 1762280294.6353984,
+    "data": {
+      "liquidity": 8598623130359067,
+      "sqrt_price_x96": 4571786727611180710817302,
+      "token0": "WETH",
+      "token1": "USDT",
+      "token0_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 18,
+      "decimals1": 6,
+      "price0": 3355.22,
+      "price1": 0.999574,
+      "tvl_usd": 10697.093278766364,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x4ccd010148379ea531d6c587cfdd60180196f9b1": {
+    "timestamp": 1762280295.8352475,
+    "data": {
+      "liquidity": 51070474530508792,
+      "sqrt_price_x96": 4574764817393220203706152,
+      "token0": "WETH",
+      "token1": "USDT",
+      "token0_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 18,
+      "decimals1": 6,
+      "price0": 3355.22,
+      "price1": 0.999574,
+      "tvl_usd": 26086.696296462702,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0xac2bf8efdfe422e2123a5e96f151e07df73215d7": {
+    "timestamp": 1762280301.997962,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 914445288133972522445647625634123,
+      "token0": "USDT",
+      "token1": "YFI",
+      "token0_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "token1_address": "0xDA537104D6A5edd53c6fBba9A898708E465260b6",
+      "decimals0": 6,
+      "decimals1": 18,
+      "price0": 0.999574,
+      "price1": 4393.16,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x50eaedb835021e4a108b7290636d62e9765cc6d7": {
+    "timestamp": 1762280303.0636754,
+    "data": {
+      "liquidity": 2288214177765775,
+      "sqrt_price_x96": 43486847799377387037752968259054534,
+      "token0": "WBTC",
+      "token1": "WETH",
+      "token0_address": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "token1_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "decimals0": 8,
+      "decimals1": 18,
+      "price0": 100898,
+      "price1": 3355.22,
+      "tvl_usd": 1.7618854874046755e-06,
+      "type": "v3"
+    }
+  },
+  "Uniswap_V3:0x69b912c40014a628ff1c8078c55ad790c6c35ed0": {
+    "timestamp": 1762280313.9384604,
+    "data": {
+      "liquidity": 44442782103105,
+      "sqrt_price_x96": 69815021086737313943984833780,
+      "token0": "WETH",
+      "token1": "YFI",
+      "token0_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "token1_address": "0xDA537104D6A5edd53c6fBba9A898708E465260b6",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 3355.22,
+      "price1": 4393.16,
+      "tvl_usd": 5.161511805729614e-08,
+      "type": "v3"
+    }
+  },
+  "SushiSwap:0x74d23f21f780ca26b47db16b0504f2e3832b9321": {
+    "timestamp": 1762280321.265272,
+    "data": {
+      "reserve0": 5184555935584815257548,
+      "reserve1": 22347334604520480861,
+      "token0": "LINK",
+      "token1": "WETH",
+      "token0_address": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "token1_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 14.46,
+      "price1": 3355.22,
+      "tvl_usd": 149948.90284033562,
+      "type": "v2"
+    }
+  },
+  "SushiSwap:0xb2c60ca55202e65301aa48e40883b9f09cefcb86": {
+    "timestamp": 1762280322.7959216,
+    "data": {
+      "reserve0": 1,
+      "reserve1": 47150409803556826,
+      "token0": "WBTC",
+      "token1": "QUICK",
+      "token0_address": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "token1_address": "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
+      "decimals0": 8,
+      "decimals1": 18,
+      "price0": 100898,
+      "price1": 0.01590748,
+      "tvl_usd": 0.0017590242009418843,
+      "type": "v2"
+    }
+  },
+  "SushiSwap:0xc56060af39152c614fa67e169c0dd1809a886e4f": {
+    "timestamp": 1762280326.3567495,
+    "data": {
+      "reserve0": 105100802720205951,
+      "reserve1": 70696830979521412624,
+      "token0": "WETH",
+      "token1": "UNI",
+      "token0_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "token1_address": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 3355.22,
+      "price1": 5.0,
+      "tvl_usd": 706.1204702004964,
+      "type": "v2"
+    }
+  },
+  "SushiSwap:0xb1dd5322be07fb2a40ae7fbbbac96781ca2b0602": {
+    "timestamp": 1762280328.729326,
+    "data": {
+      "reserve0": 1410,
+      "reserve1": 1542034,
+      "token0": "WBTC",
+      "token1": "USDT",
+      "token0_address": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 8,
+      "decimals1": 6,
+      "price0": 100898,
+      "price1": 0.999574,
+      "tvl_usd": 2.964038893516,
+      "type": "v2"
+    }
+  },
+  "SushiSwap:0xdfa3ddd1807db8e4b4851d2e5421374e433a2983": {
+    "timestamp": 1762280333.7910903,
+    "data": {
+      "reserve0": 1589929531795863,
+      "reserve1": 1288565080200978,
+      "token0": "WETH",
+      "token1": "YFI",
+      "token0_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "token1_address": "0xDA537104D6A5edd53c6fBba9A898708E465260b6",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 3355.22,
+      "price1": 4393.16,
+      "tvl_usd": 10.995435931407844,
+      "type": "v2"
+    }
+  },
+  "SushiSwap_V3:0x7f6fa65ae896b7e8e33c16cb08267f70543453d3": {
+    "timestamp": 1762280369.737346,
+    "data": {
+      "liquidity": 11893917046743858988,
+      "sqrt_price_x96": 3794843321486505013830852368,
+      "token0": "SUSHI",
+      "token1": "AAVE",
+      "token0_address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+      "token1_address": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 0.422968,
+      "price1": 189.24,
+      "tvl_usd": 6.252009851781102e-08,
+      "type": "v3"
+    }
+  },
+  "SushiSwap_V3:0xa5b458d6fe39042dfa4e05b7d3ffe435f699e455": {
+    "timestamp": 1762280370.817761,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 807961487776504459772850779124297814,
+      "token0": "USDC",
+      "token1": "AAVE",
+      "token0_address": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "token1_address": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "decimals0": 6,
+      "decimals1": 18,
+      "price0": 0.999805,
+      "price1": 189.24,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "SushiSwap_V3:0x166e6c7ffb6835de797a44953ef32e384469faa8": {
+    "timestamp": 1762280371.8980892,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 4295128740,
+      "token0": "USDT",
+      "token1": "AAVE",
+      "token0_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "token1_address": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "decimals0": 6,
+      "decimals1": 18,
+      "price0": 0.999597,
+      "price1": 189.24,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "SushiSwap_V3:0x6a0c9e2e41a7b7cdd4f003cfe349b933fa97306a": {
+    "timestamp": 1762280377.8945155,
+    "data": {
+      "liquidity": 3808211055974230712,
+      "sqrt_price_x96": 61089939287103007017552303241,
+      "token0": "CRV",
+      "token1": "DAI",
+      "token0_address": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+      "token1_address": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 0.413417,
+      "price1": 0.999545,
+      "tvl_usd": 3.0080355268709896e-09,
+      "type": "v3"
+    }
+  },
+  "SushiSwap_V3:0x786dd3d0d5e6d97d4e46c69283caf3cef368f966": {
+    "timestamp": 1762280379.130497,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 78518773026759273507781160557,
+      "token0": "SUSHI",
+      "token1": "CRV",
+      "token0_address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+      "token1_address": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 0.422968,
+      "price1": 0.413417,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "SushiSwap_V3:0x6320cf2eef72631a86deb3f838ab5c84d0ecbe3a": {
+    "timestamp": 1762280383.0870628,
+    "data": {
+      "liquidity": 9443544748280959654,
+      "sqrt_price_x96": 879599375548767687081047624,
+      "token0": "CRV",
+      "token1": "WETH",
+      "token0_address": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+      "token1_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 0.413417,
+      "price1": 3338.17,
+      "tvl_usd": 2.277777482987016e-07,
+      "type": "v3"
+    }
+  },
+  "SushiSwap_V3:0x8fc918e8d1c8a5f4979ae7d3bf31a55f58b84191": {
+    "timestamp": 1762280386.7946832,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 79213957015618974982159549135466614,
+      "token0": "USDC",
+      "token1": "DAI",
+      "token0_address": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "token1_address": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "decimals0": 6,
+      "decimals1": 18,
+      "price0": 0.999805,
+      "price1": 0.999545,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "SushiSwap_V3:0x28eb6cf2dfe62ed904082710e47f33d54b3fb9e8": {
+    "timestamp": 1762280390.8016815,
+    "data": {
+      "liquidity": 20704065204009325,
+      "sqrt_price_x96": 4632587343620751180940094802051,
+      "token0": "WETH",
+      "token1": "DAI",
+      "token0_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "token1_address": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 3338.17,
+      "price1": 0.999545,
+      "tvl_usd": 1.6819155764957605e-08,
+      "type": "v3"
+    }
+  },
+  "SushiSwap_V3:0xf296ccbe58784ff18006fa0922973f0a906d3c12": {
+    "timestamp": 1762280392.0412316,
+    "data": {
+      "liquidity": 2925695816707832,
+      "sqrt_price_x96": 5049267537777825838158215486024,
+      "token0": "WETH",
+      "token1": "DAI",
+      "token0_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "token1_address": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 3338.17,
+      "price1": 0.999545,
+      "tvl_usd": 6.891213908116636e-09,
+      "type": "v3"
+    }
+  },
+  "SushiSwap_V3:0x9b5e4447323750fa235a197a0310956d902e0119": {
+    "timestamp": 1762280398.1644428,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 1461446703485210103287273052203988822378723970341,
+      "token0": "LINK",
+      "token1": "USDT",
+      "token0_address": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 18,
+      "decimals1": 6,
+      "price0": 14.4,
+      "price1": 0.999597,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "SushiSwap_V3:0x70c7b9689899eb0dc8471e028b7fb288b3c8bcf2": {
+    "timestamp": 1762280399.306139,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 88648183785144317856411026264722,
+      "token0": "WBTC",
+      "token1": "LINK",
+      "token0_address": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "token1_address": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "decimals0": 8,
+      "decimals1": 18,
+      "price0": 100572,
+      "price1": 14.4,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "SushiSwap_V3:0xbd8b543e6bbbe8ba7c156e77d1ae5e6ad215ac38": {
+    "timestamp": 1762280400.3567104,
+    "data": {
+      "liquidity": 199573145171940781,
+      "sqrt_price_x96": 5185470553484726287568388558,
+      "token0": "LINK",
+      "token1": "WETH",
+      "token0_address": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "token1_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 14.4,
+      "price1": 3338.17,
+      "tvl_usd": 1.9520821262795554e-07,
+      "type": "v3"
+    }
+  },
+  "SushiSwap_V3:0x8a4b1a6cdc96aae13ad4e8c3ea564223da06852d": {
+    "timestamp": 1762280405.71062,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 17469762787933257031065489918508972855,
+      "token0": "WBTC",
+      "token1": "QUICK",
+      "token0_address": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "token1_address": "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
+      "decimals0": 8,
+      "decimals1": 18,
+      "price0": 100572,
+      "price1": 0.01577986,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "SushiSwap_V3:0x0f2e967535d267e9c1a3dd5af60a0685ef2307ee": {
+    "timestamp": 1762280409.4060721,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 271000410195397583219161137665,
+      "token0": "SUSHI",
+      "token1": "UNI",
+      "token0_address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+      "token1_address": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 0.422968,
+      "price1": 4.98,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "SushiSwap_V3:0x1d51c22eb17f9d1a6c7dd922bfac76a9b604bc7e": {
+    "timestamp": 1762280413.4676092,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 1461446703485210103287273052203988822378723970341,
+      "token0": "SUSHI",
+      "token1": "USDC",
+      "token0_address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+      "token1_address": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "decimals0": 18,
+      "decimals1": 6,
+      "price0": 0.422968,
+      "price1": 0.999805,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "SushiSwap_V3:0x4674ffb81c99078cdde066a0e338005924f53ec1": {
+    "timestamp": 1762280414.7036312,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 80522153023155304751039,
+      "token0": "SUSHI",
+      "token1": "USDT",
+      "token0_address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 18,
+      "decimals1": 6,
+      "price0": 0.422968,
+      "price1": 0.999597,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "SushiSwap_V3:0x54d15491484873961636ee467d07818ae97ee637": {
+    "timestamp": 1762280415.8560934,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 58354343991734240309849,
+      "token0": "SUSHI",
+      "token1": "USDT",
+      "token0_address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 18,
+      "decimals1": 6,
+      "price0": 0.422968,
+      "price1": 0.999597,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "SushiSwap_V3:0x216d5edff8cfb43bd833a369cea99ced9d91f9dd": {
+    "timestamp": 1762280417.0593421,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 1461446703485210103287273052203988822378723970341,
+      "token0": "SUSHI",
+      "token1": "USDT",
+      "token0_address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 18,
+      "decimals1": 6,
+      "price0": 0.422968,
+      "price1": 0.999597,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "SushiSwap_V3:0x948e3c82bbf9ee4085df3e681d86cdeff1a68db9": {
+    "timestamp": 1762280429.2608197,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 2378302498956917695902864967829,
+      "token0": "WBTC",
+      "token1": "USDC",
+      "token0_address": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "token1_address": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "decimals0": 8,
+      "decimals1": 6,
+      "price0": 100572,
+      "price1": 0.999805,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "SushiSwap_V3:0xa70fd44b7b5fb49fc1e588bd4a5cce4762978ee6": {
+    "timestamp": 1762280430.7362347,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 1532764085283181033376996223888076,
+      "token0": "USDC",
+      "token1": "WETH",
+      "token0_address": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "token1_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "decimals0": 6,
+      "decimals1": 18,
+      "price0": 0.999805,
+      "price1": 3338.17,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "SushiSwap_V3:0xbecf47e5cac07ad7f893172c07562493c78fa83c": {
+    "timestamp": 1762280432.0071797,
+    "data": {
+      "liquidity": 1343474688765,
+      "sqrt_price_x96": 1302507221451177874290232830056469,
+      "token0": "USDC",
+      "token1": "WETH",
+      "token0_address": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "token1_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "decimals0": 6,
+      "decimals1": 18,
+      "price0": 0.999805,
+      "price1": 3338.17,
+      "tvl_usd": 1.2721951802926246e-10,
+      "type": "v3"
+    }
+  },
+  "SushiSwap_V3:0x4be1739b1a280158b1ac6b772b69527b76ab79db": {
+    "timestamp": 1762280437.9510264,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 2027836723016549637281330556849,
+      "token0": "WBTC",
+      "token1": "USDT",
+      "token0_address": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 8,
+      "decimals1": 6,
+      "price0": 100572,
+      "price1": 0.999597,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "SushiSwap_V3:0x112863d04b408db143361e40a8f8309cd7d7f011": {
+    "timestamp": 1762280439.5954554,
+    "data": {
+      "liquidity": 490750,
+      "sqrt_price_x96": 2523539445182947949425694785503,
+      "token0": "WBTC",
+      "token1": "USDT",
+      "token0_address": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 8,
+      "decimals1": 6,
+      "price0": 100572,
+      "price1": 0.999597,
+      "tvl_usd": 0.44608293305963587,
+      "type": "v3"
+    }
+  },
+  "SushiSwap_V3:0xa2decb2f871c4210d518858e82f11feaea17329b": {
+    "timestamp": 1762280440.906571,
+    "data": {
+      "liquidity": 109411679242,
+      "sqrt_price_x96": 4606248290350520680223876,
+      "token0": "WETH",
+      "token1": "USDT",
+      "token0_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 18,
+      "decimals1": 6,
+      "price0": 3338.17,
+      "price1": 0.999597,
+      "tvl_usd": 38.446299231761756,
+      "type": "v3"
+    }
+  },
+  "SushiSwap_V3:0x175a9e543efce1058b4c54b657a237c94cf2e383": {
+    "timestamp": 1762280446.1786163,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 4295128740,
+      "token0": "WBTC",
+      "token1": "WETH",
+      "token0_address": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "token1_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "decimals0": 8,
+      "decimals1": 18,
+      "price0": 100572,
+      "price1": 3338.17,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "SushiSwap_V3:0x743b474d5d85cfd8379ad2b3e91a57fbee605fbd": {
+    "timestamp": 1762280447.3584964,
+    "data": {
+      "liquidity": 2657993724786,
+      "sqrt_price_x96": 43462484382792670850673527339864064,
+      "token0": "WBTC",
+      "token1": "WETH",
+      "token0_address": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "token1_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "decimals0": 8,
+      "decimals1": 18,
+      "price0": 100572,
+      "price1": 3338.17,
+      "tvl_usd": 5.971045561502331e-08,
+      "type": "v3"
+    }
+  },
+  "SushiSwap_V3:0x458a9f9ca0b2ea7b5f54dc4f1ad7744fac6e1b24": {
+    "timestamp": 1762280448.700729,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 1461446703485210103287273052203988822378723970341,
+      "token0": "WBTC",
+      "token1": "WETH",
+      "token0_address": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "token1_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "decimals0": 8,
+      "decimals1": 18,
+      "price0": 100572,
+      "price1": 3338.17,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  },
+  "SushiSwap_V3:0x0c2c12ea87dc9295d35d20b5e43e083a1308147e": {
+    "timestamp": 1762280456.0862362,
+    "data": {
+      "liquidity": 0,
+      "sqrt_price_x96": 52524612167327464550973069069,
+      "token0": "WETH",
+      "token1": "YFI",
+      "token0_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "token1_address": "0xDA537104D6A5edd53c6fBba9A898708E465260b6",
+      "decimals0": 18,
+      "decimals1": 18,
+      "price0": 3338.17,
+      "price1": 4382.83,
+      "tvl_usd": 0,
+      "type": "v3"
+    }
+  }
+}

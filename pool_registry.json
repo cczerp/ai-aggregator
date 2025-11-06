@@ -1,0 +1,2854 @@
+{
+  "QuickSwap_V2": {
+    "AAVE/CRV": {
+      "pool": "0x32c415a82a9901DBd2835F04a6875fe134d0eeFc",
+      "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "token1": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+      "type": "v2"
+    },
+    "AAVE/DAI": {
+      "pool": "0xF06E03b4Fd658e26A78175Da9eCd5b5B78422f45",
+      "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "token1": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "type": "v2"
+    },
+    "AAVE/LINK": {
+      "pool": "0xBdB7B4ebA07C23cD2C7513b1d33726aa79739A22",
+      "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "token1": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "type": "v2"
+    },
+    "AAVE/SUSHI": {
+      "pool": "0xC889a46436F0A021cFa1F54aBB3030e5825Cf795",
+      "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "token1": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+      "type": "v2"
+    },
+    "AAVE/USDT": {
+      "pool": "0xfcf19F1BAa7d36b4b293BC096A2948a1268f020d",
+      "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "type": "v2"
+    },
+    "AAVE/WBTC": {
+      "pool": "0xb9DA6601D7e9aa4b09e99A2980Fe498Fa8D31a60",
+      "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "token1": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "type": "v2"
+    },
+    "AAVE/WETH": {
+      "pool": "0x90bc3E68Ba8393a3Bf2D79309365089975341a43",
+      "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "type": "v2"
+    },
+    "AAVE/WPOL": {
+      "pool": "0x0554059D42E26f35CC958581C71FdfD92405d02f",
+      "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      "type": "v2"
+    },
+    "CRV/DAI": {
+      "pool": "0xF16ad36077422B7579814660b691Eac1eb73290b",
+      "token0": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+      "token1": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "type": "v2"
+    },
+    "CRV/LINK": {
+      "pool": "0x41de7cF3ad3E977fB1eDa30A26D393f49a2e7cA1",
+      "token0": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+      "token1": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "type": "v2"
+    },
+    "CRV/USDT": {
+      "pool": "0x098F4Cc0d4B2eb6E440c20946bEDBA30E0c0962c",
+      "token0": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+      "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "type": "v2"
+    },
+    "CRV/WBTC": {
+      "pool": "0x44Cf1B91Cc64dBf2EA0f71272C062f267a4BA8BB",
+      "token0": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+      "token1": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "type": "v2"
+    },
+    "CRV/WETH": {
+      "pool": "0xaB4F7A3199B2Cd7A8bFb425941EAd08FAcb6d617",
+      "token0": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+      "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "type": "v2"
+    },
+    "CRV/WPOL": {
+      "pool": "0x634F9d9f8680349b518cb615017C105aF46CCFd2",
+      "token0": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+      "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      "type": "v2"
+    },
+    "DAI/LINK": {
+      "pool": "0xFBa51e1eA2d46c4D5E98f27E1F5333969d2222D7",
+      "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "token1": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "type": "v2"
+    },
+    "DAI/QUICK": {
+      "pool": "0xdA12716EAE93A83A1f4e2789640b1E9B55c0cdBB",
+      "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "token1": "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
+      "type": "v2"
+    },
+    "DAI/UNI": {
+      "pool": "0x1594319188843b226D9BF91B69d6E303b3155BD6",
+      "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "token1": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+      "type": "v2"
+    },
+    "DAI/USDC": {
+      "pool": "0xD29a84Ba6DEb95063bd3a0a32212dCb272156Bea",
+      "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "token1": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "type": "v2"
+    },
+    "DAI/USDT": {
+      "pool": "0x59153f27eeFE07E5eCE4f9304EBBa1DA6F53CA88",
+      "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "type": "v2"
+    },
+    "DAI/WBTC": {
+      "pool": "0xfB7910710F8288143445912c575B9F4b37564351",
+      "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "token1": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "type": "v2"
+    },
+    "DAI/WETH": {
+      "pool": "0x4A35582a710E1F4b2030A3F826DA20BfB6703C09",
+      "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "type": "v2"
+    },
+    "DAI/WPOL": {
+      "pool": "0xEEf611894CeaE652979C9D0DaE1dEb597790C6eE",
+      "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      "type": "v2"
+    },
+    "LINK/UNI": {
+      "pool": "0x29761E548eC3F0B428414dC41A2D51BBfA0831f5",
+      "token0": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "token1": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+      "type": "v2"
+    },
+    "LINK/USDC": {
+      "pool": "0xD1654826C87fF62Fc90c62ff63f87F8191F78Cc9",
+      "token0": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "token1": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "type": "v2"
+    },
+    "LINK/USDT": {
+      "pool": "0xE2FeE46bd868c85A99c79f18D6C3fF441d0E3CD6",
+      "token0": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "type": "v2"
+    },
+    "LINK/WBTC": {
+      "pool": "0x75e90aC3E5dd5CC30A418F0cD1e15c8C89c9076A",
+      "token0": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "token1": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "type": "v2"
+    },
+    "LINK/WETH": {
+      "pool": "0x5cA6CA6c3709E1E6CFe74a50Cf6B2B6BA2Dadd67",
+      "token0": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "type": "v2"
+    },
+    "LINK/WPOL": {
+      "pool": "0x3c986748414A812e455DCd5418246B8fdEd5C369",
+      "token0": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      "type": "v2"
+    },
+    "QUICK/USDC": {
+      "pool": "0xE5FF9470112219c3a0EFeeE997438161a5221a80",
+      "token0": "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
+      "token1": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "type": "v2"
+    },
+    "QUICK/USDT": {
+      "pool": "0x7F06EE760A7F604B84836B1bF700B984aCD5d4c6",
+      "token0": "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
+      "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "type": "v2"
+    },
+    "QUICK/WBTC": {
+      "pool": "0xD58b4586dCe5c39909D3284836e09FAec2955EB6",
+      "token0": "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
+      "token1": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "type": "v2"
+    },
+    "QUICK/WETH": {
+      "pool": "0x60e70705b52a4A5bDc1d8614426bA5016a68aB38",
+      "token0": "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
+      "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "type": "v2"
+    },
+    "QUICK/WPOL": {
+      "pool": "0xF3eB2f17eAFBf35e92C965A954c6e7693187057D",
+      "token0": "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
+      "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      "type": "v2"
+    },
+    "SNX/WETH": {
+      "pool": "0x61A32c45d2eCC1AF08Eb3faF033245AE3841642C",
+      "token0": "0x50B728D8D964fd00C2d0AAD81718b71311feF68a",
+      "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "type": "v2"
+    },
+    "SNX/WPOL": {
+      "pool": "0x4Bb82c6e51FD21760675d624341FFc32b5F0f4Ac",
+      "token0": "0x50B728D8D964fd00C2d0AAD81718b71311feF68a",
+      "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      "type": "v2"
+    },
+    "SUSHI/UNI": {
+      "pool": "0xD9F14d79d81475E96aCA9cb5cf992fd8Af1D7135",
+      "token0": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+      "token1": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+      "type": "v2"
+    },
+    "SUSHI/USDC": {
+      "pool": "0xD283b6CE5CD06b6669e88E0E87597ac2FC294990",
+      "token0": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+      "token1": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "type": "v2"
+    },
+    "SUSHI/USDT": {
+      "pool": "0xdAa4745705cdc72fdf274E5d75d0c22B109104D2",
+      "token0": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+      "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "type": "v2"
+    },
+    "SUSHI/WETH": {
+      "pool": "0x49E7D82DAfCC415a6eDD6e20F1710f3F024e964e",
+      "token0": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+      "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "type": "v2"
+    },
+    "SUSHI/WPOL": {
+      "pool": "0x0B3a76D33d93b2651dbf03B102EEFa9500E89243",
+      "token0": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+      "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      "type": "v2"
+    },
+    "UNI/USDT": {
+      "pool": "0xf6c9aeb821A732284c4914b34F1b090b5Cc82DA3",
+      "token0": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+      "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "type": "v2"
+    },
+    "UNI/WBTC": {
+      "pool": "0x36060458E65eEDecd68d6ECB84848e060f0dbf3c",
+      "token0": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+      "token1": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "type": "v2"
+    },
+    "UNI/WETH": {
+      "pool": "0xF7135272a5584Eb116f5a77425118a8B4A2ddfDb",
+      "token0": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+      "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "type": "v2"
+    },
+    "UNI/WPOL": {
+      "pool": "0xc45092e7e73951c6668f6C46AcFCa9F2B1c69aEf",
+      "token0": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+      "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      "type": "v2"
+    },
+    "USDC/USDT": {
+      "pool": "0xE43AB6540C0929EF29D216A34ab1F0eaCc5C3825",
+      "token0": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "type": "v2"
+    },
+    "USDC/WBTC": {
+      "pool": "0xf8889c3b46B26153887dE2E5b41331af60d156F1",
+      "token0": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "token1": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "type": "v2"
+    },
+    "USDC/WETH": {
+      "pool": "0x7bAF833f82BB1971f99A5a5d84bED1d5D0dEDD70",
+      "token0": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "type": "v2"
+    },
+    "USDC/WPOL": {
+      "pool": "0x6D9e8dbB2779853db00418D4DcF96F3987CFC9D2",
+      "token0": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      "type": "v2"
+    },
+    "USDT/WBTC": {
+      "pool": "0x7847350B4C25f564B5a165389fDCeEA99e1ED3BD",
+      "token0": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "token1": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "type": "v2"
+    },
+    "USDT/WETH": {
+      "pool": "0xF6422B997c7F54D1c6a6e103bcb1499EeA0a7046",
+      "token0": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "type": "v2"
+    },
+    "USDT/WPOL": {
+      "pool": "0x604229c960e5CACF2aaEAc8Be68Ac07BA9dF81c3",
+      "token0": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      "type": "v2"
+    },
+    "WBTC/WETH": {
+      "pool": "0xdC9232E2Df177d7a12FdFf6EcBAb114E2231198D",
+      "token0": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "type": "v2"
+    },
+    "WBTC/WPOL": {
+      "pool": "0xf6B87181BF250af082272E3f448eC3238746Ce3D",
+      "token0": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      "type": "v2"
+    },
+    "WETH/WPOL": {
+      "pool": "0xadbF1854e5883eB8aa7BAf50705338739e558E5b",
+      "token0": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      "type": "v2"
+    },
+    "WETH/YFI": {
+      "pool": "0xfB5E6eB1C844B04924121Fb0bf6b9623FC0b9F4d",
+      "token0": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "token1": "0xDA537104D6A5edd53c6fBba9A898708E465260b6",
+      "type": "v2"
+    },
+    "WPOL/YFI": {
+      "pool": "0x020955c170FD4fFC85c42f9A1B02e4f599606cF5",
+      "token0": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      "token1": "0xDA537104D6A5edd53c6fBba9A898708E465260b6",
+      "type": "v2"
+    }
+  },
+  "Uniswap_V3": {
+    "AAVE/CRV": {
+      "10000": {
+        "pool": "0x027be85FF9481399eC5c6b854c77D5E5ca98905b",
+        "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+        "token1": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "AAVE/DAI": {
+      "3000": {
+        "pool": "0xd20f057B05F1D62c1fe306f6EE77ab4c8fD7e2FB",
+        "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+        "token1": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0xe5c7e972542Ce10d77683c84D1ceE2028E0C782E",
+        "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+        "token1": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "AAVE/LINK": {
+      "500": {
+        "pool": "0x412c8Ce2a0Ff7aC94744E2FE5A5DEBD76f507469",
+        "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+        "token1": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0x284e88102b1b05125052B01a0A68e0E0517b3a9D",
+        "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+        "token1": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0xfaE91e08188332ED6Ea09b314BBE3FC6cD1432C1",
+        "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+        "token1": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "AAVE/QUICK": {
+      "10000": {
+        "pool": "0x14BDA96767398575323955DA16014e82CB757CDf",
+        "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+        "token1": "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "AAVE/SUSHI": {
+      "10000": {
+        "pool": "0x3DAC94757A68E6Ba6Cc89371EAB9748328BbEf64",
+        "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+        "token1": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "AAVE/UNI": {
+      "500": {
+        "pool": "0x289A8BC6a6009836137d47d3427d5CC2D7eEa908",
+        "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+        "token1": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0xAD49B88d538ab56d374A7af1B1f34d56f35088fd",
+        "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+        "token1": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x44823816EF34963F9321dA649c950Ea94013075A",
+        "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+        "token1": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "AAVE/USDC": {
+      "500": {
+        "pool": "0x3b4F239fc871eD2F63FD42B0A2dbAA627E5F286a",
+        "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+        "token1": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0xc42BF5CD16D9eb1E892b66bB32A3892Dcb7bb75C",
+        "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+        "token1": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x22C2F649d8233E43F13c24448D1E72E6d84F32B0",
+        "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+        "token1": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "AAVE/USDT": {
+      "500": {
+        "pool": "0x6E6C3ecA437624cb3BB74c1903195DE93d7e31b6",
+        "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+        "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0x20fB28b6209eD80eeE40894BAA9a199C07B03e55",
+        "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+        "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x948989E14111d072F592D3309a6e3b1654F5D783",
+        "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+        "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "AAVE/WBTC": {
+      "500": {
+        "pool": "0xaEf2426Aab13589cFEb3ebB201d75601c34BB137",
+        "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+        "token1": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0x141688f5EAB27CBa15b5588f011bdEfc25F9Eae6",
+        "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+        "token1": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x8918b4Cfa6BfFBE00C43BBB83B308F5003F7524c",
+        "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+        "token1": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "AAVE/WETH": {
+      "500": {
+        "pool": "0x25FB97799F80433e422f47E75173314e54dAE174",
+        "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+        "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0x2aCeda63B5e958c45bd27d916ba701BC1DC08F7a",
+        "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+        "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x313821E1Cec96e4bc48acB9AD94e9978dE7300DF",
+        "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+        "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "AAVE/WPOL": {
+      "500": {
+        "pool": "0xB3866Eb993e1aEf93f219C3da0a71c3f11BeCBf2",
+        "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0xa9077cDB3D13F45B8B9d87C43E11bCe0e73d8631",
+        "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x89f485b9514E41276a58bBF54090D01B2Ce7e7b2",
+        "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "CRV/DAI": {
+      "10000": {
+        "pool": "0x60ed64A53c15460a7b6409779cd89c3A74876f7d",
+        "token0": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+        "token1": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "CRV/LINK": {
+      "10000": {
+        "pool": "0xbE16B0a1CB25FDe3674729D25331582f462aAA50",
+        "token0": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+        "token1": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "CRV/QUICK": {
+      "10000": {
+        "pool": "0x8aF70918b4b570dd310CC0A101dd32616Cf32984",
+        "token0": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+        "token1": "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "CRV/SUSHI": {
+      "3000": {
+        "pool": "0x09d17750523d90989f66C4B4bB087d8AB8550C34",
+        "token0": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+        "token1": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+        "fee": 3000,
+        "type": "v3"
+      }
+    },
+    "CRV/UNI": {
+      "3000": {
+        "pool": "0x226D1f412BC11586930ee75bc174666BdD4Cacfe",
+        "token0": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+        "token1": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x6215668753577A37886dc763c8dBa4d74C57cb60",
+        "token0": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+        "token1": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "CRV/USDC": {
+      "3000": {
+        "pool": "0x12bd8b7505005465770073Ee9F990C0dc675f560",
+        "token0": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+        "token1": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0xA1E7e41693C3c08845A1d299827f2e293625f147",
+        "token0": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+        "token1": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "CRV/USDT": {
+      "500": {
+        "pool": "0xa0ddC32e8b2E4326673a623d42A6BF2aBF0Dcb63",
+        "token0": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+        "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0x1c8E2278401946c4b40Ba84d6a79d9DC6Bd62D3d",
+        "token0": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+        "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x15729E1eAB9C8C4E4cBDe4A510552d221A298d9d",
+        "token0": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+        "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "CRV/WBTC": {
+      "500": {
+        "pool": "0x4730dCB24F08c2967C2685F70d7fc38F21Ea0B3a",
+        "token0": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+        "token1": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0xCbF84d0493730A616d052A37b4B863323B41714E",
+        "token0": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+        "token1": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0xd738aFf65485Ec1A3726E28Bf8A9D0cF47849842",
+        "token0": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+        "token1": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "CRV/WETH": {
+      "500": {
+        "pool": "0xC48054895F205598B40Bc74fD234dfd03166D462",
+        "token0": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+        "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0xFC99D1c02D27DE07DfE0dCd878CDe86ee59c5f6B",
+        "token0": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+        "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x3B60D952Db8cc40b709dF5587A6a9F76Ff036be7",
+        "token0": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+        "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "CRV/WPOL": {
+      "500": {
+        "pool": "0x991a0E83CDA62EA5F07888132e362AC183ec923c",
+        "token0": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0x4D05f2A005e6F36633778416764E82d1D12E7fbb",
+        "token0": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x4C5757Da88894C52b9b8b78e6BFa6C9DefCa5c31",
+        "token0": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "DAI/LINK": {
+      "500": {
+        "pool": "0x229d17F5e473c1Acf944Be18ab72c533fE6E77F5",
+        "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+        "token1": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0x153D9ecFbe79FFecdB2aACfab5Abc4756F5f0CF0",
+        "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+        "token1": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0xabfBA24FbfA7AF2985036bf9d0A2fd7209Cf76f6",
+        "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+        "token1": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "DAI/SUSHI": {
+      "3000": {
+        "pool": "0x0D7a582cf0608Ef5FDDcE0Ba561dFb38168444Ef",
+        "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+        "token1": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x04685dAeC3F4f8DE4bEbEe2ce6e38E6BAdDab1FC",
+        "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+        "token1": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "DAI/UNI": {
+      "500": {
+        "pool": "0x46048A5cd6c19f5e32e616990789E61a05652d1E",
+        "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+        "token1": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0x23bB918dc4C9C968b01ac87858880E14A7C89188",
+        "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+        "token1": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x82FaBD8d39B0fc7aa91A6B060807a483e9b7391F",
+        "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+        "token1": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "DAI/USDC": {
+      "500": {
+        "pool": "0xe023d2Bd6a787b4D31494770FC9bAdC5726fCaae",
+        "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+        "token1": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0x02765EB2283a5c644C2bEf51911e2f9039FC225B",
+        "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+        "token1": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x9ff305a8566B6096232563b7D2A5374b5E971A77",
+        "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+        "token1": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "DAI/USDT": {
+      "500": {
+        "pool": "0x42F0530351471dAB7ec968476D19bD36Af9Ec52d",
+        "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+        "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0x88aAEed1fCFCA2Eda30749Afa9ad45A75c80E292",
+        "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+        "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x9a4270d9DA562780A6bb5D01dcb527eb8eC86Da4",
+        "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+        "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "DAI/WBTC": {
+      "500": {
+        "pool": "0x5e575a7050CA806248E8F4341601847Fde52D9BA",
+        "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+        "token1": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0xd0beb9570bC3d2AF7FA461dFD3c75cC3a34f95e2",
+        "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+        "token1": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0xF147E3760Fe6Ed404BbB5eADE7632A8AB2888c2e",
+        "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+        "token1": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "DAI/WETH": {
+      "500": {
+        "pool": "0x67a9FE12fa6082D9D0203c84C6c56D3c4B269F28",
+        "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+        "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0x6baD0f9a89Ca403bb91d253D385CeC1A2b6eca97",
+        "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+        "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x3F82d2fe81904F0E74146A14904E5355ef476049",
+        "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+        "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "DAI/WPOL": {
+      "500": {
+        "pool": "0x0f663c16Dd7C65cF87eDB9229464cA77aEea536b",
+        "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0xFE530931dA161232Ec76A7c3bEA7D36cF3811A0d",
+        "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x58359563b3f4854428B1b98e91A42471e6d20B8e",
+        "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "LINK/SUSHI": {
+      "3000": {
+        "pool": "0x5796062B5a8D207698373be746C974623CE521C0",
+        "token0": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+        "token1": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x080A16FC4f2AD8ab536a83385524E9F553B8Ae35",
+        "token0": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+        "token1": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "LINK/UNI": {
+      "3000": {
+        "pool": "0xC1D402ecc78Cd5a06213BeF614934f6966c83957",
+        "token0": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+        "token1": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x089e923496033B8FcD578423Ea37aA69C083bD83",
+        "token0": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+        "token1": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "LINK/USDC": {
+      "500": {
+        "pool": "0x052C9b8f41f3855225495E78532aaAD0f22a925C",
+        "token0": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+        "token1": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0x79E4240E33C121402dfc9009dE266356c91f241d",
+        "token0": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+        "token1": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x58b8Ff718d9Ffa0445753bA63A14f863482bfdBF",
+        "token0": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+        "token1": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "LINK/USDT": {
+      "500": {
+        "pool": "0x4953593C5706534719A9404cec8542bE97c31a99",
+        "token0": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+        "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0x3c92bd9596E6aca8cfa29ec733ebe0c189bec1F3",
+        "token0": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+        "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x2d8e5F3bbb21e1A3B52dF89007B0CC8b09bA8523",
+        "token0": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+        "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "LINK/WBTC": {
+      "500": {
+        "pool": "0xA21C391C746b3b86058537CFA7D52AA2cCB71479",
+        "token0": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+        "token1": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0x0c61D1E9bBEC03cA9d1cA2Db0C94fa08AC91Ad5a",
+        "token0": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+        "token1": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0xC6D36381e41995247Fe26f24Ed72b691424f4ae9",
+        "token0": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+        "token1": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "LINK/WETH": {
+      "500": {
+        "pool": "0x3dC10D7Bfb94eeB009203E84a653E5764F71771d",
+        "token0": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+        "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0x3e31AB7f37c048FC6574189135D108df80F0ea26",
+        "token0": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+        "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x5cb7076245A3134f7072f8395045E31C037aeB08",
+        "token0": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+        "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "LINK/WPOL": {
+      "500": {
+        "pool": "0x0A28C2F5E0E8463E047C203F00F649812aE67E4f",
+        "token0": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0x98b9162161164De1ED182A0dFA08f5fBf0F733CA",
+        "token0": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x97EDFd21A5639D450131cd2e42958cbfEeAFbB7E",
+        "token0": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "QUICK/SUSHI": {
+      "500": {
+        "pool": "0xbD73941455fe6D4e4981D361a96B9F067369Ef8E",
+        "token0": "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
+        "token1": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+        "fee": 500,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x23cEf324EF00330e5D6B98476Db7d43CacCa39cB",
+        "token0": "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
+        "token1": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "QUICK/USDC": {
+      "3000": {
+        "pool": "0xBb0687d706C47184b3592c67dE0A38E83245f6b6",
+        "token0": "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
+        "token1": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x02A8593a8A8D82495BB7f4d1038fb61C6a39996A",
+        "token0": "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
+        "token1": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "QUICK/USDT": {
+      "500": {
+        "pool": "0xF64Fb42f76950E9E0AC530A57483A69ddA523f57",
+        "token0": "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
+        "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0x464943DB6965AD3ef23836C8510BA42A43D46CB4",
+        "token0": "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
+        "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0xF4EFb3dF8C658983798b2E7b5CB910a732C6D1AC",
+        "token0": "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
+        "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "QUICK/WETH": {
+      "3000": {
+        "pool": "0x98909Ae0aAB112B583F744485bC020Be369a7D66",
+        "token0": "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
+        "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "fee": 3000,
+        "type": "v3"
+      }
+    },
+    "QUICK/WPOL": {
+      "500": {
+        "pool": "0x074091DbB89963142b9543bD7c1B65f9a1Dc261B",
+        "token0": "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0x603c0A1E43eBF1955F55717Fd13428902fa213D6",
+        "token0": "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x34E41E1B8B0dd4643BEdb4F24234422cB179742D",
+        "token0": "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "SNX/USDC": {
+      "3000": {
+        "pool": "0x701A775551999cFd9bCBF113E641d0f59F9bB803",
+        "token0": "0x50B728D8D964fd00C2d0AAD81718b71311feF68a",
+        "token1": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x396a8CC713103126B0C94523e5A1f394478E65D6",
+        "token0": "0x50B728D8D964fd00C2d0AAD81718b71311feF68a",
+        "token1": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "SNX/USDT": {
+      "500": {
+        "pool": "0x5a0E114262ce69a373fb1dBC2129458651daf11A",
+        "token0": "0x50B728D8D964fd00C2d0AAD81718b71311feF68a",
+        "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0xE8c16482eaD6491c11a095396a4897a44a200906",
+        "token0": "0x50B728D8D964fd00C2d0AAD81718b71311feF68a",
+        "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x3e270744A44444Fe1BD18e3731b4fA2Eff113fD9",
+        "token0": "0x50B728D8D964fd00C2d0AAD81718b71311feF68a",
+        "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "SNX/WETH": {
+      "500": {
+        "pool": "0x13B3907Ed837135B12f386E71271AD3759E44fF7",
+        "token0": "0x50B728D8D964fd00C2d0AAD81718b71311feF68a",
+        "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0x6fC7F7959D57285a03bf7Adab56c8aa951145b03",
+        "token0": "0x50B728D8D964fd00C2d0AAD81718b71311feF68a",
+        "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x21215246573E94d992E222506f82e70d5334630B",
+        "token0": "0x50B728D8D964fd00C2d0AAD81718b71311feF68a",
+        "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "SNX/WPOL": {
+      "500": {
+        "pool": "0xF7b289AEb2AE59c5ee3E609f1EB7AFA0300541c2",
+        "token0": "0x50B728D8D964fd00C2d0AAD81718b71311feF68a",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0x5cD1C9488F1CCC197Cf75eB340Db38D46ae523dB",
+        "token0": "0x50B728D8D964fd00C2d0AAD81718b71311feF68a",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x3BdE4581D074fe08d3497d9cfBbd0B74cb764f57",
+        "token0": "0x50B728D8D964fd00C2d0AAD81718b71311feF68a",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "SUSHI/UNI": {
+      "3000": {
+        "pool": "0xb6907DDddBF8C8d5919A51e8A5BE2F180a4bB7E8",
+        "token0": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+        "token1": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x5De491e5C2531ce731A174024F254a453eaE423B",
+        "token0": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+        "token1": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "SUSHI/USDC": {
+      "3000": {
+        "pool": "0x56c2DfEc99b72662F97aE03B1547Ea7e3EfEEAC0",
+        "token0": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+        "token1": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+        "fee": 3000,
+        "type": "v3"
+      }
+    },
+    "SUSHI/USDT": {
+      "500": {
+        "pool": "0x1da267fF3903b17b0ff9D9D986BDfbBb675b57d5",
+        "token0": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+        "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0xdf1CD8D8C333f02db3DE558Ee057bA20E0726E80",
+        "token0": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+        "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x89F188CB56e6A2D29BF8D1102122734bF5b8ac6d",
+        "token0": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+        "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "SUSHI/WBTC": {
+      "10000": {
+        "pool": "0xa72401d6bB0A70579fEAc6916cef02Ab789cedD7",
+        "token0": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+        "token1": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "SUSHI/WETH": {
+      "500": {
+        "pool": "0x582D9E11a8a337d24D998FD69d0d9c0349b8a957",
+        "token0": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+        "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0x0312692E9cADD3dDaaCE2E112A4e36397bd2f18a",
+        "token0": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+        "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x374F98170f18D69C7D4A6242fFFEf7888C7687FA",
+        "token0": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+        "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "SUSHI/WPOL": {
+      "500": {
+        "pool": "0x9D5677898dc43A40E18595F5C61eC97Dc2306F38",
+        "token0": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0x07A0e5CC33F3f28Cf655D7a76334D0b1BAB5b704",
+        "token0": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0xB46388F104FF88AAC68626a316AAF3A924f32055",
+        "token0": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "UNI/USDC": {
+      "500": {
+        "pool": "0xA8e0eD3D29b92433e21348eB8e2290F71E312Cdf",
+        "token0": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+        "token1": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0x55F5f2bb12A818741b822e9311929ADf062aB6B0",
+        "token0": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+        "token1": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x35CBF36e817c56D483B5853E1562aaB48Eb273ed",
+        "token0": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+        "token1": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "UNI/USDT": {
+      "500": {
+        "pool": "0x242Ae2DD4f734C44d2298b9f1B0B3125D36c24DD",
+        "token0": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+        "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0x7ACF7Fc43677739eA451AA561c44c80c59087391",
+        "token0": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+        "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0xbb1f504259Cf7078E447E24e55CF1d7A511A38a2",
+        "token0": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+        "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "UNI/WBTC": {
+      "3000": {
+        "pool": "0x17d0fFa6292c68F3edA04Cae4D5752A2d5dDe650",
+        "token0": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+        "token1": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x6Ac1be4F701597B047e0B3976cC44D215e2Aaf72",
+        "token0": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+        "token1": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "UNI/WETH": {
+      "500": {
+        "pool": "0xB5Bf6B58a64C070c9A95C43644a90B07AD03e0a7",
+        "token0": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+        "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0x357faF5843c7FD7fb4E34FBEabDAc16eabE8a5bc",
+        "token0": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+        "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x39CD971fdFBB2E11013b6E2B0a7865840C729CC9",
+        "token0": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+        "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "UNI/WPOL": {
+      "500": {
+        "pool": "0x50cAd48c1Ca7db58e09dcd3BF029BcdFc279f4E6",
+        "token0": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0x7f9121B4f4E040fd066e9Dc5C250Cf9B4338D5BC",
+        "token0": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x65c4b1bD1f30569198DdA7CC4cb438C4a90357F5",
+        "token0": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "USDC/USDT": {
+      "500": {
+        "pool": "0xEE95696f77693aF4F9B93850A9f48B4AD8E7a30A",
+        "token0": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+        "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0x1Cb770fC7C7367c6aD5E88D32072b7f4bf881304",
+        "token0": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+        "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x03BC0fd2840516a863CbC5220e17d3764123ba24",
+        "token0": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+        "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "USDC/WBTC": {
+      "500": {
+        "pool": "0x32FAE204835e08b9374493d6B4628FD1F87DD045",
+        "token0": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+        "token1": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0xe6Ba22265AeFe9dC392F544437ACCe2AEdF8ef36",
+        "token0": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+        "token1": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x644e0Dca0bef70Ba31600e69992E502F9Be69332",
+        "token0": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+        "token1": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "USDC/WETH": {
+      "500": {
+        "pool": "0xA4D8c89f0c20efbe54cBa9e7e7a7E509056228D9",
+        "token0": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+        "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0x19C5505638383337D2972Ce68B493aD78E315147",
+        "token0": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+        "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x12bD7Ae45ACF2504BED144Eabc6FF5bBEbd91563",
+        "token0": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+        "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "USDC/WPOL": {
+      "500": {
+        "pool": "0xB6e57ed85c4c9dbfEF2a68711e9d6f36c56e0FcB",
+        "token0": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0x2DB87C4831B2fec2E35591221455834193b50D1B",
+        "token0": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0xc9F9F6E0D776eed0d53f96Ba29247832e2C4D91d",
+        "token0": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "USDT/WBTC": {
+      "500": {
+        "pool": "0xa1cfb393607d1a6888D273b762832ed14C8b56b1",
+        "token0": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "token1": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0x33016DF701b323c33cc027146c6a9e0997B2a923",
+        "token0": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "token1": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x8Fc5e02d85891BA2855af1904dfc5cf1d82e4a44",
+        "token0": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "token1": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "USDT/WETH": {
+      "500": {
+        "pool": "0xBB98B3D2b18aeF63a3178023A920971cf5F29bE4",
+        "token0": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0x4CcD010148379ea531D6C587CfDd60180196F9b1",
+        "token0": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0xc21b964AF2B0254580d44981d624335f2b7C6fB6",
+        "token0": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "USDT/WPOL": {
+      "500": {
+        "pool": "0x9B08288C3Be4F62bbf8d1C20Ac9C5e6f9467d8B7",
+        "token0": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0x781067Ef296E5C4A4203F81C593274824b7C185d",
+        "token0": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x9a72FC3Fb9E99087d2eAE500355E7902C763f9B3",
+        "token0": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "USDT/YFI": {
+      "3000": {
+        "pool": "0xAC2Bf8efDFE422E2123a5E96F151e07DF73215D7",
+        "token0": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "token1": "0xDA537104D6A5edd53c6fBba9A898708E465260b6",
+        "fee": 3000,
+        "type": "v3"
+      }
+    },
+    "WBTC/WETH": {
+      "500": {
+        "pool": "0x50eaEDB835021E4A108B7290636d62E9765cc6d7",
+        "token0": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+        "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0xfe343675878100b344802A6763fd373fDeed07A4",
+        "token0": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+        "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x4f28EeF4dDe2BFA0BDB95A7EFE586c3654e6CF07",
+        "token0": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+        "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "WBTC/WPOL": {
+      "500": {
+        "pool": "0x6b75F2189F0E11C52e814E09e280eb1a9A8A094a",
+        "token0": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0x642F28a89fa9d0Fa30e664F71804Bfdd7341D21f",
+        "token0": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x56ff3A6fA5476C5Fd28Af7616d8BB35E50a47A81",
+        "token0": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "WETH/WPOL": {
+      "500": {
+        "pool": "0x86f1d8390222A3691C28938eC7404A1661E618e0",
+        "token0": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0x167384319B41F7094e62f7506409Eb38079AbfF8",
+        "token0": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x9F2b55f290fb1dd0c80d685284dbeF91ebEEA480",
+        "token0": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "WETH/YFI": {
+      "3000": {
+        "pool": "0x69b912C40014A628FF1C8078C55Ad790c6C35eD0",
+        "token0": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "token1": "0xDA537104D6A5edd53c6fBba9A898708E465260b6",
+        "fee": 3000,
+        "type": "v3"
+      }
+    },
+    "WPOL/YFI": {
+      "3000": {
+        "pool": "0x55D00c0e0cC58679c20FbEDA62e330216bc56038",
+        "token0": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "token1": "0xDA537104D6A5edd53c6fBba9A898708E465260b6",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0xC6d687d26d2ba76c64Ffd5caaf0833bc630993CE",
+        "token0": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "token1": "0xDA537104D6A5edd53c6fBba9A898708E465260b6",
+        "fee": 10000,
+        "type": "v3"
+      }
+    }
+  },
+  "SushiSwap": {
+    "AAVE/DAI": {
+      "pool": "0xdc22C3C23d94CF60ce61F7ac73c05CaAb0ed4668",
+      "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "token1": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "type": "v2"
+    },
+    "AAVE/LINK": {
+      "pool": "0x386d5B630Abe3D0B57f1610Ffb171042Ca7C2593",
+      "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "token1": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "type": "v2"
+    },
+    "AAVE/SUSHI": {
+      "pool": "0x429b932FaB6F85Aa41abdF65C0095c910D3a65dd",
+      "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "token1": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+      "type": "v2"
+    },
+    "AAVE/UNI": {
+      "pool": "0x580850020637A4478a40B757006BD1Dc70A50E9E",
+      "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "token1": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+      "type": "v2"
+    },
+    "AAVE/USDT": {
+      "pool": "0xa543Ba3fd79a03788e5521a0Ce48B3F2Bf93b2c1",
+      "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "type": "v2"
+    },
+    "AAVE/WBTC": {
+      "pool": "0xba9C0286FD6D2535c5b3CCa5353743A8BFe45241",
+      "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "token1": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "type": "v2"
+    },
+    "AAVE/WETH": {
+      "pool": "0x2813D43463C374a680f235c428FB1D7f08dE0B69",
+      "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "type": "v2"
+    },
+    "AAVE/WPOL": {
+      "pool": "0x7d88D931504D04BFBEE6F9745297A93063CAb24c",
+      "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      "type": "v2"
+    },
+    "CRV/DAI": {
+      "pool": "0x5F3EeCeeaD64ee34b78e80cD574496E82e537541",
+      "token0": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+      "token1": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "type": "v2"
+    },
+    "CRV/LINK": {
+      "pool": "0x5e365dB1a7213c0c5739129D80e95E64e6ED088e",
+      "token0": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+      "token1": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "type": "v2"
+    },
+    "CRV/SUSHI": {
+      "pool": "0xf2FFA11A11695b23BD7A26d587ee28039576D60F",
+      "token0": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+      "token1": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+      "type": "v2"
+    },
+    "CRV/USDT": {
+      "pool": "0x5c26E61C6153805B073beb185319De61aDBDcB98",
+      "token0": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+      "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "type": "v2"
+    },
+    "CRV/WETH": {
+      "pool": "0x396E655C309676cAF0acf4607a868e0CDed876dB",
+      "token0": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+      "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "type": "v2"
+    },
+    "CRV/WPOL": {
+      "pool": "0x140EA3fae80A2732eBc4DE0511FF84EF1A575217",
+      "token0": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+      "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      "type": "v2"
+    },
+    "DAI/LINK": {
+      "pool": "0xb97977b27A3EA8b4CEed1C738ECa671A0dDAd5e8",
+      "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "token1": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "type": "v2"
+    },
+    "DAI/SUSHI": {
+      "pool": "0x177E42F6B3da3ffdda3DCbB6010f00a380C3CB05",
+      "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "token1": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+      "type": "v2"
+    },
+    "DAI/UNI": {
+      "pool": "0x519890fb51b1b10a114C97AA03B0985D896B6764",
+      "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "token1": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+      "type": "v2"
+    },
+    "DAI/USDC": {
+      "pool": "0x9758668CD2B5586911b19c91F42e3e9958Bc5dE2",
+      "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "token1": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "type": "v2"
+    },
+    "DAI/USDT": {
+      "pool": "0x3B31Bb4b6bA4f67F4EF54e78bCb0AAa4f53DC7fF",
+      "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "type": "v2"
+    },
+    "DAI/WBTC": {
+      "pool": "0x7a1d5E67c3a273274766E241363E3E98e721E456",
+      "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "token1": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "type": "v2"
+    },
+    "DAI/WETH": {
+      "pool": "0x6FF62bfb8c12109E8000935A6De54daD83a4f39f",
+      "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "type": "v2"
+    },
+    "DAI/WPOL": {
+      "pool": "0x8929D3FEa77398F64448c85015633c2d6472fB29",
+      "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      "type": "v2"
+    },
+    "LINK/SUSHI": {
+      "pool": "0x4eab9556BD46F552691fe75c16d1C2eD1622dF51",
+      "token0": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "token1": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+      "type": "v2"
+    },
+    "LINK/USDT": {
+      "pool": "0x43C355d9cE77f91b7E1A314E258246D155100be9",
+      "token0": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "type": "v2"
+    },
+    "LINK/WBTC": {
+      "pool": "0x67A81a470cC17257363e38AFC412A45B756fC6F9",
+      "token0": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "token1": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "type": "v2"
+    },
+    "LINK/WETH": {
+      "pool": "0x74D23F21F780CA26B47Db16B0504F2e3832b9321",
+      "token0": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "type": "v2"
+    },
+    "LINK/WPOL": {
+      "pool": "0x68ccE7049013ca8df91CD512ceFEe8FC0bb8d926",
+      "token0": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      "type": "v2"
+    },
+    "QUICK/WBTC": {
+      "pool": "0xB2c60CA55202e65301Aa48e40883B9f09CEFCb86",
+      "token0": "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
+      "token1": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "type": "v2"
+    },
+    "SNX/WETH": {
+      "pool": "0x116Ff0d1Caa91a6b94276b3471f33dbeB52073E7",
+      "token0": "0x50B728D8D964fd00C2d0AAD81718b71311feF68a",
+      "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "type": "v2"
+    },
+    "SNX/WPOL": {
+      "pool": "0x435711ef539e90fA1381566EDCf2721C3EBE9dcd",
+      "token0": "0x50B728D8D964fd00C2d0AAD81718b71311feF68a",
+      "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      "type": "v2"
+    },
+    "SUSHI/UNI": {
+      "pool": "0x7B415C1C0e8e17f26105a1d1FB50D46bDb9643bc",
+      "token0": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+      "token1": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+      "type": "v2"
+    },
+    "SUSHI/USDT": {
+      "pool": "0xF19144BC9B66bD9B999167B41cCb17D473419d1D",
+      "token0": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+      "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "type": "v2"
+    },
+    "SUSHI/WBTC": {
+      "pool": "0x3BfFD4Ca16197Ad48DC610c41a022664905b7fFC",
+      "token0": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+      "token1": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "type": "v2"
+    },
+    "SUSHI/WETH": {
+      "pool": "0xb5846453B67d0B4b4Ce655930Cf6E4129F4416D7",
+      "token0": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+      "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "type": "v2"
+    },
+    "SUSHI/WPOL": {
+      "pool": "0x597A9bc3b24C2A578CCb3aa2c2C62C39427c6a49",
+      "token0": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+      "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      "type": "v2"
+    },
+    "UNI/USDT": {
+      "pool": "0x1f7B93a86C393d7ff285332E77fdCa6c0dF2f249",
+      "token0": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+      "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "type": "v2"
+    },
+    "UNI/WETH": {
+      "pool": "0xc56060aF39152C614fA67E169c0DD1809a886e4F",
+      "token0": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+      "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "type": "v2"
+    },
+    "UNI/WPOL": {
+      "pool": "0x7FAe0648684ec375176E2d0F171cA9814798D920",
+      "token0": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+      "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      "type": "v2"
+    },
+    "USDC/USDT": {
+      "pool": "0x2bF45B61821783047c70c0573Eb8e06A2AB1f4F5",
+      "token0": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "type": "v2"
+    },
+    "USDC/WBTC": {
+      "pool": "0x939D0D41D8bB1c80150553374e401a8d58326745",
+      "token0": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "token1": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "type": "v2"
+    },
+    "USDC/WETH": {
+      "pool": "0x27e2929315Ced73060bB7eCcb1D160B30c1Bc041",
+      "token0": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "type": "v2"
+    },
+    "USDC/WPOL": {
+      "pool": "0x96c7FC08D8CDACdB95a8613b19fffe4D54307263",
+      "token0": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      "type": "v2"
+    },
+    "USDT/WBTC": {
+      "pool": "0xb1dD5322BE07fb2A40ae7fbbBac96781Ca2B0602",
+      "token0": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "token1": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "type": "v2"
+    },
+    "USDT/WETH": {
+      "pool": "0xc2755915a85C6f6c1C0F3a86ac8C058F11Caa9C9",
+      "token0": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "type": "v2"
+    },
+    "USDT/WPOL": {
+      "pool": "0x55FF76BFFC3Cdd9D5FdbBC2ece4528ECcE45047e",
+      "token0": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      "type": "v2"
+    },
+    "WBTC/WETH": {
+      "pool": "0xE62Ec2e799305E0D367b0Cc3ee2CdA135bF89816",
+      "token0": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "type": "v2"
+    },
+    "WBTC/WPOL": {
+      "pool": "0x8531c4e29491fE6e5e87AF6054FC20FcCf0b4290",
+      "token0": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      "type": "v2"
+    },
+    "WETH/WPOL": {
+      "pool": "0xc4e595acDD7d12feC385E5dA5D43160e8A0bAC0E",
+      "token0": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      "type": "v2"
+    },
+    "WETH/YFI": {
+      "pool": "0xdFA3dDd1807DB8E4B4851D2E5421374e433a2983",
+      "token0": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "token1": "0xDA537104D6A5edd53c6fBba9A898708E465260b6",
+      "type": "v2"
+    },
+    "WPOL/YFI": {
+      "pool": "0xc4A681264F93B8DB5d554EFb4de6eE011Ada091b",
+      "token0": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      "token1": "0xDA537104D6A5edd53c6fBba9A898708E465260b6",
+      "type": "v2"
+    }
+  },
+  "Algebra": {
+    "AAVE/DAI": {
+      "pool": "0xbD3982969bb094311578032d345F13650A31DF9c",
+      "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "token1": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "type": "v3_algebra"
+    },
+    "AAVE/LINK": {
+      "pool": "0x5212797a43dB7B4a3EeD3E586fbc5242c68abbAe",
+      "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "token1": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "type": "v3_algebra"
+    },
+    "AAVE/QUICK": {
+      "pool": "0x84F9d77d1A1C3E8A6D83a3DB7384893D8DAF109A",
+      "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "token1": "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
+      "type": "v3_algebra"
+    },
+    "AAVE/UNI": {
+      "pool": "0xd4f4254dEf4F0BBE385285F10eE41f71cdd1e7b1",
+      "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "token1": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+      "type": "v3_algebra"
+    },
+    "AAVE/USDC": {
+      "pool": "0xd6f8B50479DdBB33210dC6e8F12e19199A54b55b",
+      "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "token1": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "type": "v3_algebra"
+    },
+    "AAVE/USDT": {
+      "pool": "0x9Aca6B70110254c5e0f5B9D27257568d625Bd770",
+      "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "type": "v3_algebra"
+    },
+    "AAVE/WBTC": {
+      "pool": "0xB1a4A1c15F5DDea83D675D3B32103238f13a9A95",
+      "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "token1": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "type": "v3_algebra"
+    },
+    "AAVE/WETH": {
+      "pool": "0x44720A6f572649526Ac9073caE9200755cc78e0A",
+      "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "type": "v3_algebra"
+    },
+    "AAVE/WPOL": {
+      "pool": "0xD385ac9c9BCC8b345080365bf9d3345f20F97dB6",
+      "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      "type": "v3_algebra"
+    },
+    "CRV/DAI": {
+      "pool": "0x8c826eB99A325bB2E133411063987BF537329F36",
+      "token0": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+      "token1": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "type": "v3_algebra"
+    },
+    "CRV/QUICK": {
+      "pool": "0x63c0F7130EC91b6E233431Ce25D22258af97426E",
+      "token0": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+      "token1": "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
+      "type": "v3_algebra"
+    },
+    "CRV/USDT": {
+      "pool": "0x6EE56CB45220debB8EF6583A964064467987998E",
+      "token0": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+      "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "type": "v3_algebra"
+    },
+    "CRV/WETH": {
+      "pool": "0x42e98bA9eeddfA9dEAF73FE46Ac40E69376319A1",
+      "token0": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+      "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "type": "v3_algebra"
+    },
+    "CRV/WPOL": {
+      "pool": "0x00A6177C6455A29B8dAa7144B2bEfc9F2147BB7E",
+      "token0": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+      "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      "type": "v3_algebra"
+    },
+    "DAI/LINK": {
+      "pool": "0x4A61b119f6ECF106FB6468967f068023393e2F0a",
+      "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "token1": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "type": "v3_algebra"
+    },
+    "DAI/QUICK": {
+      "pool": "0xB582E22AB3A849c698B586e1b8DCE211d4ED4aF2",
+      "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "token1": "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
+      "type": "v3_algebra"
+    },
+    "DAI/UNI": {
+      "pool": "0x7Cb3fCb01C9F70910372f69e6bab9363986D3E67",
+      "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "token1": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+      "type": "v3_algebra"
+    },
+    "DAI/USDC": {
+      "pool": "0xBC8f3da0bd42E1F2509cd8671Ce7c7E5f7fd39c8",
+      "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "token1": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "type": "v3_algebra"
+    },
+    "DAI/USDT": {
+      "pool": "0xefFA9E5e63ba18160Ee26BdA56b42F3368719615",
+      "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "type": "v3_algebra"
+    },
+    "DAI/WBTC": {
+      "pool": "0xB068a46A4633caC1c234Ac40d36256379689Dd70",
+      "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "token1": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "type": "v3_algebra"
+    },
+    "DAI/WETH": {
+      "pool": "0x5bF44Bb003Efe05f711A14A189C0902d6626E919",
+      "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "type": "v3_algebra"
+    },
+    "DAI/WPOL": {
+      "pool": "0x6BaEad5Db7FeE6D5c9F0Ca07Bb5038C4cD279F5c",
+      "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      "type": "v3_algebra"
+    },
+    "LINK/QUICK": {
+      "pool": "0x0090F56042F338DC03621d8F1ED7d906Bed0667b",
+      "token0": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "token1": "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
+      "type": "v3_algebra"
+    },
+    "LINK/USDC": {
+      "pool": "0xc10a06863f858f67C2Cd46F1675eE029D3F7acd8",
+      "token0": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "token1": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "type": "v3_algebra"
+    },
+    "LINK/USDT": {
+      "pool": "0x4f3391090A9c6F2F6C259d47642c64CC4F3BE01b",
+      "token0": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "type": "v3_algebra"
+    },
+    "LINK/WBTC": {
+      "pool": "0xf8Dae936feB683B1d782C87AD71F6A5F6CCaE75F",
+      "token0": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "token1": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "type": "v3_algebra"
+    },
+    "LINK/WETH": {
+      "pool": "0xAb52931301078E2405c3a3EBB86e11ad0dFD2CfD",
+      "token0": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "type": "v3_algebra"
+    },
+    "LINK/WPOL": {
+      "pool": "0x33bc9A6a200752ddd44F41dD978977E0699cC00d",
+      "token0": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      "type": "v3_algebra"
+    },
+    "QUICK/USDC": {
+      "pool": "0x14Ef96A0f7d738Db906bdD5260E46AA47B1e6E45",
+      "token0": "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
+      "token1": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "type": "v3_algebra"
+    },
+    "QUICK/USDT": {
+      "pool": "0x944180a2DAc71286A7BBD70D18e690D6d278fe66",
+      "token0": "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
+      "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "type": "v3_algebra"
+    },
+    "QUICK/WBTC": {
+      "pool": "0x6d800FCCd3BfeE49c15288F7f396817Dd58BDfdA",
+      "token0": "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
+      "token1": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "type": "v3_algebra"
+    },
+    "QUICK/WETH": {
+      "pool": "0xDE2D1fd2E8238aBA80a5B80c7262E4833D92f624",
+      "token0": "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
+      "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "type": "v3_algebra"
+    },
+    "QUICK/WPOL": {
+      "pool": "0x9F1A8cAF3C8e94e43aa64922d67dFf4dc3e88A42",
+      "token0": "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
+      "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      "type": "v3_algebra"
+    },
+    "SUSHI/USDC": {
+      "pool": "0xb2978De230a5cfc3F37F8C4C90cA3706801D4d8c",
+      "token0": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+      "token1": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "type": "v3_algebra"
+    },
+    "SUSHI/WPOL": {
+      "pool": "0x15fAA51c14c9B86404c7e3093119FB1c2BA69Cd7",
+      "token0": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+      "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      "type": "v3_algebra"
+    },
+    "UNI/USDC": {
+      "pool": "0x3D83DB285BE6d77A469d525453C5c7653a96b6ed",
+      "token0": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+      "token1": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "type": "v3_algebra"
+    },
+    "UNI/USDT": {
+      "pool": "0x71FBe730dE1B05F6d2E5764BF8757125f5674D7b",
+      "token0": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+      "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "type": "v3_algebra"
+    },
+    "UNI/WETH": {
+      "pool": "0x982ABca0Fa01D62f4aa938F3eE575f6eB18d4E8e",
+      "token0": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+      "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "type": "v3_algebra"
+    },
+    "UNI/WPOL": {
+      "pool": "0x75E6a3985298CF615B7c15E4C492e34D956E640B",
+      "token0": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+      "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      "type": "v3_algebra"
+    },
+    "USDC/USDT": {
+      "pool": "0x0e3Eb2C75Bd7dD0e12249d96b1321d9570764D77",
+      "token0": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "type": "v3_algebra"
+    },
+    "USDC/WBTC": {
+      "pool": "0xdb975b96828352880409e86d5aE93c23c924f812",
+      "token0": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "token1": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "type": "v3_algebra"
+    },
+    "USDC/WETH": {
+      "pool": "0xa6AeDF7c4Ed6e821E67a6BfD56FD1702aD9a9719",
+      "token0": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "type": "v3_algebra"
+    },
+    "USDC/WPOL": {
+      "pool": "0x6669B4706cC152F359e947BCa68E263A87c52634",
+      "token0": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      "type": "v3_algebra"
+    },
+    "USDT/WBTC": {
+      "pool": "0x76D9553f9910c5CF1F5dBbb210dc95BC5a63EE68",
+      "token0": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "token1": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "type": "v3_algebra"
+    },
+    "USDT/WETH": {
+      "pool": "0x9CEff2F5138fC59eB925d270b8A7A9C02a1810f2",
+      "token0": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "type": "v3_algebra"
+    },
+    "USDT/WPOL": {
+      "pool": "0x5b41EEDCfC8e0AE47493d4945Aa1AE4fe05430ff",
+      "token0": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      "type": "v3_algebra"
+    },
+    "WBTC/WETH": {
+      "pool": "0xAC4494e30a85369e332BDB5230d6d694d4259DbC",
+      "token0": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "type": "v3_algebra"
+    },
+    "WBTC/WPOL": {
+      "pool": "0xd525641c26f426d35C39fE204071049F1C8e28A0",
+      "token0": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      "type": "v3_algebra"
+    },
+    "WETH/WPOL": {
+      "pool": "0x479e1B71A702a595e19b6d5932CD5c863ab57ee0",
+      "token0": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      "type": "v3_algebra"
+    },
+    "WETH/YFI": {
+      "pool": "0xCB7b31b97d169e0d954a5849B11D63338CD8DBCF",
+      "token0": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "token1": "0xDA537104D6A5edd53c6fBba9A898708E465260b6",
+      "type": "v3_algebra"
+    },
+    "WPOL/YFI": {
+      "pool": "0xAa44e0ef6649D4F7D07fB6eE3c252521b38b5E15",
+      "token0": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      "token1": "0xDA537104D6A5edd53c6fBba9A898708E465260b6",
+      "type": "v3_algebra"
+    }
+  },
+  "SushiSwap_V3": {
+    "AAVE/SUSHI": {
+      "10000": {
+        "pool": "0x7f6Fa65aE896b7E8e33c16cB08267f70543453d3",
+        "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+        "token1": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "AAVE/USDC": {
+      "3000": {
+        "pool": "0xA5B458d6fE39042dfa4E05B7D3Ffe435f699e455",
+        "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+        "token1": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+        "fee": 3000,
+        "type": "v3"
+      }
+    },
+    "AAVE/USDT": {
+      "10000": {
+        "pool": "0x166E6C7FfB6835DE797a44953eF32E384469fAA8",
+        "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+        "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "AAVE/WETH": {
+      "3000": {
+        "pool": "0xFCf92152659CCaAA68699A21C6C98053d0fa51e1",
+        "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+        "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "fee": 3000,
+        "type": "v3"
+      }
+    },
+    "AAVE/WPOL": {
+      "500": {
+        "pool": "0x2DBFf79bcb0f9c0d97e91256d0b50A7D6366C1e0",
+        "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0x36bEaE545577d03Cf86CefeCFEc7589B648348D9",
+        "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x14bF6Ffe40f364C436D601F2b8c31578903FB0bC",
+        "token0": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "CRV/DAI": {
+      "10000": {
+        "pool": "0x6a0C9E2e41A7B7CDD4F003cFe349B933Fa97306A",
+        "token0": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+        "token1": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "CRV/SUSHI": {
+      "3000": {
+        "pool": "0x786Dd3D0D5e6d97D4E46C69283caf3CEf368F966",
+        "token0": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+        "token1": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x0950821F110154C8493f4c7fDc84b7D9201f3928",
+        "token0": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+        "token1": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "CRV/USDT": {
+      "3000": {
+        "pool": "0x59ee3b0dA2636e34B2D66a04Cb1aC51486D42149",
+        "token0": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+        "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "fee": 3000,
+        "type": "v3"
+      }
+    },
+    "CRV/WETH": {
+      "3000": {
+        "pool": "0xdC962a21453207659c46c54098c9cbC2767A873C",
+        "token0": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+        "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x6320cF2EeF72631A86deB3f838AB5C84D0EcbE3a",
+        "token0": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+        "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "CRV/WPOL": {
+      "3000": {
+        "pool": "0x1C38b2c3cc880B6dDbc1b6D6d2E528421C0ABb9C",
+        "token0": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0xdA79086DBfb34e5e9F38A278808E16A2cca1B975",
+        "token0": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "DAI/USDC": {
+      "3000": {
+        "pool": "0x8Fc918e8d1C8A5f4979ae7D3BF31a55F58b84191",
+        "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+        "token1": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+        "fee": 3000,
+        "type": "v3"
+      }
+    },
+    "DAI/USDT": {
+      "3000": {
+        "pool": "0xEEB0B62e8C28769539Ac4aB35aDE56F56592A983",
+        "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+        "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "fee": 3000,
+        "type": "v3"
+      }
+    },
+    "DAI/WETH": {
+      "500": {
+        "pool": "0x8af1f562a6bD6c84F659A51892E65955AC81569D",
+        "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+        "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0x28EB6CF2dFe62eD904082710E47F33d54b3fb9e8",
+        "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+        "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0xF296cCBE58784fF18006Fa0922973F0A906D3C12",
+        "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+        "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "DAI/WPOL": {
+      "500": {
+        "pool": "0x3c4A14Cfba9e6b6A76dB4036ccB32dEbb33e3dcE",
+        "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0xe58517662569c742388b90dC5461F7DBBBD8aE58",
+        "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x533E539031f8810A471EcA6Bef77Fb2EcF7e6487",
+        "token0": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "LINK/USDT": {
+      "500": {
+        "pool": "0x8716504DFef6209749F6d97b05E9BA6fD2c6CE02",
+        "token0": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+        "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0x9B5E4447323750FA235a197a0310956D902e0119",
+        "token0": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+        "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "fee": 3000,
+        "type": "v3"
+      }
+    },
+    "LINK/WBTC": {
+      "3000": {
+        "pool": "0x70c7B9689899EB0dC8471E028B7fB288B3c8bcf2",
+        "token0": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+        "token1": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+        "fee": 3000,
+        "type": "v3"
+      }
+    },
+    "LINK/WETH": {
+      "3000": {
+        "pool": "0xBd8b543E6bbbE8BA7c156e77d1aE5e6ad215Ac38",
+        "token0": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+        "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "fee": 3000,
+        "type": "v3"
+      }
+    },
+    "LINK/WPOL": {
+      "500": {
+        "pool": "0x8B62Efb62479e268Ded4aB051d670C826884637c",
+        "token0": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0x4C3c28962D327085b088782523C867f2e7Db8790",
+        "token0": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 3000,
+        "type": "v3"
+      }
+    },
+    "QUICK/USDC": {
+      "500": {
+        "pool": "0x0ed6dc2c1b134c1617DBFcB6c468E2d83E521d0B",
+        "token0": "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
+        "token1": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+        "fee": 500,
+        "type": "v3"
+      }
+    },
+    "QUICK/WBTC": {
+      "10000": {
+        "pool": "0x8A4B1A6cdc96Aae13aD4e8C3ea564223dA06852D",
+        "token0": "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
+        "token1": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "QUICK/WPOL": {
+      "500": {
+        "pool": "0x6910F40a8f31a589aF907676Cbec3353B2Df80C3",
+        "token0": "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 500,
+        "type": "v3"
+      }
+    },
+    "SNX/WPOL": {
+      "10000": {
+        "pool": "0x291915B8C41b74d2337D7F910AA9995B82B8B2CA",
+        "token0": "0x50B728D8D964fd00C2d0AAD81718b71311feF68a",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "SUSHI/UNI": {
+      "3000": {
+        "pool": "0x0f2e967535d267e9C1A3dD5Af60a0685Ef2307Ee",
+        "token0": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+        "token1": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x97Fe2396fb385Dae7bA3CeCc93B9F9eCE4432d9F",
+        "token0": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+        "token1": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "SUSHI/USDC": {
+      "3000": {
+        "pool": "0xe702Efc3C9D6203120a38F25A354e2aC685c5415",
+        "token0": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+        "token1": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x1D51c22Eb17f9D1A6C7DD922bfAc76a9B604bC7E",
+        "token0": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+        "token1": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "SUSHI/USDT": {
+      "500": {
+        "pool": "0x4674FFB81c99078cDdE066A0E338005924f53Ec1",
+        "token0": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+        "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0x54D15491484873961636Ee467d07818ae97Ee637",
+        "token0": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+        "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x216d5eDfF8cFB43bd833A369CEA99CEd9d91f9Dd",
+        "token0": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+        "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "SUSHI/WBTC": {
+      "3000": {
+        "pool": "0x20eb0c42c85Bf6dE988d5330639aD65a49BF53A2",
+        "token0": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+        "token1": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+        "fee": 3000,
+        "type": "v3"
+      }
+    },
+    "SUSHI/WETH": {
+      "3000": {
+        "pool": "0xFf5713FdbAD797b81539b5F9766859d4E050a6CC",
+        "token0": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+        "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "fee": 3000,
+        "type": "v3"
+      }
+    },
+    "SUSHI/WPOL": {
+      "500": {
+        "pool": "0x07b3Eb5b3a5b475d714ad5A8d92Aa827fD74b163",
+        "token0": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0xb42Ab92De8C5ad625755D910546c8f80D6A9CddE",
+        "token0": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x3C7A30BCaE5A4aAd6791417170cb1f09088Ea925",
+        "token0": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "UNI/WPOL": {
+      "3000": {
+        "pool": "0x07100fD0E5857820b1B63bD7fd693067defF0d1f",
+        "token0": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 3000,
+        "type": "v3"
+      }
+    },
+    "USDC/USDT": {
+      "500": {
+        "pool": "0xb209915440741F0D90efd5f6DF42D3E09fD0bC26",
+        "token0": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+        "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0x5202E569B3aC1122430Cf6D8014b44e308f37A3F",
+        "token0": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+        "token1": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "fee": 3000,
+        "type": "v3"
+      }
+    },
+    "USDC/WBTC": {
+      "3000": {
+        "pool": "0x948E3c82bbf9Ee4085Df3E681d86cdEff1A68DB9",
+        "token0": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+        "token1": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+        "fee": 3000,
+        "type": "v3"
+      }
+    },
+    "USDC/WETH": {
+      "500": {
+        "pool": "0xa70fd44b7B5fB49fC1E588bd4A5CCE4762978eE6",
+        "token0": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+        "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0xbECF47E5CaC07ad7F893172c07562493c78fa83C",
+        "token0": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+        "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "fee": 3000,
+        "type": "v3"
+      }
+    },
+    "USDC/WPOL": {
+      "500": {
+        "pool": "0xAA5829dA4F485607d3d85DC64bf621cBD4aBa5F6",
+        "token0": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0x562A0460FE6cfc2E610AE5596c5b4ACe94d97C56",
+        "token0": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0xd9dD1422C2684877ff8dF9cc9a289ABB8EB54a61",
+        "token0": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "USDT/WBTC": {
+      "500": {
+        "pool": "0x4be1739B1a280158b1aC6B772b69527b76ab79db",
+        "token0": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "token1": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0x112863d04b408Db143361E40a8f8309CD7D7f011",
+        "token0": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "token1": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+        "fee": 3000,
+        "type": "v3"
+      }
+    },
+    "USDT/WETH": {
+      "3000": {
+        "pool": "0xA2decb2F871c4210d518858E82f11FEAeA17329b",
+        "token0": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "fee": 3000,
+        "type": "v3"
+      }
+    },
+    "USDT/WPOL": {
+      "500": {
+        "pool": "0x9353A943146f08ac065850047BD5b1E76Fcb7c73",
+        "token0": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0xdB0101bE2132408e65B30246aa662e4D6f49599c",
+        "token0": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0xcFD3F1AB726a90C2aCEee4654ee80d35CA50188D",
+        "token0": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "WBTC/WETH": {
+      "500": {
+        "pool": "0x175a9E543efCE1058B4C54B657a237C94Cf2e383",
+        "token0": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+        "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0x743b474D5D85cFD8379aD2B3E91a57FBee605fbD",
+        "token0": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+        "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x458A9f9Ca0b2eA7B5f54dC4f1AD7744FAc6e1b24",
+        "token0": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+        "token1": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "WBTC/WPOL": {
+      "3000": {
+        "pool": "0xe445dc0652710d8Fd8F48b510da3Df02f150b4F1",
+        "token0": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x1C3F2B7110F7adeF4B9b383221337aA4c453eC34",
+        "token0": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "WETH/WPOL": {
+      "500": {
+        "pool": "0xf1A12338D39Fc085D8631E1A745B5116BC9b2A32",
+        "token0": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 500,
+        "type": "v3"
+      },
+      "3000": {
+        "pool": "0x89A54409f8ce05b91317C0e2a985E8d30de93341",
+        "token0": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 3000,
+        "type": "v3"
+      },
+      "10000": {
+        "pool": "0x0287Ef25D7bD3fFEc6a3A31F9496C797ACd78225",
+        "token0": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "token1": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "fee": 10000,
+        "type": "v3"
+      }
+    },
+    "WETH/YFI": {
+      "10000": {
+        "pool": "0x0c2c12eA87dc9295d35d20b5E43E083a1308147e",
+        "token0": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "token1": "0xDA537104D6A5edd53c6fBba9A898708E465260b6",
+        "fee": 10000,
+        "type": "v3"
+      }
+    }
+  },
+  "Retro": {},
+  "Dystopia": {}
+}

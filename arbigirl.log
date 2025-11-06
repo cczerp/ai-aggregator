@@ -1,0 +1,162 @@
+2025-11-02 21:14:27,912 | INFO | Hi! I’m ArbiGirl — your chatty arb scout. Ask me to scan, simulate, or run best over a threshold.
+2025-11-02 21:14:27,914 | INFO | (Auto-execute: ON | Min profit: $1.00 | Bridge: http://127.0.0.1:5050)
+2025-11-02 21:15:28,913 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-11-02 21:15:28,913 | INFO | Retrying request to /chat/completions in 0.498456 seconds
+2025-11-02 21:15:29,900 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-11-02 21:15:29,901 | INFO | Retrying request to /chat/completions in 0.987713 seconds
+2025-11-02 21:15:31,387 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-11-02 21:15:31,391 | INFO | Intent → action=scan params={}
+2025-11-02 21:15:31,392 | INFO | Scanning pools for juicy little gaps… ✨
+2025-11-02 21:15:31,482 | INFO | Scan summary: USDC/USDT ~ $12.34 via ['UniswapV2', 'QuickSwap']
+2025-11-02 21:15:31,483 | INFO | Hmm… this one looks promising: USDC/USDT ~ about $12.34. Let me simulate…
+2025-11-02 21:15:31,495 | INFO | Looks good! Simulated profit ≈ $12.34. Executing now… 🚀
+2025-11-02 21:15:31,522 | INFO | Done. Tracked as 37dc5f85-682c-4245-a972-b6ae3e3d53fa. I’ll log the receipt when it lands.
+2025-11-02 21:16:55,179 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-11-02 21:16:55,180 | INFO | Retrying request to /chat/completions in 0.489010 seconds
+2025-11-02 21:16:55,746 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-11-02 21:16:55,747 | INFO | Retrying request to /chat/completions in 0.830959 seconds
+2025-11-02 21:16:57,269 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-11-02 21:16:57,271 | INFO | Intent → action=run_best params={'min_profit_usd': 1.0}
+2025-11-02 21:16:57,272 | INFO | Scanning pools for juicy little gaps… ✨
+2025-11-02 21:16:57,303 | INFO | Scan summary: USDC/USDT ~ $12.34 via ['UniswapV2', 'QuickSwap']
+2025-11-02 21:16:57,304 | INFO | Hmm… this one looks promising: USDC/USDT ~ about $12.34. Let me simulate…
+2025-11-02 21:16:57,333 | INFO | Looks good! Simulated profit ≈ $12.34. Executing now… 🚀
+2025-11-02 21:16:57,344 | INFO | Done. Tracked as 946ad2aa-a61b-4a65-bca0-d6908339b510. I’ll log the receipt when it lands.
+2025-11-02 21:19:00,680 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-11-02 21:19:00,682 | INFO | Retrying request to /chat/completions in 0.486120 seconds
+2025-11-02 21:19:01,652 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-11-02 21:19:01,653 | INFO | Retrying request to /chat/completions in 0.991072 seconds
+2025-11-02 21:19:02,726 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-11-02 21:19:02,728 | INFO | Intent → action=scan params={}
+2025-11-02 21:19:02,729 | INFO | Scanning pools for juicy little gaps… ✨
+2025-11-02 21:19:02,760 | INFO | Scan summary: USDC/USDT ~ $12.34 via ['UniswapV2', 'QuickSwap']
+2025-11-02 21:19:02,761 | INFO | Hmm… this one looks promising: USDC/USDT ~ about $12.34. Let me simulate…
+2025-11-02 21:19:02,791 | INFO | Looks good! Simulated profit ≈ $12.34. Executing now… 🚀
+2025-11-02 21:19:02,822 | INFO | Done. Tracked as 45a7cd09-103d-4c98-9b8d-c939df49cbb5. I’ll log the receipt when it lands.
+2025-11-02 21:29:57,395 | INFO | K, I’ll curl up and nap. 💤
+2025-11-02 21:34:11,974 | INFO | Hi! I’m ArbiGirl — your chatty arb scout. Ask me to scan, simulate, or run best over a threshold.
+2025-11-02 21:34:11,975 | INFO | (Auto-execute: ON | Min profit: $1.00 | Bridge: http://127.0.0.1:5050)
+2025-11-02 21:35:28,565 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-11-02 21:35:28,566 | INFO | Retrying request to /chat/completions in 0.498359 seconds
+2025-11-02 21:35:29,716 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-11-02 21:35:29,717 | INFO | Retrying request to /chat/completions in 0.806600 seconds
+2025-11-02 21:35:30,638 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-11-02 21:35:30,642 | INFO | Intent → action=scan params={}
+2025-11-02 21:35:30,643 | INFO | Scanning pools for juicy little gaps… ✨
+2025-11-02 21:35:30,819 | INFO | Mm, scan failed: 500 Server Error: INTERNAL SERVER ERROR for url: http://127.0.0.1:5050/scan
+2025-11-02 21:39:50,244 | INFO | K, I’ll curl up and nap. 💤
+2025-11-02 21:42:22,793 | INFO | Hi! I’m ArbiGirl — your chatty arb scout. Ask me to scan, simulate, or run best over a threshold.
+2025-11-02 21:42:22,794 | INFO | (Auto-execute: ON | Min profit: $1.00 | Bridge: http://127.0.0.1:5050)
+2025-11-02 21:43:12,929 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-11-02 21:43:12,929 | INFO | Retrying request to /chat/completions in 0.487527 seconds
+2025-11-02 21:43:13,502 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-11-02 21:43:13,503 | INFO | Retrying request to /chat/completions in 0.967018 seconds
+2025-11-02 21:43:14,526 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-11-02 21:43:14,529 | INFO | Intent → action=scan params={}
+2025-11-02 21:43:14,529 | INFO | Scanning pools for juicy little gaps… ✨
+2025-11-02 21:43:14,561 | INFO | Mm, scan failed: 500 Server Error: INTERNAL SERVER ERROR for url: http://127.0.0.1:5050/scan
+2025-11-02 23:48:14,520 | INFO | K, I’ll curl up and nap. 💤
+2025-11-02 23:49:59,580 | INFO | 👋 Hi! I'm ArbiGirl - your arbitrage scout.
+2025-11-02 23:49:59,581 | INFO | ⚙️  Auto-execute: ON | Min profit: $1.00
+2025-11-02 23:49:59,582 | INFO | 💡 Say 'scan', 'status', 'run', or 'quit'. No need to be fancy!
+
+2025-11-02 23:55:47,559 | INFO | 🔍 Scanning pools for juicy gaps... ✨
+2025-11-02 23:55:47,688 | INFO | ❌ Scan failed: 500 Server Error: INTERNAL SERVER ERROR for url: http://127.0.0.1:5050/scan
+2025-11-03 00:37:20,762 | INFO | 👋 Bye!
+2025-11-03 00:37:25,414 | INFO | 👋 Hi! I'm ArbiGirl - your arbitrage scout.
+2025-11-03 00:37:25,415 | INFO | ⚙️  Auto-execute: ON | Min profit: $1.00
+2025-11-03 00:37:25,415 | INFO | 💡 Say 'scan', 'status', 'run', or 'quit'. No need to be fancy!
+
+2025-11-03 00:38:55,601 | INFO | 🔍 Scanning pools for juicy gaps... ✨
+2025-11-03 00:38:55,652 | INFO | ❌ Scan failed: 500 Server Error: INTERNAL SERVER ERROR for url: http://127.0.0.1:5050/scan
+2025-11-03 00:56:12,147 | INFO | 👋 Bye!
+2025-11-03 00:56:19,007 | INFO | 👋 Hi! I'm ArbiGirl - your arbitrage scout.
+2025-11-03 00:56:19,007 | INFO | ⚙️  Auto-execute: ON | Min profit: $1.00
+2025-11-03 00:56:19,007 | INFO | 💡 Say 'scan', 'status', 'run', or 'quit'. No need to be fancy!
+
+2025-11-03 00:56:29,158 | INFO | 🔍 Scanning pools for juicy gaps... ✨
+2025-11-03 00:58:29,192 | INFO | ❌ Scan failed: HTTPConnectionPool(host='127.0.0.1', port=5050): Read timed out. (read timeout=120)
+2025-11-03 01:23:53,389 | INFO | 👋 Bye!
+2025-11-03 01:24:09,179 | INFO | 👋 Hi! I'm ArbiGirl - your arbitrage scout.
+2025-11-03 01:24:09,180 | INFO | ⚙️  Auto-execute: ON | Min profit: $1.00
+2025-11-03 01:24:09,181 | INFO | 💡 Say 'scan', 'status', 'run', or 'quit'. No need to be fancy!
+
+2025-11-03 01:24:16,816 | INFO | 🔍 Scanning pools for juicy gaps... ✨
+2025-11-03 01:24:16,817 | INFO | ⏳ This may take 2-5 minutes for a full scan... please wait
+2025-11-03 01:24:16,837 | INFO | 📊 USDC/USDT ~ $12.34 via ['UniswapV2', 'QuickSwap']
+2025-11-03 01:24:16,837 | INFO | 💰 Found: USDC/USDT ~ $12.34. Simulating...
+2025-11-03 01:24:16,850 | INFO | ⚠️  After sim, net profit is $0.00 - skipping.
+2025-11-03 01:44:01,982 | INFO | 👋 Bye!
+2025-11-03 01:44:41,442 | INFO | 👋 Hi! I'm ArbiGirl - your arbitrage scout.
+2025-11-03 01:44:41,443 | INFO | ⚙️  Auto-execute: ON | Min profit: $1.00
+2025-11-03 01:44:41,443 | INFO | 💡 Say 'scan', 'status', 'run', or 'quit'. No need to be fancy!
+
+2025-11-03 01:44:48,255 | INFO | 🔍 Scanning pools for juicy gaps... ✨
+2025-11-03 01:44:48,256 | INFO | ⏳ This may take 2-5 minutes for a full scan... please wait
+2025-11-03 01:48:05,884 | INFO | 📊 No clear arbs right now.
+2025-11-03 01:48:05,886 | INFO | 💤 No opportunities above $1.00 right now.
+2025-11-03 11:40:42,684 | INFO | 👋 Bye!
+2025-11-03 11:41:35,950 | INFO | 👋 Hi! I'm ArbiGirl - your arbitrage scout.
+2025-11-03 11:41:35,950 | INFO | ⚙️  Auto-execute: ON | Min profit: $1.00
+2025-11-03 11:41:35,957 | INFO | 💡 Say 'scan', 'status', 'run', or 'quit'. No need to be fancy!
+
+2025-11-03 11:41:50,652 | INFO | 🔍 Scanning pools for juicy gaps... ✨
+2025-11-03 11:41:50,652 | INFO | ⏳ This may take 2-5 minutes for a full scan... please wait
+2025-11-03 11:44:38,811 | INFO | 📊 No clear arbs right now.
+2025-11-03 11:44:38,813 | INFO | 💤 No opportunities above $1.00 right now.
+2025-11-03 11:46:59,070 | INFO | 👋 Bye!
+2025-11-03 11:53:12,527 | INFO | 👋 Hi! I'm ArbiGirl - your arbitrage scout.
+2025-11-03 11:53:12,529 | INFO | ⚙️  Auto-execute: ON | Min profit: $1.00
+2025-11-03 11:53:12,529 | INFO | 💡 Say 'scan', 'status', 'run', or 'quit'. No need to be fancy!
+
+2025-11-03 11:53:33,111 | INFO | 🔍 Scanning pools for juicy gaps... ✨
+2025-11-03 11:53:33,112 | INFO | ⏳ This may take 2-5 minutes for a full scan... please wait
+2025-11-03 11:56:04,678 | INFO | 📊 No clear arbs right now.
+2025-11-03 11:56:04,681 | INFO | 💤 No opportunities above $1.00 right now.
+2025-11-03 18:31:36,560 | INFO | 👋 Hi! I'm ArbiGirl - your arbitrage scout.
+2025-11-03 18:31:36,562 | INFO | ⚙️  Auto-execute: ON | Min profit: $1.00
+2025-11-03 18:31:36,562 | INFO | 💡 Say 'scan', 'status', 'run', or 'quit'. No need to be fancy!
+
+2025-11-03 18:31:46,986 | INFO | 🔍 Scanning pools for juicy gaps... ✨
+2025-11-03 18:31:46,986 | INFO | ⏳ This may take 2-5 minutes for a full scan... please wait
+2025-11-03 18:34:30,005 | INFO | 📊 No clear arbs right now.
+2025-11-03 18:34:30,008 | INFO | 💤 No opportunities above $1.00 right now.
+2025-11-03 18:41:39,890 | INFO | 🔍 Scanning pools for juicy gaps... ✨
+2025-11-03 18:41:39,896 | INFO | ⏳ This may take 2-5 minutes for a full scan... please wait
+2025-11-03 18:44:00,101 | INFO | 📊 No clear arbs right now.
+2025-11-03 18:44:00,104 | INFO | 💤 No opportunities above $1.00 right now.
+2025-11-03 18:47:17,882 | INFO | 👋 Bye!
+2025-11-03 18:49:31,394 | INFO | 👋 Hi! I'm ArbiGirl - your arbitrage scout.
+2025-11-03 18:49:31,395 | INFO | ⚙️  Auto-execute: ON | Min profit: $1.00
+2025-11-03 18:49:31,396 | INFO | 💡 Say 'scan', 'status', 'run', or 'quit'. No need to be fancy!
+
+2025-11-03 18:50:08,723 | INFO | 👋 Bye!
+2025-11-03 18:50:12,451 | INFO | 👋 Hi! I'm ArbiGirl - your arbitrage scout.
+2025-11-03 18:50:12,452 | INFO | ⚙️  Auto-execute: ON | Min profit: $1.00
+2025-11-03 18:50:12,452 | INFO | 💡 Say 'scan', 'status', 'run', or 'quit'. No need to be fancy!
+
+2025-11-03 18:50:14,054 | INFO | 🔍 Scanning pools for juicy gaps... ✨
+2025-11-03 18:50:14,055 | INFO | ⏳ This may take 2-5 minutes for a full scan... please wait
+2025-11-03 18:52:27,182 | INFO | 📊 USDT/WETH ~ $0.00 via [] | USDT/WETH ~ $0.00 via [] | USDT/WETH ~ $0.00 via [] | USDT/WETH ~ $0.00 via [] | USDT/WETH ~ $0.00 via [] (+17 more)
+2025-11-03 18:52:27,183 | INFO | 💤 No opportunities above $1.00 right now.
+2025-11-03 19:05:00,666 | INFO | 👋 Bye!
+2025-11-03 19:05:04,521 | INFO | 👋 Hi! I'm ArbiGirl - your arbitrage scout.
+2025-11-03 19:05:04,522 | INFO | ⚙️  Auto-execute: ON | Min profit: $1.00
+2025-11-03 19:05:04,524 | INFO | 💡 Say 'scan', 'status', 'run', or 'quit'. No need to be fancy!
+
+2025-11-03 19:05:08,954 | INFO | 🔍 Scanning pools for juicy gaps... ✨
+2025-11-03 19:05:08,955 | INFO | ⏳ This may take 2-5 minutes for a full scan... please wait
+2025-11-03 19:07:19,781 | INFO | 📊 USDT/WETH ~ $11682399.60 via ['Uniswap_V3', 'Uniswap_V3'] | USDT/WETH ~ $11677162.39 via ['Uniswap_V3', 'Uniswap_V3'] | USDT/WETH ~ $11325953.70 via ['Uniswap_V3', 'Uniswap_V3'] | USDT/WETH ~ $11325501.66 via ['Uniswap_V3', 'Uniswap_V3'] | USDT/WETH ~ $1172206.65 via ['Uniswap_V3', 'Uniswap_V3'] (+17 more)
+2025-11-03 19:07:19,783 | INFO | 💰 Found: USDT/WETH ~ $11682399.60. Simulating...
+2025-11-03 19:07:19,798 | INFO | ⛔ Simulation says no-go: {'sim': {'error': 'Missing required parameters', 'gas_usd': 0, 'net_profit_usd': 0, 'profit_usd': 0, 'success': False}, 'status': 'ok'}
+2025-11-03 19:35:26,533 | INFO | 👋 Bye!
+2025-11-03 19:35:54,466 | INFO | 👋 Hi! I'm ArbiGirl - your arbitrage scout.
+2025-11-03 19:35:54,467 | INFO | ⚙️  Auto-execute: ON | Min profit: $1.00
+2025-11-03 19:35:54,468 | INFO | 💡 Say 'scan', 'status', 'run', or 'quit'. No need to be fancy!
+
+2025-11-03 19:36:22,157 | INFO | 🔍 Scanning pools for juicy gaps... ✨
+2025-11-03 19:36:22,157 | INFO | ⏳ This may take 2-5 minutes for a full scan... please wait
+2025-11-03 19:38:33,414 | INFO | 📊 USDT/WETH ~ $11682835.57 via ['Uniswap_V3', 'Uniswap_V3'] | USDT/WETH ~ $11677162.39 via ['Uniswap_V3', 'Uniswap_V3'] | USDT/WETH ~ $11326376.47 via ['Uniswap_V3', 'Uniswap_V3'] | USDT/WETH ~ $11325501.66 via ['Uniswap_V3', 'Uniswap_V3'] | USDT/WETH ~ $1172250.39 via ['Uniswap_V3', 'Uniswap_V3'] (+17 more)
+2025-11-03 19:38:33,415 | INFO | 💰 Found: USDT/WETH ~ $11682835.57. Simulating...
+2025-11-03 19:38:33,427 | INFO | ⛔ Simulation says no-go: {'sim': {'error': 'Missing required parameters', 'gas_usd': 0, 'net_profit_usd': 0, 'profit_usd': 0, 'success': False}, 'status': 'ok'}
+2025-11-03 19:47:48,447 | INFO | 👋 Bye!
