@@ -1,0 +1,35 @@
+# === Python ===
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+*.egg
+*.log
+
+# === Virtual Environments ===
+venv/
+env/
+ENV/
+.venv/
+.envrc
+
+# === Environment Files ===
+.env
+*.env
+.env.local
+.env.dev
+.env.prod
+
+# === Cache & System ===
+.cache/
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.sqlite3
+
+# === Build / Distribution ===
+build/
+dist/
+*.spec
