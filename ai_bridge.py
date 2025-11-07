@@ -42,7 +42,7 @@ from pool_data_fetcher import PoolDataFetcher
 from arb_finder import ArbFinder
 from rpc_mgr import RPCManager
 from cache import Cache
-from ai_monitor import AIMonitor
+import subprocess
 
 init(autoreset=True)
 load_dotenv()
@@ -663,14 +663,12 @@ class ArbiGirl:
         # Initialize components
         self.rpc_manager = RPCManager()
         self.cache = Cache()
-        self.ai_monitor = AIMonitor()
         self.pool_fetcher = PoolDataFetcher(
             self.rpc_manager,
             self.cache,
-            self.ai_monitor,
             min_tvl_usd=10000
         )
-        self.arb_finder = ArbFinder(self.ai_monitor, min_profit_usd=1.0)
+        self.arb_finder = ArbFinder(min_profit_usd=1.0)
 
         # State
         self.auto_scan = False
@@ -678,10 +676,142 @@ class ArbiGirl:
         self.last_opportunities = []
         self.last_pools = None
 
+        # AI Monitoring (built-in to ArbiGirl)
+        self.events = []
+        self.max_history = 10000
+        self.stats = {
+            'total_fetches': 0,
+            'total_calculations': 0,
+            'total_arb_checks': 0,
+            'total_opportunities': 0,
+            'cache_hits': 0,
+            'cache_misses': 0
+        }
+
         print(f"\n{Fore.GREEN}✓ ArbiGirl initialized successfully!{Style.RESET_ALL}")
         print(f"  • Pool Fetcher ready (caches: pair 1hr, TVL 3hr)")
         print(f"  • Arb Finder ready (instant scanning)")
+        print(f"  • AI Monitoring active (tracking all operations)")
         self._show_help()
+
+    def log_event(self, event_type: str, details: Dict[str, Any]):
+        """Log an event for AI monitoring"""
+        event = {
+            'timestamp': time.time(),
+            'datetime': datetime.now().isoformat(),
+            'type': event_type,
+            'details': details
+        }
+        self.events.append(event)
+
+        # Keep only recent events
+        if len(self.events) > self.max_history:
+            self.events = self.events[-self.max_history:]
+
+        # Update stats
+        if event_type == 'fetch':
+            self.stats['total_fetches'] += 1
+        elif event_type == 'calculation':
+            self.stats['total_calculations'] += 1
+        elif event_type == 'arb_check':
+            self.stats['total_arb_checks'] += 1
+        elif event_type == 'opportunity':
+            self.stats['total_opportunities'] += 1
+        elif event_type == 'cache_hit':
+            self.stats['cache_hits'] += 1
+        elif event_type == 'cache_miss':
+            self.stats['cache_misses'] += 1
+
+    def _query_ai(self, question: str) -> str:
+        """Answer questions about operations"""
+        q_lower = question.lower()
+
+        # Stats query
+        if 'stats' in q_lower or 'statistics' in q_lower:
+            total_cache = self.stats['cache_hits'] + self.stats['cache_misses']
+            hit_rate = (self.stats['cache_hits'] / total_cache * 100) if total_cache > 0 else 0
+
+            return f"""System Statistics:
+  • Total fetches: {self.stats['total_fetches']:,}
+  • Total calculations: {self.stats['total_calculations']:,}
+  • Total arb checks: {self.stats['total_arb_checks']:,}
+  • Total opportunities: {self.stats['total_opportunities']:,}
+  • Cache hits: {self.stats['cache_hits']:,}
+  • Cache misses: {self.stats['cache_misses']:,}
+  • Cache hit rate: {hit_rate:.1f}%
+  • Events in memory: {len(self.events):,}"""
+
+        # Coins/tokens query
+        if 'coins' in q_lower or 'tokens' in q_lower or 'which coins' in q_lower:
+            tokens = set()
+            for event in self.events:
+                details = event['details']
+                if 'token0' in details:
+                    tokens.add(details['token0'])
+                if 'token1' in details:
+                    tokens.add(details['token1'])
+                if 'pair' in details:
+                    pair_tokens = details['pair'].split('/')
+                    tokens.update(pair_tokens)
+
+            if tokens:
+                return f"Tokens checked: {', '.join(sorted(tokens))}"
+            return "No token data available yet"
+
+        # DEX query
+        if 'dex' in q_lower or 'exchange' in q_lower:
+            dexes = set()
+            for event in self.events:
+                details = event['details']
+                if 'dex' in details:
+                    dexes.add(details['dex'])
+                if 'dex_buy' in details:
+                    dexes.add(details['dex_buy'])
+                if 'dex_sell' in details:
+                    dexes.add(details['dex_sell'])
+
+            if dexes:
+                return f"DEXes used: {', '.join(sorted(dexes))}"
+            return "No DEX data available yet"
+
+        # Latest opportunities
+        if 'opportunities' in q_lower or 'arb' in q_lower:
+            if self.last_opportunities:
+                result = f"Latest opportunities ({len(self.last_opportunities)} found):\n"
+                for i, opp in enumerate(self.last_opportunities[:5], 1):
+                    result += f"\n{i}. {opp.get('pair')} - ${opp.get('profit_usd', 0):.2f} profit ({opp.get('roi_percent', 0):.2f}% ROI)\n"
+                    result += f"   Buy: {opp.get('dex_buy')} @ {opp.get('buy_price', 0):.8f}\n"
+                    result += f"   Sell: {opp.get('dex_sell')} @ {opp.get('sell_price', 0):.8f}\n"
+                return result
+            return "No opportunities found yet"
+
+        # How many pools
+        if 'how many pools' in q_lower or 'pool count' in q_lower:
+            if self.last_pools:
+                pool_count = sum(len(pairs) for pairs in self.last_pools.values())
+                return f"Currently tracking {pool_count} pools across {len(self.last_pools)} DEXes"
+            return "No pools loaded yet"
+
+        # Cache info
+        if 'cache' in q_lower:
+            cache_events = [e for e in self.events if e['type'] in ['cache_hit', 'cache_miss']][-10:]
+            if cache_events:
+                result = "Recent cache activity:\n"
+                for event in cache_events:
+                    event_type = "HIT" if event['type'] == 'cache_hit' else "MISS"
+                    details = event['details']
+                    result += f"\n• {event_type}: {details.get('dex', 'N/A')} / {details.get('pool', 'N/A')}\n"
+                return result
+            return "No cache activity recorded yet"
+
+        # Default
+        return f"""I track all operations! Ask me:
+  • "show stats" - System statistics
+  • "what coins were checked?" - List of tokens
+  • "what dexes were used?" - List of DEXes
+  • "show opportunities" - Latest arbitrage opportunities
+  • "how many pools?" - Pool count
+  • "show cache activity" - Cache hits/misses"""
 
     def _show_help(self):
         """Show available commands"""
@@ -692,7 +822,8 @@ class ArbiGirl:
         print(f"  {Fore.YELLOW}auto{Style.RESET_ALL}       - Start/stop automatic scanning")
         print(f"  {Fore.YELLOW}cache{Style.RESET_ALL}      - Check cache status")
         print(f"  {Fore.YELLOW}status{Style.RESET_ALL}     - Show current status")
-        print(f"  {Fore.YELLOW}ask <question>{Style.RESET_ALL} - Ask AI about operations")
+        print(f"  {Fore.YELLOW}ask <question>{Style.RESET_ALL} - Ask me about operations")
+        print(f"  {Fore.YELLOW}run <file.py>{Style.RESET_ALL} - Run a Python file and diagnose")
         print(f"  {Fore.YELLOW}clear{Style.RESET_ALL}      - Clear the screen")
         print(f"  {Fore.YELLOW}help{Style.RESET_ALL}       - Show this help")
         print(f"  {Fore.YELLOW}exit{Style.RESET_ALL}       - Exit ArbiGirl")
@@ -707,8 +838,12 @@ class ArbiGirl:
 
         pool_count = sum(len(pairs) for pairs in self.last_pools.values())
 
-        # Update AI monitor with pool data
-        self.ai_monitor.update_pools(self.last_pools)
+        # Log fetch event
+        self.log_event('fetch', {
+            'pool_count': pool_count,
+            'dex_count': len(self.last_pools),
+            'duration': fetch_time
+        })
 
         print(f"\n{Fore.GREEN}✅ Fetch complete!{Style.RESET_ALL}")
         print(f"  • Pools fetched: {pool_count}")
@@ -741,8 +876,14 @@ class ArbiGirl:
 
         self.last_opportunities = opportunities
 
-        # Update AI monitor with opportunities
-        self.ai_monitor.update_opportunities(opportunities)
+        # Log scan event and opportunities
+        self.log_event('arb_check', {
+            'opportunities_found': len(opportunities),
+            'duration': scan_time
+        })
+
+        for opp in opportunities:
+            self.log_event('opportunity', opp)
 
         if opportunities:
             self.arb_finder.display_opportunities(opportunities, limit=5)
@@ -764,8 +905,9 @@ class ArbiGirl:
         opportunities = self.arb_finder.find_opportunities(self.last_pools)
         self.last_opportunities = opportunities
 
-        # Update AI monitor with opportunities
-        self.ai_monitor.update_opportunities(opportunities)
+        # Log opportunities
+        for opp in opportunities:
+            self.log_event('opportunity', opp)
 
         full_time = time.time() - start_time
 
@@ -900,7 +1042,7 @@ class ArbiGirl:
         self._show_help()
 
     def handle_ask(self, question: str):
-        """Ask AI monitor about operations"""
+        """Ask ArbiGirl about operations"""
         if not question:
             print(f"{Fore.YELLOW}Usage: ask <question>{Style.RESET_ALL}")
             print(f"\nExamples:")
@@ -908,12 +1050,102 @@ class ArbiGirl:
             print(f"  • ask what dexes have you checked?")
             print(f"  • ask show me the stats")
             print(f"  • ask how many opportunities found?")
-            print(f"  • ask what calculations have been done?")
+            print(f"  • ask show cache activity")
             return
 
-        print(f"\n{Fore.CYAN}🤖 AI Monitor:{Style.RESET_ALL}")
-        answer = self.ai_monitor.query(question)
+        print(f"\n{Fore.CYAN}🤖 ArbiGirl:{Style.RESET_ALL}")
+        answer = self._query_ai(question)
         print(f"{answer}\n")
+
+    def handle_run(self, filename: str):
+        """Run a Python file and diagnose any errors"""
+        if not filename:
+            print(f"{Fore.YELLOW}Usage: run <file.py>{Style.RESET_ALL}")
+            return
+
+        if not filename.endswith('.py'):
+            print(f"{Fore.YELLOW}File must be a Python file (.py){Style.RESET_ALL}")
+            return
+
+        import os
+        if not os.path.exists(filename):
+            print(f"{Fore.RED}File not found: {filename}{Style.RESET_ALL}")
+            return
+
+        print(f"\n{Fore.CYAN}🏃 Running {filename}...{Style.RESET_ALL}\n")
+
+        try:
+            result = subprocess.run(
+                ['python', filename],
+                capture_output=True,
+                text=True,
+                timeout=30
+            )
+
+            # Show output
+            if result.stdout:
+                print(f"{Fore.GREEN}Output:{Style.RESET_ALL}")
+                print(result.stdout)
+
+            # Analyze errors
+            if result.returncode != 0:
+                print(f"\n{Fore.RED}❌ Error detected (exit code: {result.returncode}){Style.RESET_ALL}\n")
+
+                if result.stderr:
+                    print(f"{Fore.YELLOW}Error output:{Style.RESET_ALL}")
+                    print(result.stderr)
+
+                    # Diagnose common errors
+                    stderr_lower = result.stderr.lower()
+
+                    if 'modulenotfounderror' in stderr_lower or 'no module named' in stderr_lower:
+                        print(f"\n{Fore.CYAN}💡 Diagnosis: Missing Python package{Style.RESET_ALL}")
+                        print("   Fix: Install the missing package with pip install <package_name>")
+
+                    elif 'syntaxerror' in stderr_lower:
+                        print(f"\n{Fore.CYAN}💡 Diagnosis: Python syntax error{Style.RESET_ALL}")
+                        print("   Fix: Check the line number in the error and correct the syntax")
+                        # Extract line number if possible
+                        import re
+                        match = re.search(r'line (\d+)', result.stderr)
+                        if match:
+                            line_num = match.group(1)
+                            print(f"   Error is on line {line_num}")
+
+                    elif 'indentationerror' in stderr_lower:
+                        print(f"\n{Fore.CYAN}💡 Diagnosis: Indentation error{Style.RESET_ALL}")
+                        print("   Fix: Check that your indentation is consistent (use 4 spaces)")
+
+                    elif 'importerror' in stderr_lower:
+                        print(f"\n{Fore.CYAN}💡 Diagnosis: Import error{Style.RESET_ALL}")
+                        print("   Fix: Check that the module exists and is in the correct location")
+
+                    elif 'filenotfounderror' in stderr_lower:
+                        print(f"\n{Fore.CYAN}💡 Diagnosis: Missing file{Style.RESET_ALL}")
+                        print("   Fix: Check that all required files exist in the correct location")
+
+                    elif 'keyerror' in stderr_lower or 'attributeerror' in stderr_lower:
+                        print(f"\n{Fore.CYAN}💡 Diagnosis: Data access error{Style.RESET_ALL}")
+                        print("   Fix: Check that you're accessing the correct keys/attributes")
+
+                    elif 'typeerror' in stderr_lower:
+                        print(f"\n{Fore.CYAN}💡 Diagnosis: Type mismatch{Style.RESET_ALL}")
+                        print("   Fix: Check that you're using the correct data types")
+
+                    else:
+                        print(f"\n{Fore.CYAN}💡 General diagnosis:{Style.RESET_ALL}")
+                        print("   Review the error message above for details")
+
+            else:
+                print(f"\n{Fore.GREEN}✅ File executed successfully!{Style.RESET_ALL}")
+
+        except subprocess.TimeoutExpired:
+            print(f"\n{Fore.RED}❌ Execution timeout (>30 seconds){Style.RESET_ALL}")
+            print(f"{Fore.CYAN}💡 Diagnosis: Script is taking too long{Style.RESET_ALL}")
+            print("   Fix: Check for infinite loops or long-running operations")
+
+        except Exception as e:
+            print(f"\n{Fore.RED}❌ Failed to run file: {e}{Style.RESET_ALL}")
 
     def run(self):
         say(f"{Fore.GREEN}Ready! Type commands or ask naturally.{Style.RESET_ALL}\n")
@@ -953,6 +1185,11 @@ class ArbiGirl:
                     self.handle_ask(question)
                 elif command == 'ask':
                     self.handle_ask('')
+                elif command.startswith('run '):
+                    filename = user_input[4:].strip()
+                    self.handle_run(filename)
+                elif command == 'run':
+                    self.handle_run('')
                 else:
                     print(f"{Fore.YELLOW}Unknown command. Type 'help'{Style.RESET_ALL}")
 

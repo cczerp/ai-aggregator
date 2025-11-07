@@ -15,7 +15,6 @@ from rpc_mgr import RPCManager
 from registries import TOKENS
 from price_fetcher import CoinGeckoPriceFetcher
 from abis import UNISWAP_V2_PAIR_ABI, UNISWAP_V3_POOL_ABI
-from ai_monitor import AIMonitor
 
 init(autoreset=True)
 
@@ -31,13 +30,11 @@ class PoolDataFetcher:
         self,
         rpc_manager: RPCManager,
         cache: Cache,
-        ai_monitor: Optional[AIMonitor] = None,
         pool_registry_path: str = "./pool_registry.json",
         min_tvl_usd: float = 10000
     ):
         self.rpc_manager = rpc_manager
         self.cache = cache
-        self.ai_monitor = ai_monitor
         self.min_tvl_usd = min_tvl_usd
 
         # Load pool registry
@@ -204,15 +201,6 @@ class PoolDataFetcher:
 
         # If both cached, return immediately
         if cached_pair_prices and cached_tvl_data:
-            # Log cache hit
-            if self.ai_monitor:
-                self.ai_monitor.log_event('cache_hit', {
-                    'dex': dex,
-                    'pool': pool_address,
-                    'has_pair_prices': True,
-                    'has_tvl_data': True
-                })
-
             return {
                 'pair_prices': cached_pair_prices,
                 'tvl_data': cached_tvl_data,
@@ -235,18 +223,6 @@ class PoolDataFetcher:
             # Cache with different durations
             self.cache.set_pair_prices(dex, pool_address, data['pair_prices'])
             self.cache.set_tvl_data(dex, pool_address, data['tvl_data'])
-
-            # Log fetch
-            if self.ai_monitor:
-                self.ai_monitor.log_event('fetch', {
-                    'dex': dex,
-                    'pool': pool_address,
-                    'source': 'blockchain',
-                    'token0': data['pair_prices'].get('token0'),
-                    'token1': data['pair_prices'].get('token1'),
-                    'tvl_usd': data['tvl_data'].get('tvl_usd'),
-                    'type': pool_type
-                })
 
             return {
                 'pair_prices': data['pair_prices'],
