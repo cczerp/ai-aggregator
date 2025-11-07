@@ -204,14 +204,22 @@ class PriceDataFetcher:
             test_amount1 = 10 ** decimals1  # 1 token1
 
             # Get quote for token0 -> token1
-            path0to1 = [Web3.to_checksum_address(token0_addr), Web3.to_checksum_address(token1_addr)]
-            amounts_out_0to1 = router.functions.getAmountsOut(test_amount0, path0to1).call()
-            quote_0to1 = amounts_out_0to1[1]  # Output amount
+            try:
+                path0to1 = [Web3.to_checksum_address(token0_addr), Web3.to_checksum_address(token1_addr)]
+                amounts_out_0to1 = router.functions.getAmountsOut(test_amount0, path0to1).call()
+                quote_0to1 = amounts_out_0to1[1]  # Output amount
+            except Exception as e:
+                # Fall back to reserve-based calculation
+                quote_0to1 = int((test_amount0 * reserve1) / reserve0) if reserve0 > 0 else 0
 
             # Get quote for token1 -> token0
-            path1to0 = [Web3.to_checksum_address(token1_addr), Web3.to_checksum_address(token0_addr)]
-            amounts_out_1to0 = router.functions.getAmountsOut(test_amount1, path1to0).call()
-            quote_1to0 = amounts_out_1to0[1]  # Output amount
+            try:
+                path1to0 = [Web3.to_checksum_address(token1_addr), Web3.to_checksum_address(token0_addr)]
+                amounts_out_1to0 = router.functions.getAmountsOut(test_amount1, path1to0).call()
+                quote_1to0 = amounts_out_1to0[1]  # Output amount
+            except Exception as e:
+                # Fall back to reserve-based calculation
+                quote_1to0 = int((test_amount1 * reserve0) / reserve1) if reserve1 > 0 else 0
 
             return {
                 'pair_prices': {
@@ -237,7 +245,7 @@ class PriceDataFetcher:
                 }
             }
 
-        except Exception:
+        except Exception as e:
             return None
 
     def fetch_v3_pool(self, w3: Web3, pool_address: str, dex: str) -> Optional[Dict]:
@@ -313,8 +321,10 @@ class PriceDataFetcher:
                 }
                 result_0to1 = quoter.functions.quoteExactInputSingle(params0to1).call()
                 quote_0to1 = result_0to1[0]  # amountOut
-            except:
-                quote_0to1 = 0
+            except Exception as e:
+                # Fall back to sqrt price calculation
+                price_ratio = (sqrt_price_x96 / (2 ** 96)) ** 2
+                quote_0to1 = int(test_amount0 * price_ratio)
 
             # Get quote for token1 -> token0
             try:
@@ -327,11 +337,10 @@ class PriceDataFetcher:
                 }
                 result_1to0 = quoter.functions.quoteExactInputSingle(params1to0).call()
                 quote_1to0 = result_1to0[0]  # amountOut
-            except:
-                quote_1to0 = 0
-
-            if quote_0to1 == 0 or quote_1to0 == 0:
-                return None
+            except Exception as e:
+                # Fall back to sqrt price calculation
+                price_ratio = (sqrt_price_x96 / (2 ** 96)) ** 2
+                quote_1to0 = int(test_amount1 / price_ratio) if price_ratio > 0 else 0
 
             return {
                 'pair_prices': {

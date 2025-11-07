@@ -817,9 +817,9 @@ class ArbiGirl:
         """Show available commands"""
         print(f"\n{Fore.CYAN}Available Commands:{Style.RESET_ALL}")
         print(f"  {Fore.YELLOW}fetch{Style.RESET_ALL}      - Fetch pool data (caches 1hr/3hr)")
-        print(f"  {Fore.YELLOW}scan{Style.RESET_ALL}       - Find arbs from cache (instant)")
-        print(f"  {Fore.YELLOW}full{Style.RESET_ALL}       - Run full scan (fetch + find arbs)")
-        print(f"  {Fore.YELLOW}auto{Style.RESET_ALL}       - Start/stop automatic scanning")
+        print(f"  {Fore.YELLOW}calculate{Style.RESET_ALL}  - Calculate arbs from cache (instant)")
+        print(f"  {Fore.YELLOW}full{Style.RESET_ALL}       - Run full cycle (fetch + calculate)")
+        print(f"  {Fore.YELLOW}auto{Style.RESET_ALL}       - Start/stop automatic calculation")
         print(f"  {Fore.YELLOW}cache{Style.RESET_ALL}      - Check cache status")
         print(f"  {Fore.YELLOW}status{Style.RESET_ALL}     - Show current status")
         print(f"\n{Fore.CYAN}Show Commands:{Style.RESET_ALL}")
@@ -1049,7 +1049,20 @@ class ArbiGirl:
 
     def handle_fetch(self):
         """Fetch pool data"""
-        print(f"\n{Fore.CYAN}📡 Fetching pool data...{Style.RESET_ALL}")
+        print(f"\n{Fore.CYAN}📡 Fetching pool data...{Style.RESET_ALL}\n")
+
+        # First, fetch and display all token prices from CoinGecko (visual key map)
+        print(f"{Fore.CYAN}{'='*80}")
+        print(f"💵 TOKEN PRICES (CoinGecko)")
+        print(f"{'='*80}{Style.RESET_ALL}\n")
+
+        token_prices = self.price_fetcher.price_fetcher.fetch_all_prices()
+        if token_prices:
+            # Sort by USD price (descending)
+            sorted_tokens = sorted(token_prices.items(), key=lambda x: x[1], reverse=True)
+            for symbol, price_usd in sorted_tokens:
+                print(f"   {symbol:8} = ${price_usd:>12,.2f}")
+        print()
 
         start_time = time.time()
         self.last_pools = self.price_fetcher.fetch_all_pools()
@@ -1069,41 +1082,52 @@ class ArbiGirl:
         print(f"  • Time: {fetch_time:.2f}s")
         print(f"  • Cached: Pair prices (1hr), TVL (3hr)")
 
-        # Show what was actually fetched
+        # Show what was actually fetched - grouped by pair
         if pool_count > 0:
             print(f"\n{Fore.CYAN}{'='*80}")
             print(f"💰 FETCHED PAIR PRICES (ACTUAL DEX QUOTES)")
             print(f"{'='*80}{Style.RESET_ALL}\n")
 
+            # Group pools by pair name (to show duplicates together)
+            pairs_by_name = {}
             for dex, pairs in self.last_pools.items():
-                if pairs:
-                    print(f"{Fore.GREEN}📊 {dex}{Style.RESET_ALL}")
-                    for pair_name, pool_data in pairs.items():
-                        pair_prices = pool_data.get('pair_prices', {})
-                        tvl_data = pool_data.get('tvl_data', {})
+                for pair_name, pool_data in pairs.items():
+                    if pair_name not in pairs_by_name:
+                        pairs_by_name[pair_name] = []
+                    pairs_by_name[pair_name].append((dex, pool_data))
 
-                        token0 = pair_prices.get('token0', 'N/A')
-                        token1 = pair_prices.get('token1', 'N/A')
-                        quote_0to1 = pair_prices.get('quote_0to1', 0)
-                        quote_1to0 = pair_prices.get('quote_1to0', 0)
-                        decimals0 = pair_prices.get('decimals0', 18)
-                        decimals1 = pair_prices.get('decimals1', 18)
-                        tvl = tvl_data.get('tvl_usd', 0)
-                        pool_type = pair_prices.get('type', 'v2')
+            # Display grouped by pair
+            for pair_name in sorted(pairs_by_name.keys()):
+                dex_list = pairs_by_name[pair_name]
+                print(f"{Fore.YELLOW}{pair_name}{Style.RESET_ALL} ({len(dex_list)} DEX{'es' if len(dex_list) > 1 else ''})")
 
-                        # Calculate human-readable prices from quotes
-                        price_0to1 = quote_0to1 / (10 ** decimals1) if quote_0to1 > 0 else 0
-                        price_1to0 = quote_1to0 / (10 ** decimals0) if quote_1to0 > 0 else 0
+                for dex, pool_data in dex_list:
+                    pair_prices = pool_data.get('pair_prices', {})
+                    tvl_data = pool_data.get('tvl_data', {})
 
-                        print(f"   {pair_name:20} | 1 {token0} = {price_0to1:.6f} {token1} | 1 {token1} = {price_1to0:.6f} {token0} | TVL: ${tvl:>10,.0f} | {pool_type.upper()}")
-                    print()
+                    token0 = pair_prices.get('token0', 'N/A')
+                    token1 = pair_prices.get('token1', 'N/A')
+                    quote_0to1 = pair_prices.get('quote_0to1', 0)
+                    quote_1to0 = pair_prices.get('quote_1to0', 0)
+                    decimals0 = pair_prices.get('decimals0', 18)
+                    decimals1 = pair_prices.get('decimals1', 18)
+                    tvl = tvl_data.get('tvl_usd', 0)
+                    pool_type = pair_prices.get('type', 'v2')
 
-            print(f"{Fore.CYAN}Total pairs fetched: {pool_count} (out of 157+ checked){Style.RESET_ALL}")
-            print(f"{Fore.YELLOW}Note: {157 - pool_count if pool_count < 157 else 0}+ pools filtered out (< $3k TVL){Style.RESET_ALL}\n")
+                    # Calculate human-readable prices from quotes
+                    price_0to1 = quote_0to1 / (10 ** decimals1) if quote_0to1 > 0 else 0
+                    price_1to0 = quote_1to0 / (10 ** decimals0) if quote_1to0 > 0 else 0
 
-    def handle_scan(self):
-        """Find arbitrage from cached data"""
-        print(f"\n{Fore.CYAN}💰 Scanning for arbitrage (using cache)...{Style.RESET_ALL}")
+                    print(f"  {Fore.GREEN}{dex:20}{Style.RESET_ALL} | 1 {token0} = {price_0to1:.6f} {token1} | 1 {token1} = {price_1to0:.6f} {token0} | TVL: ${tvl:>10,.0f} | {pool_type.upper()}")
+
+                print()
+
+            print(f"{Fore.CYAN}Total unique pairs: {len(pairs_by_name)} | Total pools: {pool_count}{Style.RESET_ALL}")
+            print(f"{Fore.YELLOW}Note: Pools with TVL < $3,000 were filtered out{Style.RESET_ALL}\n")
+
+    def handle_calculate(self):
+        """Calculate arbitrage opportunities from cached data"""
+        print(f"\n{Fore.CYAN}🔢 Calculating arbitrage opportunities (using cache)...{Style.RESET_ALL}")
 
         # Check if pools were fetched
         if not self.last_pools:
@@ -1141,7 +1165,7 @@ class ArbiGirl:
         else:
             print(f"\n{Fore.YELLOW}No opportunities found.{Style.RESET_ALL}")
 
-        print(f"\n{Fore.BLUE}Scan completed in {scan_time:.2f}s (instant - using cache){Style.RESET_ALL}")
+        print(f"\n{Fore.BLUE}Calculation completed in {scan_time:.2f}s (instant - using cache){Style.RESET_ALL}")
 
     def handle_full(self):
         """Run full scan (fetch + find arbs)"""
@@ -1417,8 +1441,8 @@ class ArbiGirl:
                     break
                 elif command == 'fetch':
                     self.handle_fetch()
-                elif command == 'scan':
-                    self.handle_scan()
+                elif command in ['scan', 'calculate', 'iterate']:
+                    self.handle_calculate()
                 elif command == 'full':
                     self.handle_full()
                 elif command == 'auto':
