@@ -19,7 +19,7 @@ from pool_scanner import PoolScanner
 
 # Import existing modules (you already have these)
 try:
-    from arb_scanner import ArbScanner
+    from arb_scanner import ArbitrageScanner
     from tx_builder import FlashbotsTxBuilder
     from gas_optimization_manager import GasOptimizationManager
 except ImportError as e:
