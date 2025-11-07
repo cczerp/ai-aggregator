@@ -38,7 +38,7 @@ from pydantic import BaseModel
 import uvicorn
 
 # Import the two core modules
-from pool_data_fetcher import PoolDataFetcher
+from price_data_fetcher import PriceDataFetcher
 from arb_finder import ArbFinder
 from rpc_mgr import RPCManager
 from cache import Cache
@@ -663,7 +663,7 @@ class ArbiGirl:
         # Initialize components
         self.rpc_manager = RPCManager()
         self.cache = Cache()
-        self.pool_fetcher = PoolDataFetcher(
+        self.price_fetcher = PriceDataFetcher(
             self.rpc_manager,
             self.cache,
             min_tvl_usd=10000
@@ -689,7 +689,7 @@ class ArbiGirl:
         }
 
         print(f"\n{Fore.GREEN}✓ ArbiGirl initialized successfully!{Style.RESET_ALL}")
-        print(f"  • Pool Fetcher ready (caches: pair 1hr, TVL 3hr)")
+        print(f"  • Price Data Fetcher ready (pair 1hr, TVL 3hr, prices 5min)")
         print(f"  • Arb Finder ready (instant scanning)")
         print(f"  • AI Monitoring active (tracking all operations)")
         self._show_help()
@@ -833,7 +833,7 @@ class ArbiGirl:
         print(f"\n{Fore.CYAN}📡 Fetching pool data...{Style.RESET_ALL}")
 
         start_time = time.time()
-        self.last_pools = self.pool_fetcher.fetch_all_pools()
+        self.last_pools = self.price_fetcher.fetch_all_pools()
         fetch_time = time.time() - start_time
 
         pool_count = sum(len(pairs) for pairs in self.last_pools.values())
@@ -1209,7 +1209,7 @@ def main():
     """Main entry point"""
     try:
         # Check for required files
-        required_files = ['pool_data_fetcher.py', 'arb_finder.py', 'pool_registry.json', 'cache.py', 'rpc_mgr.py']
+        required_files = ['price_data_fetcher.py', 'arb_finder.py', 'pool_registry.json', 'cache.py', 'rpc_mgr.py']
         missing = [f for f in required_files if not os.path.exists(f)]
 
         if missing:

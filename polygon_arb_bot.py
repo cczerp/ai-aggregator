@@ -15,7 +15,7 @@ from colorama import Fore, Style, init
 # Import all managers
 from rpc_mgr import RPCManager
 from cache import Cache
-from pool_data_fetcher import PoolDataFetcher
+from price_data_fetcher import PriceDataFetcher
 from arb_finder import ArbFinder
 
 # Import existing modules (you already have these)
@@ -63,9 +63,9 @@ class PolygonArbBot:
             cache_duration_hours=cache_duration_hours
         )
         
-        # Initialize Pool Data Fetcher
-        print(f"\n{Fore.YELLOW}🔍 Initializing Pool Data Fetcher...{Style.RESET_ALL}")
-        self.pool_fetcher = PoolDataFetcher(
+        # Initialize Price Data Fetcher
+        print(f"\n{Fore.YELLOW}🔍 Initializing Price Data Fetcher...{Style.RESET_ALL}")
+        self.price_fetcher = PriceDataFetcher(
             rpc_manager=self.rpc_manager,
             cache=self.cache,
             min_tvl_usd=min_tvl
@@ -89,7 +89,7 @@ class PolygonArbBot:
     
     def scan_pools(self) -> dict:
         """Fetch all pool data"""
-        return self.pool_fetcher.fetch_all_pools()
+        return self.price_fetcher.fetch_all_pools()
 
     def find_arbitrage(self, pools: dict) -> list:
         """Find arbitrage opportunities"""

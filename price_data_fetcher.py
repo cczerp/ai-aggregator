@@ -1,11 +1,14 @@
 """
-Pool Data Fetcher
-Fetches pool data from blockchain and caches it:
-- Pair prices: 1 hour cache
-- TVL data: 3 hour cache
+Price Data Fetcher
+Fetches pool data and token prices:
+- Pool pair prices: 1 hour cache
+- Pool TVL data: 3 hour cache
+- Token prices from CoinGecko: 5 minute cache
 """
 
 import json
+import time
+import requests
 from typing import Dict, Optional
 from web3 import Web3
 from colorama import Fore, Style, init
@@ -13,17 +16,106 @@ from colorama import Fore, Style, init
 from cache import Cache
 from rpc_mgr import RPCManager
 from registries import TOKENS
-from price_fetcher import CoinGeckoPriceFetcher
 from abis import UNISWAP_V2_PAIR_ABI, UNISWAP_V3_POOL_ABI
 
 init(autoreset=True)
 
 
-class PoolDataFetcher:
+class CoinGeckoPriceFetcher:
+    """Fetch all token prices from CoinGecko in a single call"""
+
+    # Map token symbols to CoinGecko IDs
+    COINGECKO_IDS = {
+        "WETH": "ethereum",
+        "WBTC": "bitcoin",
+        "USDC": "usd-coin",
+        "USDT": "tether",
+        "DAI": "dai",
+        "WPOL": "matic-network",
+        "WMATIC": "matic-network",
+        "LINK": "chainlink",
+        "AAVE": "aave",
+        "UNI": "uniswap",
+        "SUSHI": "sushi",
+        "CRV": "curve-dao-token",
+        "SNX": "havven",
+        "YFI": "yearn-finance",
+        "QUICK": "quickswap",
+    }
+
+    def __init__(self, cache_duration: int = 300):
+        """
+        Args:
+            cache_duration: Cache duration in seconds (default 5 min)
+        """
+        self.cache_duration = cache_duration
+        self.price_cache = {}
+        self.last_fetch_time = 0
+        self.api_url = "https://api.coingecko.com/api/v3/simple/price"
+
+        print(f"{Fore.GREEN}✅ CoinGecko Price Fetcher Initialized{Style.RESET_ALL}")
+        print(f"   Cache duration: {cache_duration}s")
+        print(f"   Tokens tracked: {len(self.COINGECKO_IDS)}")
+
+    def _fetch_all_prices(self) -> Dict[str, float]:
+        """Fetch all token prices in ONE API call"""
+        try:
+            # Get all CoinGecko IDs in a single call
+            ids = ",".join(self.COINGECKO_IDS.values())
+
+            params = {
+                "ids": ids,
+                "vs_currencies": "usd"
+            }
+
+            response = requests.get(self.api_url, params=params, timeout=10)
+            response.raise_for_status()
+            data = response.json()
+
+            # Map back to token symbols
+            prices = {}
+            for symbol, gecko_id in self.COINGECKO_IDS.items():
+                if gecko_id in data and "usd" in data[gecko_id]:
+                    prices[symbol] = data[gecko_id]["usd"]
+
+            print(f"{Fore.GREEN}✅ Fetched {len(prices)} prices from CoinGecko{Style.RESET_ALL}")
+            return prices
+
+        except Exception as e:
+            print(f"{Fore.RED}❌ CoinGecko API error: {e}{Style.RESET_ALL}")
+            return {}
+
+    def get_price(self, token_symbol: str) -> Optional[float]:
+        """Get price for a token (cached)"""
+        # Check if cache needs refresh
+        now = time.time()
+        if now - self.last_fetch_time > self.cache_duration:
+            self.price_cache = self._fetch_all_prices()
+            self.last_fetch_time = now
+
+        return self.price_cache.get(token_symbol)
+
+    def get_all_prices(self) -> Dict[str, float]:
+        """Get all prices (cached)"""
+        now = time.time()
+        if now - self.last_fetch_time > self.cache_duration:
+            self.price_cache = self._fetch_all_prices()
+            self.last_fetch_time = now
+
+        return self.price_cache.copy()
+
+    def force_refresh(self):
+        """Force refresh prices immediately"""
+        self.price_cache = self._fetch_all_prices()
+        self.last_fetch_time = time.time()
+
+
+class PriceDataFetcher:
     """
-    Fetches pool data and caches it with specific durations:
+    Fetches pool data and token prices with caching:
     - pair_prices: 1 hour
     - tvl_data: 3 hours
+    - token prices: 5 minutes (CoinGecko)
     """
 
     def __init__(
@@ -44,9 +136,9 @@ class PoolDataFetcher:
         # Initialize price fetcher
         self.price_fetcher = CoinGeckoPriceFetcher(cache_duration=300)
 
-        print(f"{Fore.GREEN}✅ Pool Data Fetcher initialized{Style.RESET_ALL}")
+        print(f"{Fore.GREEN}✅ Price Data Fetcher initialized{Style.RESET_ALL}")
         print(f"   Min TVL: ${min_tvl_usd:,}")
-        print(f"   Cache: Pair prices (1hr), TVL (3hr)")
+        print(f"   Cache: Pair prices (1hr), TVL (3hr), Token prices (5min)")
 
     def _get_token_info(self, address: str) -> Optional[Dict]:
         """Get token info from registry"""
