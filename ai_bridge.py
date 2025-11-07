@@ -37,8 +37,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import uvicorn
 
-# Import PolygonArbBot which has 300+ pools and ArbiGirl compatibility
-from polygon_arb_bot import PolygonArbBot
+# Import the two core modules
+from pool_data_fetcher import PoolDataFetcher
+from arb_finder import ArbFinder
+from rpc_mgr import RPCManager
+from cache import Cache
 
 init(autoreset=True)
 load_dotenv()
@@ -647,163 +650,240 @@ class CLInterface:
     """CLI Interface"""
 
 class ArbiGirl:
-    """AI-powered arbitrage bot with 300+ pool scanner"""
+    """AI-powered arbitrage bot - runs components independently or together"""
 
     def __init__(self):
-        """Initialize ArbiGirl with PolygonArbBot (300+ pools)"""
+        """Initialize ArbiGirl with pool fetcher and arb finder"""
         print(f"\n{Fore.MAGENTA}{'='*60}")
-        print(f"         🤖 ArbiGirl MEV Bot v3.0")
-        print(f"         Now with 300+ pools from pool_registry!")
+        print(f"         🤖 ArbiGirl MEV Bot v5.0")
+        print(f"         Run any component independently!")
         print(f"{'='*60}{Style.RESET_ALL}\n")
 
-        # Initialize PolygonArbBot (has 300+ pools + ArbiGirl compatibility)
-        self.bot = PolygonArbBot(
-            min_tvl=10000,
-            scan_interval=60,
-            cache_duration_hours=6,
-            auto_execute=False
+        # Initialize components
+        self.rpc_manager = RPCManager()
+        self.cache = Cache()
+        self.pool_fetcher = PoolDataFetcher(
+            self.rpc_manager,
+            self.cache,
+            min_tvl_usd=10000
         )
-
-        # Command queue for async operations
-        self.command_queue = queue.Queue()
+        self.arb_finder = ArbFinder(min_profit_usd=1.0)
 
         # State
         self.auto_scan = False
-        self.api_url = f"http://{API_HOST}:{API_PORT}"
+        self.auto_fetch_on_expire = False
         self.last_opportunities = []
+        self.last_pools = None
 
-        print(f"{Fore.GREEN}✓ ArbiGirl initialized successfully!{Style.RESET_ALL}")
-        print(f"  • Ready to scan 300+ pools from pool_registry.json")
-        print(f"  • Cache duration: 6 hours for DEX prices")
+        print(f"\n{Fore.GREEN}✓ ArbiGirl initialized successfully!{Style.RESET_ALL}")
+        print(f"  • Pool Fetcher ready (caches: pair 1hr, TVL 3hr)")
+        print(f"  • Arb Finder ready (instant scanning)")
         self._show_help()
 
     def _show_help(self):
         """Show available commands"""
         print(f"\n{Fore.CYAN}Available Commands:{Style.RESET_ALL}")
-        print(f"  {Fore.YELLOW}scan{Style.RESET_ALL}       - Run one arbitrage scan (300+ pools)")
+        print(f"  {Fore.YELLOW}fetch{Style.RESET_ALL}      - Fetch pool data (caches 1hr/3hr)")
+        print(f"  {Fore.YELLOW}scan{Style.RESET_ALL}       - Find arbs from cache (instant)")
+        print(f"  {Fore.YELLOW}full{Style.RESET_ALL}       - Run full scan (fetch + find arbs)")
         print(f"  {Fore.YELLOW}auto{Style.RESET_ALL}       - Start/stop automatic scanning")
-        print(f"  {Fore.YELLOW}status{Style.RESET_ALL}     - Show current status and statistics")
-        print(f"  {Fore.YELLOW}pools{Style.RESET_ALL}      - Show pool registry info")
+        print(f"  {Fore.YELLOW}cache{Style.RESET_ALL}      - Check cache status")
+        print(f"  {Fore.YELLOW}status{Style.RESET_ALL}     - Show current status")
         print(f"  {Fore.YELLOW}clear{Style.RESET_ALL}      - Clear the screen")
         print(f"  {Fore.YELLOW}help{Style.RESET_ALL}       - Show this help")
         print(f"  {Fore.YELLOW}exit{Style.RESET_ALL}       - Exit ArbiGirl")
     
-    def handle_scan(self):
-        """Run a single scan"""
-        print(f"\n{Fore.CYAN}🔍 Running arbitrage scan (300+ pools)...{Style.RESET_ALL}")
+    def handle_fetch(self):
+        """Fetch pool data"""
+        print(f"\n{Fore.CYAN}📡 Fetching pool data...{Style.RESET_ALL}")
 
         start_time = time.time()
-        opportunities = self.bot.run_single_scan()
+        self.last_pools = self.pool_fetcher.fetch_all_pools()
+        fetch_time = time.time() - start_time
+
+        pool_count = sum(len(pairs) for pairs in self.last_pools.values())
+
+        print(f"\n{Fore.GREEN}✅ Fetch complete!{Style.RESET_ALL}")
+        print(f"  • Pools fetched: {pool_count}")
+        print(f"  • Time: {fetch_time:.2f}s")
+        print(f"  • Cached: Pair prices (1hr), TVL (3hr)")
+
+    def handle_scan(self):
+        """Find arbitrage from cached data"""
+        print(f"\n{Fore.CYAN}💰 Scanning for arbitrage (using cache)...{Style.RESET_ALL}")
+
+        # Check if pools were fetched
+        if not self.last_pools:
+            print(f"\n{Fore.YELLOW}No pools in memory. Fetching first...{Style.RESET_ALL}")
+            self.handle_fetch()
+
+        # Check cache expiration
+        warning = self.cache.get_expiration_warning()
+        if warning:
+            print(f"\n{Fore.YELLOW}⚠️  CACHE WARNING:{Style.RESET_ALL}")
+            print(warning)
+
+            if not self.auto_fetch_on_expire:
+                response = input(f"\n{Fore.YELLOW}Fetch fresh data? (y/n): {Style.RESET_ALL}").strip().lower()
+                if response == 'y':
+                    self.handle_fetch()
+
+        start_time = time.time()
+        opportunities = self.arb_finder.find_opportunities(self.last_pools)
         scan_time = time.time() - start_time
 
         self.last_opportunities = opportunities
 
         if opportunities:
-            print(f"\n{Fore.GREEN}✨ Found {len(opportunities)} opportunities!{Style.RESET_ALL}")
+            self.arb_finder.display_opportunities(opportunities, limit=5)
         else:
-            print(f"\n{Fore.YELLOW}No opportunities found this scan.{Style.RESET_ALL}")
+            print(f"\n{Fore.YELLOW}No opportunities found.{Style.RESET_ALL}")
 
-        print(f"\n{Fore.BLUE}Scan completed in {scan_time:.2f}s{Style.RESET_ALL}")
+        print(f"\n{Fore.BLUE}Scan completed in {scan_time:.2f}s (instant - using cache){Style.RESET_ALL}")
+
+    def handle_full(self):
+        """Run full scan (fetch + find arbs)"""
+        print(f"\n{Fore.CYAN}🔄 Running full scan...{Style.RESET_ALL}")
+
+        start_time = time.time()
+
+        # Step 1: Fetch pools
+        self.handle_fetch()
+
+        # Step 2: Find arbitrage
+        opportunities = self.arb_finder.find_opportunities(self.last_pools)
+        self.last_opportunities = opportunities
+
+        full_time = time.time() - start_time
+
+        if opportunities:
+            self.arb_finder.display_opportunities(opportunities, limit=5)
+        else:
+            print(f"\n{Fore.YELLOW}No opportunities found.{Style.RESET_ALL}")
+
+        print(f"\n{Fore.BLUE}Full scan completed in {full_time:.2f}s{Style.RESET_ALL}")
     
     def handle_auto(self):
         """Toggle automatic scanning"""
         self.auto_scan = not self.auto_scan
-        
+
         if self.auto_scan:
             print(f"\n{Fore.GREEN}🔄 Automatic scanning ENABLED{Style.RESET_ALL}")
             print(f"  Scanning every 5 seconds...")
             print(f"  Type 'auto' again to stop")
-            
+
+            # Ask about auto-fetch on expire
+            response = input(f"\n{Fore.YELLOW}Auto-fetch on cache expiry? (y/n): {Style.RESET_ALL}").strip().lower()
+            self.auto_fetch_on_expire = (response == 'y')
+
+            if self.auto_fetch_on_expire:
+                print(f"{Fore.GREEN}✓ Will auto-fetch when cache expires{Style.RESET_ALL}")
+            else:
+                print(f"{Fore.YELLOW}⚠️  Will prompt before fetching{Style.RESET_ALL}")
+
             # Start auto scan in background
-            thread = threading.Thread(target=self._auto_scan_loop)
-            thread.daemon = True
+            thread = threading.Thread(target=self._auto_scan_loop, daemon=True)
             thread.start()
             return
 
-        say(f"\n{Fore.CYAN}🔍 Starting arbitrage scan...{Style.RESET_ALL}")
-
-        try:
-            resp = requests.post(
-                f"{self.api_url}/scan",
-                json={"min_profit_usd": MIN_PROFIT_USD},
-                timeout=300
-            )
-
-            if resp.status_code == 200:
-                data = resp.json()
-                opps = data.get("found_opportunities", [])
-                self.last_opportunities = opps
-
-                if opps:
-                    say(f"\n{Fore.GREEN}✨ Found {len(opps)} opportunities!{Style.RESET_ALL}\n")
-                    for i, opp in enumerate(opps[:5], 1):
-                        say(f"  {i}. {opp['pair']}: ${opp['net_profit_usd']:.2f} "
-                            f"({opp['roi_percent']:.2f}%)")
-                        say(f"     Buy: {opp['dex_buy']} | Sell: {opp['dex_sell']}")
-                else:
-                    say(f"\n{Fore.YELLOW}No opportunities found{Style.RESET_ALL}")
-
-                say(f"\n⏱️ Scan took {data['scan_duration_seconds']:.2f}s")
-            else:
-                say(f"{Fore.RED}Scan failed: {resp.text}{Style.RESET_ALL}")
-
-        except Exception as e:
-            say(f"{Fore.RED}Error: {e}{Style.RESET_ALL}")
+        else:
+            print(f"\n{Fore.YELLOW}🛑 Automatic scanning DISABLED{Style.RESET_ALL}")
 
     def _auto_scan_loop(self):
+        """Background loop for automatic scanning"""
         while self.auto_scan:
-            self.handle_scan()
-            time.sleep(5)
+            try:
+                # Check cache expiration
+                warning = self.cache.get_expiration_warning()
+                if warning and self.auto_fetch_on_expire:
+                    print(f"\n{Fore.YELLOW}⚠️  Cache expired, auto-fetching...{Style.RESET_ALL}")
+                    self.handle_fetch()
+
+                # Run scan
+                self.handle_scan()
+                time.sleep(5)
+            except Exception as e:
+                print(f"\n{Fore.RED}Auto-scan error: {e}{Style.RESET_ALL}")
+                time.sleep(5)
     
-    def handle_debug(self, args):
-        """Toggle debug mode (not applicable with PolygonArbBot)"""
-        print(f"\n{Fore.YELLOW}Debug mode not available with PolygonArbBot scanner{Style.RESET_ALL}")
-        print(f"  PolygonArbBot uses optimized pool scanning")
-        print(f"  Check bot logs for detailed information")
+    def handle_cache(self):
+        """Check cache status"""
+        print(f"\n{Fore.CYAN}{'='*60}")
+        print(f"💾 CACHE STATUS")
+        print(f"{'='*60}{Style.RESET_ALL}\n")
+
+        status = self.cache.check_expiration_status()
+
+        for cache_type, cache_status in status.items():
+            if cache_status['entry_count'] == 0:
+                continue
+
+            expired = cache_status['expired']
+            time_left = cache_status['time_remaining']
+            percentage = cache_status['percentage_fresh']
+            count = cache_status['entry_count']
+            duration = cache_status['duration'] / 3600
+
+            if expired:
+                status_icon = f"{Fore.RED}❌ EXPIRED"
+            elif time_left < 300:
+                status_icon = f"{Fore.YELLOW}⚠️  EXPIRING SOON"
+            else:
+                status_icon = f"{Fore.GREEN}✅ FRESH"
+
+            print(f"  {status_icon} {cache_type.upper()}{Style.RESET_ALL}")
+            print(f"     Entries: {count} | Duration: {duration:.0f}h")
+
+            if not expired:
+                hours_left = time_left / 3600
+                mins_left = (time_left % 3600) / 60
+                print(f"     Time left: {hours_left:.0f}h {mins_left:.0f}m | Freshness: {percentage:.1f}%")
+
+            print()
+
+        print(f"{Fore.CYAN}{'='*60}{Style.RESET_ALL}\n")
     
     def handle_status(self):
         """Show current status"""
-        print(f"\n{Fore.CYAN}{'='*40}")
+        print(f"\n{Fore.CYAN}{'='*60}")
         print(f"         System Status")
-        print(f"{'='*40}{Style.RESET_ALL}")
+        print(f"{'='*60}{Style.RESET_ALL}")
 
-        print(f"  • Scanner: PolygonArbBot (300+ pools)")
+        print(f"  • Components: pool_data_fetcher + arb_finder")
         print(f"  • Auto-scan: {'ON' if self.auto_scan else 'OFF'}")
-        print(f"  • Cache duration: {self.bot.cache.cache_duration / 3600:.0f}h")
-        print(f"  • Min TVL: ${self.bot.min_tvl:,}")
-        print(f"  • Last scan: {len(self.last_opportunities)} opportunities")
-        print(f"  • Total scans: {self.bot.total_scans}")
-        print(f"  • Total opportunities: {self.bot.total_opportunities}")
+        print(f"  • Auto-fetch on expire: {'ON' if self.auto_fetch_on_expire else 'OFF'}")
+        print(f"  • Last opportunities: {len(self.last_opportunities)}")
+        print(f"  • Min TVL: $10,000")
+        print(f"  • Min Profit: $1.00")
 
-        # Show module info
-        print(f"\n{Fore.CYAN}Modules:{Style.RESET_ALL}")
-        print(f"  • polygon_arb_bot.py (main bot)")
-        print(f"  • pool_scanner.py (300+ pools)")
-        print(f"  • cache.py (6h cache)")
+        # Cache status summary
+        status = self.cache.check_expiration_status()
+        pair_status = status.get('pair_prices', {})
+        tvl_status = status.get('tvl_data', {})
 
-        # Check if files exist
-        if os.path.exists('pool_registry.json'):
-            print(f"  {Fore.GREEN}✓ pool_registry.json found{Style.RESET_ALL}")
+        print(f"\n  {Fore.CYAN}Cache:{Style.RESET_ALL}")
+
+        if pair_status.get('expired'):
+            print(f"    • Pair prices: {Fore.RED}EXPIRED{Style.RESET_ALL}")
         else:
-            print(f"  {Fore.RED}✗ pool_registry.json NOT FOUND!{Style.RESET_ALL}")
+            time_left = pair_status.get('time_remaining', 0) / 60
+            print(f"    • Pair prices: {Fore.GREEN}FRESH{Style.RESET_ALL} ({time_left:.0f}m left)")
+
+        if tvl_status.get('expired'):
+            print(f"    • TVL data: {Fore.RED}EXPIRED{Style.RESET_ALL}")
+        else:
+            time_left = tvl_status.get('time_remaining', 0) / 60
+            print(f"    • TVL data: {Fore.GREEN}FRESH{Style.RESET_ALL} ({time_left:.0f}m left)")
+
+        print(f"\n{Fore.CYAN}{'='*60}{Style.RESET_ALL}\n")
     
-    def handle_pools(self):
-        """List loaded pools from pool_registry"""
-        print(f"\n{Fore.CYAN}Pool Registry Summary:{Style.RESET_ALL}")
-
-        # Trigger a pool scan to show stats
-        print(f"\n  Scanning pool_registry.json for available pools...")
-        print(f"  (This will use cache if available)\n")
-
-        # Show cache stats
-        self.bot.cache.print_stats()
-
-        print(f"\n  To see full pool details, check pool_registry.json")
-        print(f"  Run a scan to see which pools have >$10k TVL")
     
     def handle_clear(self):
         """Clear the screen"""
         os.system('cls' if os.name == 'nt' else 'clear')
+        print(f"\n{Fore.MAGENTA}{'='*60}")
+        print(f"         🤖 ArbiGirl MEV Bot v5.0")
+        print(f"{'='*60}{Style.RESET_ALL}\n")
         self._show_help()
     
     def run(self):
@@ -818,24 +898,36 @@ class ArbiGirl:
 
                 action, params = parse_intent(user_input)
 
-                if action == "quit":
-                    say(f"\n{Fore.MAGENTA}👋 Goodbye!{Style.RESET_ALL}")
+                command = user_input.lower().strip()
+
+                if command in ['exit', 'quit', 'bye']:
+                    print(f"\n{Fore.MAGENTA}👋 Goodbye!{Style.RESET_ALL}\n")
                     break
-                elif action == "scan":
-                    self.handle_scan(continuous=params.get("continuous", False))
-                elif action == "status":
+                elif command == 'fetch':
+                    self.handle_fetch()
+                elif command == 'scan':
+                    self.handle_scan()
+                elif command == 'full':
+                    self.handle_full()
+                elif command == 'auto':
+                    self.handle_auto()
+                elif command == 'cache':
+                    self.handle_cache()
+                elif command == 'status':
                     self.handle_status()
-                elif action == "stop":
-                    self.handle_stop()
-                elif action == "help":
+                elif command == 'clear':
+                    self.handle_clear()
+                elif command == 'help':
                     self._show_help()
                 else:
-                    say(f"{Fore.YELLOW}Unknown command. Type 'help'{Style.RESET_ALL}")
+                    print(f"{Fore.YELLOW}Unknown command. Type 'help'{Style.RESET_ALL}")
 
             except KeyboardInterrupt:
-                say(f"\n{Fore.YELLOW}Use 'quit' to exit{Style.RESET_ALL}")
+                print(f"\n{Fore.YELLOW}Use 'exit' to quit{Style.RESET_ALL}")
             except Exception as e:
-                say(f"{Fore.RED}Error: {e}{Style.RESET_ALL}")
+                print(f"{Fore.RED}Error: {e}{Style.RESET_ALL}")
+                import traceback
+                traceback.print_exc()
 
 
 # ============================================================================
@@ -843,22 +935,17 @@ class ArbiGirl:
 # ============================================================================
 
 def main():
-    """Main entry point - starts API server + CLI"""
+    """Main entry point"""
     try:
         # Check for required files
-        required_files = ['polygon_arb_bot.py', 'pool_scanner.py', 'pool_registry.json', 'cache.py', 'rpc_mgr.py']
-        missing = []
-
-        for file in required_files:
-            if not os.path.exists(file):
-                missing.append(file)
+        required_files = ['pool_data_fetcher.py', 'arb_finder.py', 'pool_registry.json', 'cache.py', 'rpc_mgr.py']
+        missing = [f for f in required_files if not os.path.exists(f)]
 
         if missing:
             print(f"{Fore.RED}Missing required files:{Style.RESET_ALL}")
             for file in missing:
                 print(f"  • {file}")
             print(f"\n{Fore.YELLOW}Please make sure all files are in the same directory!{Style.RESET_ALL}")
-            print(f"Required: polygon_arb_bot.py, pool_scanner.py, pool_registry.json, cache.py, rpc_mgr.py")
             return
 
         # Start ArbiGirl
@@ -867,12 +954,6 @@ def main():
 
     except Exception as e:
         print(f"{Fore.RED}Failed to start ArbiGirl: {e}{Style.RESET_ALL}")
-        print(f"\n{Fore.YELLOW}Make sure you have:{Style.RESET_ALL}")
-        print(f"  1. polygon_arb_bot.py (main bot)")
-        print(f"  2. pool_scanner.py (pool scanning)")
-        print(f"  3. pool_registry.json (300+ pools)")
-        print(f"  4. cache.py (caching)")
-        print(f"  5. rpc_mgr.py (RPC management)")
         import traceback
         traceback.print_exc()
 
