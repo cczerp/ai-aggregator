@@ -26,7 +26,7 @@ from abis import (
 init(autoreset=True)
 
 
-class ArbScanner:
+class ArbitrageScanner:
     """Main arbitrage scanner using modular price calculations"""
     
     def __init__(self, config_path: str = 'config.json'):
