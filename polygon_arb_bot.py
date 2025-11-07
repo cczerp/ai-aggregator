@@ -19,7 +19,7 @@ from pool_scanner import PoolScanner
 
 # Import existing modules (you already have these)
 try:
-    from arb_scanner import ArbitrageScanner
+    from arb_scanner import ArbScanner
     from tx_builder import FlashbotsTxBuilder
     from gas_optimization_manager import GasOptimizationManager
 except ImportError as e:
@@ -73,7 +73,7 @@ class PolygonArbBot:
         
         # Initialize Arbitrage Scanner (your existing one)
         print(f"\n{Fore.YELLOW}🎯 Initializing Arbitrage Scanner...{Style.RESET_ALL}")
-        self.arb_scanner = ArbitrageScanner(
+        self.arb_scanner = ArbScanner(
             rpc_manager=self.rpc_manager,
             pool_scanner=self.pool_scanner
         )
