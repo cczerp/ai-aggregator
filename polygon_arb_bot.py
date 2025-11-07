@@ -34,7 +34,7 @@ class PolygonArbBot:
     
     def __init__(
         self,
-        min_tvl: float = 10000,
+        min_tvl: float = 3000,
         scan_interval: int = 60,
         cache_duration_hours: int = 6,
         auto_execute: bool = False
@@ -552,7 +552,7 @@ def main():
     
     # Initialize bot
     bot = PolygonArbBot(
-        min_tvl=10000,           # $10k minimum
+        min_tvl=3000,            # $3k minimum
         scan_interval=60,        # 60 seconds
         cache_duration_hours=6,  # 6 hour cache for DEX prices
         auto_execute=False       # Manual mode

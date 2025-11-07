@@ -112,6 +112,22 @@ CURVE_POOL_ABI = [
     }
 ]
 
+# Uniswap V2 Router ABI (for actual quotes)
+UNISWAP_V2_ROUTER_ABI = [
+    {
+        "inputs": [
+            {"name": "amountIn", "type": "uint256"},
+            {"name": "path", "type": "address[]"}
+        ],
+        "name": "getAmountsOut",
+        "outputs": [
+            {"name": "amounts", "type": "uint256[]"}
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    }
+]
+
 # Uniswap V3 Quoter V2 ABI
 QUOTER_V2_ABI = [
     {

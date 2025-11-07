@@ -81,7 +81,7 @@ app.add_middleware(
 # Pydantic models
 class ScanRequest(BaseModel):
     min_profit_usd: Optional[float] = 1.0
-    min_tvl: Optional[float] = 10000.0
+    min_tvl: Optional[float] = 3000.0
     max_opportunities: Optional[int] = 10
 
 class SimulateRequest(BaseModel):
@@ -666,7 +666,7 @@ class ArbiGirl:
         self.price_fetcher = PriceDataFetcher(
             self.rpc_manager,
             self.cache,
-            min_tvl_usd=10000
+            min_tvl_usd=3000
         )
         self.arb_finder = ArbFinder(min_profit_usd=1.0)
 

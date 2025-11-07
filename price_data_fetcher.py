@@ -15,8 +15,8 @@ from colorama import Fore, Style, init
 
 from cache import Cache
 from rpc_mgr import RPCManager
-from registries import TOKENS
-from abis import UNISWAP_V2_PAIR_ABI, UNISWAP_V3_POOL_ABI
+from registries import TOKENS, DEXES
+from abis import UNISWAP_V2_PAIR_ABI, UNISWAP_V3_POOL_ABI, UNISWAP_V2_ROUTER_ABI, QUOTER_V2_ABI
 
 init(autoreset=True)
 
@@ -123,7 +123,7 @@ class PriceDataFetcher:
         rpc_manager: RPCManager,
         cache: Cache,
         pool_registry_path: str = "./pool_registry.json",
-        min_tvl_usd: float = 10000
+        min_tvl_usd: float = 3000
     ):
         self.rpc_manager = rpc_manager
         self.cache = cache
@@ -148,15 +148,15 @@ class PriceDataFetcher:
                 return {**info, "symbol": symbol}
         return None
 
-    def fetch_v2_pool(self, w3: Web3, pool_address: str) -> Optional[Dict]:
-        """Fetch V2 pool data"""
+    def fetch_v2_pool(self, w3: Web3, pool_address: str, dex: str) -> Optional[Dict]:
+        """Fetch V2 pool data using ACTUAL router quotes (not reserves!)"""
         try:
             pool = w3.eth.contract(
                 address=Web3.to_checksum_address(pool_address),
                 abi=UNISWAP_V2_PAIR_ABI
             )
 
-            # Get reserves and tokens
+            # Get reserves and tokens (still needed for TVL)
             reserves = pool.functions.getReserves().call()
             token0_addr = pool.functions.token0().call()
             token1_addr = pool.functions.token1().call()
@@ -170,7 +170,7 @@ class PriceDataFetcher:
             if not token0_info or not token1_info:
                 return None
 
-            # Get USD prices
+            # Get USD prices for TVL calculation
             price0 = self.price_fetcher.get_price(token0_info["symbol"])
             price1 = self.price_fetcher.get_price(token1_info["symbol"])
 
@@ -187,20 +187,49 @@ class PriceDataFetcher:
             if tvl_usd < self.min_tvl_usd:
                 return None
 
+            # Get ACTUAL QUOTED PRICES from router
+            dex_info = DEXES.get(dex, {})
+            router_addr = dex_info.get("router")
+
+            if not router_addr:
+                return None
+
+            router = w3.eth.contract(
+                address=Web3.to_checksum_address(router_addr),
+                abi=UNISWAP_V2_ROUTER_ABI
+            )
+
+            # Quote both directions with 1 token amount
+            test_amount0 = 10 ** decimals0  # 1 token0
+            test_amount1 = 10 ** decimals1  # 1 token1
+
+            # Get quote for token0 -> token1
+            path0to1 = [Web3.to_checksum_address(token0_addr), Web3.to_checksum_address(token1_addr)]
+            amounts_out_0to1 = router.functions.getAmountsOut(test_amount0, path0to1).call()
+            quote_0to1 = amounts_out_0to1[1]  # Output amount
+
+            # Get quote for token1 -> token0
+            path1to0 = [Web3.to_checksum_address(token1_addr), Web3.to_checksum_address(token0_addr)]
+            amounts_out_1to0 = router.functions.getAmountsOut(test_amount1, path1to0).call()
+            quote_1to0 = amounts_out_1to0[1]  # Output amount
+
             return {
                 'pair_prices': {
-                    'reserve0': reserve0,
-                    'reserve1': reserve1,
+                    'quote_0to1': quote_0to1,  # ACTUAL quote: 1 token0 → ? token1
+                    'quote_1to0': quote_1to0,  # ACTUAL quote: 1 token1 → ? token0
                     'token0': token0_info["symbol"],
                     'token1': token1_info["symbol"],
                     'token0_address': token0_addr,
                     'token1_address': token1_addr,
                     'decimals0': decimals0,
                     'decimals1': decimals1,
-                    'type': 'v2'
+                    'type': 'v2',
+                    'dex': dex
                 },
                 'tvl_data': {
                     'tvl_usd': tvl_usd,
+                    'reserve0': reserve0,
+                    'reserve1': reserve1,
                     'token0': token0_info["symbol"],
                     'token1': token1_info["symbol"],
                     'price0_usd': price0,
@@ -211,15 +240,15 @@ class PriceDataFetcher:
         except Exception:
             return None
 
-    def fetch_v3_pool(self, w3: Web3, pool_address: str) -> Optional[Dict]:
-        """Fetch V3 pool data"""
+    def fetch_v3_pool(self, w3: Web3, pool_address: str, dex: str) -> Optional[Dict]:
+        """Fetch V3 pool data using ACTUAL quoter quotes (not sqrt calculations!)"""
         try:
             pool = w3.eth.contract(
                 address=Web3.to_checksum_address(pool_address),
                 abi=UNISWAP_V3_POOL_ABI
             )
 
-            # Get slot0, liquidity, and tokens
+            # Get slot0, liquidity, and tokens (still needed for TVL)
             slot0 = pool.functions.slot0().call()
             liquidity = pool.functions.liquidity().call()
             token0_addr = pool.functions.token0().call()
@@ -235,7 +264,7 @@ class PriceDataFetcher:
             if not token0_info or not token1_info:
                 return None
 
-            # Get USD prices
+            # Get USD prices for TVL calculation
             price0 = self.price_fetcher.get_price(token0_info["symbol"])
             price1 = self.price_fetcher.get_price(token1_info["symbol"])
 
@@ -257,9 +286,57 @@ class PriceDataFetcher:
             if tvl_usd < self.min_tvl_usd:
                 return None
 
+            # Get ACTUAL QUOTED PRICES from quoter
+            dex_info = DEXES.get(dex, {})
+            quoter_addr = dex_info.get("quoter")
+
+            if not quoter_addr:
+                return None
+
+            quoter = w3.eth.contract(
+                address=Web3.to_checksum_address(quoter_addr),
+                abi=QUOTER_V2_ABI
+            )
+
+            # Quote both directions with 1 token amount
+            test_amount0 = 10 ** decimals0  # 1 token0
+            test_amount1 = 10 ** decimals1  # 1 token1
+
+            # Get quote for token0 -> token1
+            try:
+                params0to1 = {
+                    'tokenIn': Web3.to_checksum_address(token0_addr),
+                    'tokenOut': Web3.to_checksum_address(token1_addr),
+                    'amountIn': test_amount0,
+                    'fee': fee,
+                    'sqrtPriceLimitX96': 0
+                }
+                result_0to1 = quoter.functions.quoteExactInputSingle(params0to1).call()
+                quote_0to1 = result_0to1[0]  # amountOut
+            except:
+                quote_0to1 = 0
+
+            # Get quote for token1 -> token0
+            try:
+                params1to0 = {
+                    'tokenIn': Web3.to_checksum_address(token1_addr),
+                    'tokenOut': Web3.to_checksum_address(token0_addr),
+                    'amountIn': test_amount1,
+                    'fee': fee,
+                    'sqrtPriceLimitX96': 0
+                }
+                result_1to0 = quoter.functions.quoteExactInputSingle(params1to0).call()
+                quote_1to0 = result_1to0[0]  # amountOut
+            except:
+                quote_1to0 = 0
+
+            if quote_0to1 == 0 or quote_1to0 == 0:
+                return None
+
             return {
                 'pair_prices': {
-                    'sqrt_price_x96': sqrt_price_x96,
+                    'quote_0to1': quote_0to1,  # ACTUAL quote: 1 token0 → ? token1
+                    'quote_1to0': quote_1to0,  # ACTUAL quote: 1 token1 → ? token0
                     'liquidity': liquidity,
                     'fee': fee,
                     'token0': token0_info["symbol"],
@@ -268,10 +345,13 @@ class PriceDataFetcher:
                     'token1_address': token1_addr,
                     'decimals0': decimals0,
                     'decimals1': decimals1,
-                    'type': 'v3'
+                    'type': 'v3',
+                    'dex': dex
                 },
                 'tvl_data': {
                     'tvl_usd': tvl_usd,
+                    'sqrt_price_x96': sqrt_price_x96,
+                    'liquidity': liquidity,
                     'token0': token0_info["symbol"],
                     'token1': token1_info["symbol"],
                     'price0_usd': price0,
@@ -302,9 +382,9 @@ class PriceDataFetcher:
         # Need to fetch from blockchain
         def fetch_func(w3):
             if pool_type == "v3":
-                return self.fetch_v3_pool(w3, pool_address)
+                return self.fetch_v3_pool(w3, pool_address, dex)
             else:
-                return self.fetch_v2_pool(w3, pool_address)
+                return self.fetch_v2_pool(w3, pool_address, dex)
 
         try:
             data = self.rpc_manager.execute_with_failover(fetch_func)
@@ -396,7 +476,7 @@ if __name__ == "__main__":
     # Test
     rpc_mgr = RPCManager()
     cache = Cache()
-    fetcher = PoolDataFetcher(rpc_mgr, cache, min_tvl_usd=10000)
+    fetcher = PriceDataFetcher(rpc_mgr, cache, min_tvl_usd=3000)
 
     pools = fetcher.fetch_all_pools()
     print(f"\nFetched {sum(len(p) for p in pools.values())} pools")
