@@ -1038,6 +1038,31 @@ class ArbiGirl:
         print(f"  • Time: {fetch_time:.2f}s")
         print(f"  • Cached: Pair prices (1hr), TVL (3hr)")
 
+        # Show what was actually fetched
+        if pool_count > 0:
+            print(f"\n{Fore.CYAN}{'='*80}")
+            print(f"💰 FETCHED PAIR PRICES")
+            print(f"{'='*80}{Style.RESET_ALL}\n")
+
+            for dex, pairs in self.last_pools.items():
+                if pairs:
+                    print(f"{Fore.GREEN}📊 {dex}{Style.RESET_ALL}")
+                    for pair_name, pool_data in pairs.items():
+                        pair_prices = pool_data.get('pair_prices', {})
+                        tvl_data = pool_data.get('tvl_data', {})
+
+                        token0 = pair_prices.get('token0', 'N/A')
+                        token1 = pair_prices.get('token1', 'N/A')
+                        price = pair_prices.get('price', 0)
+                        tvl = tvl_data.get('tvl_usd', 0)
+                        pool_type = pair_prices.get('type', 'v2')
+
+                        print(f"   {pair_name:20} | Price: {price:.8f} | TVL: ${tvl:>12,.2f} | {pool_type.upper()}")
+                    print()
+
+            print(f"{Fore.CYAN}Total pairs fetched: {pool_count} (out of 157 checked){Style.RESET_ALL}")
+            print(f"{Fore.YELLOW}Note: {157 - pool_count} pools filtered out (< $10k TVL){Style.RESET_ALL}\n")
+
     def handle_scan(self):
         """Find arbitrage from cached data"""
         print(f"\n{Fore.CYAN}💰 Scanning for arbitrage (using cache)...{Style.RESET_ALL}")
