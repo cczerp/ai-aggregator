@@ -66,7 +66,7 @@ class PolygonArbBot:
         # Initialize Pool Scanner
         print(f"\n{Fore.YELLOW}🔍 Initializing Pool Scanner...{Style.RESET_ALL}")
         self.pool_scanner = PoolScanner(
-            rpc_manager=self.rpc_manager,
+            rpc_manager=self.RPCManager,
             cache=self.cache,
             min_liquidity_usd=min_tvl
         )
