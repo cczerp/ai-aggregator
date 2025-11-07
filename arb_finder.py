@@ -192,15 +192,22 @@ class ArbFinder:
                     'pool_data': pool_data
                 })
 
-        print(f"Checking {len(pair_pools)} pairs...\n")
+        print(f"Checking {len(pair_pools)} pairs for simple arbitrage (same pair, different DEXes)...\n")
+        print(f"{Fore.CYAN}📊 ROUTE EVALUATION (Simple Arbitrage Only):{Style.RESET_ALL}")
+        print(f"   Strategy: Buy Token0/Token1 on DEX_A → Sell Token0/Token1 on DEX_B")
+        print(f"   Testing {len(self.test_amounts_usd)} trade sizes: ${', $'.join(str(int(amt)) for amt in self.test_amounts_usd)}\n")
 
         # Check each pair with 2+ pools
         checked = 0
+        skipped = 0
         for pair_name, pools_list in pair_pools.items():
             if len(pools_list) < 2:
+                skipped += 1
                 continue
 
             checked += 1
+            dex_names = [p['dex'] for p in pools_list]
+            print(f"  {Fore.YELLOW}Checking {pair_name}{Style.RESET_ALL} across {len(pools_list)} DEXes: {', '.join(dex_names)}")
 
             # Try different trade sizes
             for amount_usd in self.test_amounts_usd:
@@ -208,16 +215,20 @@ class ArbFinder:
 
                 if opp:
                     opportunities.append(opp)
-                    print(f"  {Fore.GREEN}✓ Found: {pair_name} - ${opp['profit_usd']:.2f} profit ({opp['roi_percent']:.2f}%){Style.RESET_ALL}")
+                    print(f"    {Fore.GREEN}✓ PROFIT FOUND @ ${amount_usd:,.0f}: Buy {opp['dex_buy']} → Sell {opp['dex_sell']} = ${opp['profit_usd']:.2f} ({opp['roi_percent']:.2f}% ROI){Style.RESET_ALL}")
 
         # Sort by profit
         opportunities.sort(key=lambda x: x['profit_usd'], reverse=True)
 
         print(f"\n{Fore.CYAN}{'='*80}")
-        print(f"✅ SCAN COMPLETE")
+        print(f"✅ CALCULATION COMPLETE")
         print(f"{'='*80}{Style.RESET_ALL}")
-        print(f"   Pairs checked: {checked}")
+        print(f"   Total pairs: {len(pair_pools)}")
+        print(f"   Pairs checked: {checked} (pairs with 2+ DEXes)")
+        print(f"   Pairs skipped: {skipped} (only 1 DEX available)")
         print(f"   Opportunities found: {len(opportunities)}")
+        print(f"\n{Fore.YELLOW}   Note: Currently only checking simple arbitrage (same pair, different DEXes)")
+        print(f"         Triangular arbitrage (A→B→C→A) not yet implemented{Style.RESET_ALL}")
         print(f"{Fore.CYAN}{'='*80}{Style.RESET_ALL}\n")
 
         return opportunities
