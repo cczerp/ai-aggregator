@@ -1,0 +1,44 @@
+Hard-Coded Rules
+Cache Rules
+
+The pool registry cache (from pool_registry.json) must use a 30 day expiration.
+
+The TVL cache (interpreted as liquidity) expires after 12 hours.
+
+The pair-price cache expires after 3 hours.
+
+The oracle cache expires after 1 hour.
+
+The router-gas cache expires after 12 hours.
+
+The dex-health cache is tied to the pool registry cache, thus also uses a 30 day expiration.
+
+Any file or module that uses one of these cache keys must check the cache first, by timestamp: if the cache entry is still valid (within its expiration), use it; else refresh it and write a new timestamp.
+
+Caches are managed purely by time & state — not by session lifetime. The application must persist and reuse cache entries across restarts if still valid, to avoid unnecessary RPC calls.
+
+Even discovery or scan scripts (or repeated routines) must consult their relevant cache before issuing RPC/network requests.
+
+Scanner / Registry Rules
+
+The scanners must read pool pairs from pool_registry.json as the canonical source of pools to scan.
+
+They must rely on the pool registry cache (30 day expiration) for reuse.
+
+Any logic for detecting new pools or updates must trigger a refresh of registry or appropriate cache entry once expired or flagged.
+
+Bridge & Bot Logic
+
+In ai_bridge.py, you must include logic to launch the API bridge and to start arbigirl (the arbitrage bot module).
+
+Execution logic should tie into the scans, caches, registry, and bridge in the correct order:
+
+Ensure registry cache valid (or refresh).
+
+Load pool pairs.
+
+Use pair-price cache, liquidity (TVL) cache, router-gas cache, dex-health cache as needed.
+
+Start API bridge.
+
+Start arbigirl (bot execution) once data is loaded and cached conditions verified.
