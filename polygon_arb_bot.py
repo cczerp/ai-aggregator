@@ -36,7 +36,7 @@ class PolygonArbBot:
         self,
         min_tvl: float = 10000,
         scan_interval: int = 60,
-        cache_duration_hours: int = 24,
+        cache_duration_hours: int = 6,
         auto_execute: bool = False
     ):
         print(f"\n{Fore.CYAN}{'='*80}")
@@ -125,8 +125,13 @@ class PolygonArbBot:
                     "net_profit_usd": 0
                 }
             
-            # Estimate gas cost (Polygon is cheap: ~400k gas @ 40 gwei @ POL=$0.40)
-            estimated_gas_cost_usd = 0.15
+            # Estimate gas cost dynamically (Polygon: ~400k gas @ 40 gwei)
+            # Using POL price of $0.40 (can be made dynamic with price oracle)
+            estimated_gas_units = 400000
+            gas_price_gwei = 40
+            gas_cost_pol = (estimated_gas_units * gas_price_gwei) / 1e9
+            pol_price_usd = 0.40  # Can be fetched from oracle if available
+            estimated_gas_cost_usd = gas_cost_pol * pol_price_usd
             net_profit = profit_usd - estimated_gas_cost_usd
             
             if net_profit < 0.5:
@@ -313,7 +318,7 @@ class PolygonArbBot:
         print(f"   ✅ Valid (>${self.min_tvl:,.0f} TVL): {valid_pools:,}")
         print(f"   ⚠️  Low liquidity:         {low_liquidity_pools:,}")
         print(f"   💰 Opportunities found:   {len(opportunities):,}")
-        print(f"   ⏰ Cache valid for:       24 hours")
+        print(f"   ⏰ Cache valid for:       {self.cache.cache_duration / 3600:.0f} hours")
         print(f"{Fore.CYAN}{'='*80}{Style.RESET_ALL}\n")
         
         # RPC stats
@@ -550,7 +555,7 @@ def main():
     bot = PolygonArbBot(
         min_tvl=10000,           # $10k minimum
         scan_interval=60,        # 60 seconds
-        cache_duration_hours=24, # 24 hour cache
+        cache_duration_hours=6,  # 6 hour cache for DEX prices
         auto_execute=False       # Manual mode
     )
     

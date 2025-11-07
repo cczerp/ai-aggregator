@@ -31,7 +31,7 @@ class ArbScanner:
     
     def __init__(self, config_path: str = 'config.json'):
         """Initialize scanner with configuration"""
-        self.pool_scanner = PoolScanner(rpc_manager=RPCManager(), cache=Cache(cache_dir="./cache", cache_duration_hours=24))
+        self.pool_scanner = PoolScanner(rpc_manager=RPCManager(), cache=Cache(cache_dir="./cache", cache_duration_hours=6))
         self.pools = self.pool_scanner.scan_all_pools()
         
         # Load configuration

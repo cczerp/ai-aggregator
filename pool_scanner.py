@@ -309,7 +309,7 @@ class PoolScanner:
         print(f"🔍 SCANNING POOLS FOR HIGH LIQUIDITY")
         print(f"{'='*80}{Style.RESET_ALL}\n")
         print(f"   Minimum TVL: ${self.min_liquidity_usd:,}")
-        print(f"   Cache Duration: 24h\n")
+        print(f"   Cache Duration: {self.cache.cache_duration / 3600:.0f}h\n")
         
         filtered_pools = {}
         total_pools = 0
