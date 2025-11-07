@@ -852,7 +852,7 @@ class ArbiGirl:
                 return
 
             print(f"\n{Fore.CYAN}{'='*80}")
-            print(f"💰 ALL PAIR PRICES")
+            print(f"💰 ALL PAIR PRICES (ACTUAL DEX QUOTES)")
             print(f"{'='*80}{Style.RESET_ALL}\n")
 
             total_pairs = 0
@@ -865,10 +865,17 @@ class ArbiGirl:
 
                         token0 = pair_prices.get('token0', 'N/A')
                         token1 = pair_prices.get('token1', 'N/A')
-                        price = pair_prices.get('price', 0)
+                        quote_0to1 = pair_prices.get('quote_0to1', 0)
+                        quote_1to0 = pair_prices.get('quote_1to0', 0)
+                        decimals0 = pair_prices.get('decimals0', 18)
+                        decimals1 = pair_prices.get('decimals1', 18)
                         tvl = tvl_data.get('tvl_usd', 0)
 
-                        print(f"   {pair_name:20} | Price: {price:.8f} | TVL: ${tvl:>12,.2f}")
+                        # Calculate human-readable prices from quotes
+                        price_0to1 = quote_0to1 / (10 ** decimals1) if quote_0to1 > 0 else 0
+                        price_1to0 = quote_1to0 / (10 ** decimals0) if quote_1to0 > 0 else 0
+
+                        print(f"   {pair_name:20} | 1 {token0} = {price_0to1:.6f} {token1} | 1 {token1} = {price_1to0:.6f} {token0} | TVL: ${tvl:>10,.0f}")
                         total_pairs += 1
                     print()
 
@@ -892,17 +899,36 @@ class ArbiGirl:
                         pair_prices = pool_data.get('pair_prices', {})
                         tvl_data = pool_data.get('tvl_data', {})
 
+                        token0 = pair_prices.get('token0', 'N/A')
+                        token1 = pair_prices.get('token1', 'N/A')
+                        quote_0to1 = pair_prices.get('quote_0to1', 0)
+                        quote_1to0 = pair_prices.get('quote_1to0', 0)
+                        decimals0 = pair_prices.get('decimals0', 18)
+                        decimals1 = pair_prices.get('decimals1', 18)
+
+                        price_0to1 = quote_0to1 / (10 ** decimals1) if quote_0to1 > 0 else 0
+                        price_1to0 = quote_1to0 / (10 ** decimals0) if quote_1to0 > 0 else 0
+
                         print(f"\n   {Fore.YELLOW}{pair_name}{Style.RESET_ALL}")
-                        print(f"   Pool: {pair_prices.get('pool_address', 'N/A')}")
-                        print(f"   Type: {pair_prices.get('type', 'N/A')}")
-                        print(f"   Token0: {pair_prices.get('token0', 'N/A')}")
-                        print(f"   Token1: {pair_prices.get('token1', 'N/A')}")
-                        print(f"   Price: {pair_prices.get('price', 0):.8f}")
+                        print(f"   DEX: {pair_prices.get('dex', 'N/A')}")
+                        print(f"   Type: {pair_prices.get('type', 'N/A').upper()}")
+                        print(f"   Token0: {token0} ({pair_prices.get('token0_address', 'N/A')[:10]}...)")
+                        print(f"   Token1: {token1} ({pair_prices.get('token1_address', 'N/A')[:10]}...)")
+                        print(f"   Quote: 1 {token0} = {price_0to1:.6f} {token1}")
+                        print(f"   Quote: 1 {token1} = {price_1to0:.6f} {token0}")
                         print(f"   TVL: ${tvl_data.get('tvl_usd', 0):,.2f}")
 
                         if pair_prices.get('type') == 'v2':
-                            print(f"   Reserve0: {pair_prices.get('reserve0', 0):,}")
-                            print(f"   Reserve1: {pair_prices.get('reserve1', 0):,}")
+                            reserve0 = tvl_data.get('reserve0', 0)
+                            reserve1 = tvl_data.get('reserve1', 0)
+                            if reserve0 > 0:
+                                print(f"   Reserve0: {reserve0:,}")
+                                print(f"   Reserve1: {reserve1:,}")
+                        elif pair_prices.get('type') == 'v3':
+                            liquidity = pair_prices.get('liquidity', 0)
+                            fee = pair_prices.get('fee', 0)
+                            print(f"   Liquidity: {liquidity:,}")
+                            print(f"   Fee: {fee / 10000:.2f}%")
 
                         total_pools += 1
                     print()
@@ -937,9 +963,14 @@ class ArbiGirl:
 
             for i, pool in enumerate(all_pools, 1):
                 pair_prices = pool['data'].get('pair_prices', {})
-                price = pair_prices.get('price', 0)
+                token0 = pair_prices.get('token0', 'N/A')
+                token1 = pair_prices.get('token1', 'N/A')
+                quote_0to1 = pair_prices.get('quote_0to1', 0)
+                decimals1 = pair_prices.get('decimals1', 18)
+                price_0to1 = quote_0to1 / (10 ** decimals1) if quote_0to1 > 0 else 0
+
                 print(f"{i:3}. {pool['dex']:20} | {pool['pair']:20} | "
-                      f"TVL: ${pool['tvl']:>12,.2f} | Price: {price:.8f}")
+                      f"TVL: ${pool['tvl']:>12,.2f} | 1 {token0} = {price_0to1:.6f} {token1}")
 
             total_tvl = sum(p['tvl'] for p in all_pools)
             print(f"\n{Fore.CYAN}Total TVL: ${total_tvl:,.2f}{Style.RESET_ALL}\n")
@@ -1041,7 +1072,7 @@ class ArbiGirl:
         # Show what was actually fetched
         if pool_count > 0:
             print(f"\n{Fore.CYAN}{'='*80}")
-            print(f"💰 FETCHED PAIR PRICES")
+            print(f"💰 FETCHED PAIR PRICES (ACTUAL DEX QUOTES)")
             print(f"{'='*80}{Style.RESET_ALL}\n")
 
             for dex, pairs in self.last_pools.items():
@@ -1053,15 +1084,22 @@ class ArbiGirl:
 
                         token0 = pair_prices.get('token0', 'N/A')
                         token1 = pair_prices.get('token1', 'N/A')
-                        price = pair_prices.get('price', 0)
+                        quote_0to1 = pair_prices.get('quote_0to1', 0)
+                        quote_1to0 = pair_prices.get('quote_1to0', 0)
+                        decimals0 = pair_prices.get('decimals0', 18)
+                        decimals1 = pair_prices.get('decimals1', 18)
                         tvl = tvl_data.get('tvl_usd', 0)
                         pool_type = pair_prices.get('type', 'v2')
 
-                        print(f"   {pair_name:20} | Price: {price:.8f} | TVL: ${tvl:>12,.2f} | {pool_type.upper()}")
+                        # Calculate human-readable prices from quotes
+                        price_0to1 = quote_0to1 / (10 ** decimals1) if quote_0to1 > 0 else 0
+                        price_1to0 = quote_1to0 / (10 ** decimals0) if quote_1to0 > 0 else 0
+
+                        print(f"   {pair_name:20} | 1 {token0} = {price_0to1:.6f} {token1} | 1 {token1} = {price_1to0:.6f} {token0} | TVL: ${tvl:>10,.0f} | {pool_type.upper()}")
                     print()
 
-            print(f"{Fore.CYAN}Total pairs fetched: {pool_count} (out of 157 checked){Style.RESET_ALL}")
-            print(f"{Fore.YELLOW}Note: {157 - pool_count} pools filtered out (< $10k TVL){Style.RESET_ALL}\n")
+            print(f"{Fore.CYAN}Total pairs fetched: {pool_count} (out of 157+ checked){Style.RESET_ALL}")
+            print(f"{Fore.YELLOW}Note: {157 - pool_count if pool_count < 157 else 0}+ pools filtered out (< $3k TVL){Style.RESET_ALL}\n")
 
     def handle_scan(self):
         """Find arbitrage from cached data"""
