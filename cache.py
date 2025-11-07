@@ -20,9 +20,11 @@ class Cache:
     
     # Cache durations (in seconds)
     DURATIONS = {
-        'pool_registry': 30 * 24 * 3600,    # 30 days - TVL/liquidity data
-        'dex_health': 30 * 24 * 3600,        # 30 days - same as pool registry
-        'oracle': 1 * 3600,                   # 1 hour - price feeds
+        'pair_prices': 1 * 3600,              # 1 hour - pair price data
+        'tvl_data': 3 * 3600,                 # 3 hours - TVL/liquidity data
+        'pool_registry': 3 * 3600,            # 3 hours - pool registry (TVL)
+        'dex_health': 30 * 24 * 3600,         # 30 days - DEX health status
+        'oracle': 1 * 3600,                   # 1 hour - oracle price feeds
         'router_gas': 12 * 3600,              # 12 hours - gas estimates
         'arb_opportunity': 5 * 60,            # 5 minutes - opportunities
         'default': 24 * 3600                  # 24 hours - fallback
@@ -35,6 +37,8 @@ class Cache:
         
         # Separate files for different cache types
         self.cache_files = {
+            'pair_prices': self.cache_dir / "pair_prices_cache.json",
+            'tvl_data': self.cache_dir / "tvl_data_cache.json",
             'pool_registry': self.cache_dir / "pool_registry_cache.json",
             'dex_health': self.cache_dir / "dex_health_cache.json",
             'oracle': self.cache_dir / "oracle_cache.json",
@@ -148,13 +152,29 @@ class Cache:
         """Check if data is cached and valid"""
         return self.get(cache_type, *key_parts) is not None
     
+    def get_pair_prices(self, dex: str, pool: str) -> Optional[Dict]:
+        """Get pair price data (1-hour cache)"""
+        return self.get('pair_prices', dex, pool)
+
+    def set_pair_prices(self, dex: str, pool: str, data: Dict):
+        """Cache pair price data"""
+        self.set('pair_prices', data, dex, pool)
+
+    def get_tvl_data(self, dex: str, pool: str) -> Optional[Dict]:
+        """Get pool TVL data (3-hour cache)"""
+        return self.get('tvl_data', dex, pool)
+
+    def set_tvl_data(self, dex: str, pool: str, data: Dict):
+        """Cache pool TVL data"""
+        self.set('tvl_data', data, dex, pool)
+
     def get_pool_liquidity(self, dex: str, pool: str) -> Optional[Dict]:
-        """Get pool liquidity/TVL (30-day cache)"""
-        return self.get('pool_registry', dex, pool)
-    
+        """Get pool liquidity/TVL (3-hour cache) - legacy alias"""
+        return self.get('tvl_data', dex, pool)
+
     def set_pool_liquidity(self, dex: str, pool: str, data: Dict):
-        """Cache pool liquidity/TVL"""
-        self.set('pool_registry', data, dex, pool)
+        """Cache pool liquidity/TVL - legacy alias"""
+        self.set('tvl_data', data, dex, pool)
     
     def get_oracle_price(self, token: str) -> Optional[float]:
         """Get token price (1-hour cache)"""
@@ -249,6 +269,75 @@ class Cache:
         
         print(f"{Fore.CYAN}{'='*80}{Style.RESET_ALL}\n")
     
+    def check_expiration_status(self) -> Dict[str, Dict]:
+        """
+        Check expiration status of all cache types
+        Returns dict with cache_type -> {expired: bool, time_remaining: seconds, percentage_fresh: float}
+        """
+        status = {}
+        now = time.time()
+
+        for cache_type, cache_data in self.caches.items():
+            if not cache_data:
+                status[cache_type] = {
+                    'expired': True,
+                    'time_remaining': 0,
+                    'percentage_fresh': 0,
+                    'entry_count': 0
+                }
+                continue
+
+            duration = self.DURATIONS.get(cache_type, self.DURATIONS['default'])
+
+            # Check freshest entry
+            freshest_time = max(
+                (entry.get('timestamp', 0) for entry in cache_data.values()),
+                default=0
+            )
+
+            time_since_freshest = now - freshest_time
+            time_remaining = max(0, duration - time_since_freshest)
+            expired = time_remaining == 0
+            percentage_fresh = max(0, (1 - time_since_freshest / duration) * 100) if duration > 0 else 0
+
+            status[cache_type] = {
+                'expired': expired,
+                'time_remaining': time_remaining,
+                'percentage_fresh': percentage_fresh,
+                'entry_count': len(cache_data),
+                'duration': duration
+            }
+
+        return status
+
+    def get_expiration_warning(self) -> Optional[str]:
+        """
+        Get warning message if any critical caches are expiring soon or expired
+        Returns None if all caches are healthy
+        """
+        status = self.check_expiration_status()
+        warnings = []
+
+        critical_caches = ['pair_prices', 'tvl_data', 'pool_registry']
+
+        for cache_type in critical_caches:
+            cache_status = status.get(cache_type, {})
+
+            if cache_status.get('expired'):
+                duration_str = f"{cache_status.get('duration', 0) / 3600:.0f}h"
+                warnings.append(
+                    f"❌ {cache_type.upper()}: EXPIRED (duration: {duration_str})"
+                )
+            elif cache_status.get('time_remaining', 0) < 300:  # < 5 minutes
+                time_left = cache_status.get('time_remaining', 0)
+                warnings.append(
+                    f"⚠️  {cache_type.upper()}: Expiring in {time_left/60:.1f} minutes"
+                )
+
+        if warnings:
+            return "\n".join(warnings)
+        return None
+
     def __del__(self):
         """Save all caches on exit"""
         self.flush_all()

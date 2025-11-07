@@ -15,16 +15,16 @@ from colorama import Fore, Style, init
 # Import all managers
 from rpc_mgr import RPCManager
 from cache import Cache
-from pool_scanner import PoolScanner
+from price_data_fetcher import PriceDataFetcher
+from arb_finder import ArbFinder
 
 # Import existing modules (you already have these)
 try:
-    from arb_scanner import ArbScanner
     from tx_builder import FlashbotsTxBuilder
     from gas_optimization_manager import GasOptimizationManager
 except ImportError as e:
     print(f"{Fore.RED}❌ Missing module: {e}{Style.RESET_ALL}")
-    print("Please ensure arb_scanner.py, tx_builder.py, and gas_optimization_manager.py are in the same directory")
+    print("Please ensure tx_builder.py and gas_optimization_manager.py are in the same directory")
     sys.exit(1)
 
 init(autoreset=True)
@@ -63,19 +63,18 @@ class PolygonArbBot:
             cache_duration_hours=cache_duration_hours
         )
         
-        # Initialize Pool Scanner
-        print(f"\n{Fore.YELLOW}🔍 Initializing Pool Scanner...{Style.RESET_ALL}")
-        self.pool_scanner = PoolScanner(
-            rpc_manager=self.RPCManager,
-            cache=self.cache,
-            min_liquidity_usd=min_tvl
-        )
-        
-        # Initialize Arbitrage Scanner (your existing one)
-        print(f"\n{Fore.YELLOW}🎯 Initializing Arbitrage Scanner...{Style.RESET_ALL}")
-        self.arb_scanner = ArbScanner(
+        # Initialize Price Data Fetcher
+        print(f"\n{Fore.YELLOW}🔍 Initializing Price Data Fetcher...{Style.RESET_ALL}")
+        self.price_fetcher = PriceDataFetcher(
             rpc_manager=self.rpc_manager,
-            pool_scanner=self.pool_scanner
+            cache=self.cache,
+            min_tvl_usd=min_tvl
+        )
+
+        # Initialize Arbitrage Finder
+        print(f"\n{Fore.YELLOW}🎯 Initializing Arbitrage Finder...{Style.RESET_ALL}")
+        self.arb_finder = ArbFinder(
+            min_profit_usd=1.0
         )
         
         # Statistics
@@ -89,12 +88,12 @@ class PolygonArbBot:
         print(f"{'='*80}{Style.RESET_ALL}\n")
     
     def scan_pools(self) -> dict:
-        """Scan all pools for liquidity"""
-        return self.pool_scanner.scan_all_pools()
-    
-    def find_arbitrage(self, filtered_pools: dict) -> list:
+        """Fetch all pool data"""
+        return self.price_fetcher.fetch_all_pools()
+
+    def find_arbitrage(self, pools: dict) -> list:
         """Find arbitrage opportunities"""
-        return self.arb_scanner.find_arbitrage(filtered_pools)
+        return self.arb_finder.find_opportunities(pools)
     
     
     def simulate_strategy(self, strategy: dict) -> dict:
