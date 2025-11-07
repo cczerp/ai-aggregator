@@ -74,7 +74,7 @@ class PolygonArbBot:
         # Initialize Arbitrage Scanner (your existing one)
         print(f"\n{Fore.YELLOW}🎯 Initializing Arbitrage Scanner...{Style.RESET_ALL}")
         self.arb_scanner = ArbScanner(
-            rpc_manager=self.RPCManager,
+            rpc_manager=self.rpc_manager,
             pool_scanner=self.pool_scanner
         )
         
