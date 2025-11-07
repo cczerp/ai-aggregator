@@ -7,6 +7,12 @@ INSTANT - no blockchain calls, pure math.
 
 from typing import Dict, List, Optional
 from colorama import Fore, Style, init
+from price_math import (
+    calculate_v2_output_amount,
+    calculate_v3_output_amount,
+    get_price_from_v2_reserves,
+    get_price_from_v3_sqrt_price
+)
 
 init(autoreset=True)
 
@@ -34,79 +40,7 @@ class ArbFinder:
 
         print(f"{Fore.GREEN}✅ Arb Finder initialized (min profit: ${min_profit_usd}){Style.RESET_ALL}")
 
-    def calculate_v2_output(
-        self,
-        amount_in: int,
-        reserve_in: int,
-        reserve_out: int,
-        fee_bps: int = 30
-    ) -> int:
-        """
-        Calculate V2 output using constant product formula: x * y = k
-
-        Args:
-            amount_in: Input amount
-            reserve_in: Input token reserve
-            reserve_out: Output token reserve
-            fee_bps: Fee in basis points (30 = 0.3%)
-
-        Returns:
-            Output amount
-        """
-        if amount_in == 0 or reserve_in == 0 or reserve_out == 0:
-            return 0
-
-        # Apply fee
-        amount_in_with_fee = amount_in * (10000 - fee_bps)
-
-        # Constant product formula
-        numerator = amount_in_with_fee * reserve_out
-        denominator = (reserve_in * 10000) + amount_in_with_fee
-
-        if denominator == 0:
-            return 0
-
-        return numerator // denominator
-
-    def calculate_v3_output(
-        self,
-        amount_in: int,
-        sqrt_price_x96: int,
-        liquidity: int,
-        fee_bps: int,
-        token_in_is_token0: bool
-    ) -> int:
-        """
-        Calculate V3 output (simplified)
-
-        Args:
-            amount_in: Input amount
-            sqrt_price_x96: Current sqrt price
-            liquidity: Pool liquidity
-            fee_bps: Fee in basis points
-            token_in_is_token0: True if swapping token0 for token1
-
-        Returns:
-            Output amount (approximate)
-        """
-        if amount_in == 0 or liquidity == 0:
-            return 0
-
-        # Apply fee
-        amount_in_with_fee = amount_in * (10000 - fee_bps) // 10000
-
-        # Simplified calculation (actual V3 math is more complex)
-        # This is a rough approximation
-        price = (sqrt_price_x96 / (2 ** 96)) ** 2
-
-        if token_in_is_token0:
-            # Swapping token0 -> token1
-            amount_out = int(amount_in_with_fee * price)
-        else:
-            # Swapping token1 -> token0
-            amount_out = int(amount_in_with_fee / price) if price > 0 else 0
-
-        return amount_out
+    # Math functions now imported from price_math.py
 
     def get_pool_price(self, pool_data: Dict) -> Optional[float]:
         """
@@ -122,28 +56,19 @@ class ArbFinder:
         if pool_type == 'v2':
             reserve0 = pair_prices.get('reserve0', 0)
             reserve1 = pair_prices.get('reserve1', 0)
+            decimals0 = pair_prices.get('decimals0', 18)
+            decimals1 = pair_prices.get('decimals1', 18)
 
-            if reserve0 == 0 or reserve1 == 0:
-                return None
-
-            # Price: token1 per token0
-            return reserve1 / reserve0
+            # Use price_math function
+            return get_price_from_v2_reserves(reserve0, reserve1, decimals0, decimals1)
 
         elif pool_type == 'v3':
             sqrt_price_x96 = pair_prices.get('sqrt_price_x96', 0)
-
-            if sqrt_price_x96 == 0:
-                return None
-
-            # Decode price
-            price = (sqrt_price_x96 / (2 ** 96)) ** 2
-
-            # Adjust for decimals
             decimals0 = pair_prices.get('decimals0', 18)
             decimals1 = pair_prices.get('decimals1', 18)
-            price_adjusted = price * (10 ** decimals0) / (10 ** decimals1)
 
-            return price_adjusted
+            # Use price_math function
+            return get_price_from_v3_sqrt_price(sqrt_price_x96, decimals0, decimals1)
 
         return None
 

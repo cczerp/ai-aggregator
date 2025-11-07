@@ -42,6 +42,7 @@ from pool_data_fetcher import PoolDataFetcher
 from arb_finder import ArbFinder
 from rpc_mgr import RPCManager
 from cache import Cache
+from ai_monitor import AIMonitor
 
 init(autoreset=True)
 load_dotenv()
@@ -662,12 +663,14 @@ class ArbiGirl:
         # Initialize components
         self.rpc_manager = RPCManager()
         self.cache = Cache()
+        self.ai_monitor = AIMonitor()
         self.pool_fetcher = PoolDataFetcher(
             self.rpc_manager,
             self.cache,
+            self.ai_monitor,
             min_tvl_usd=10000
         )
-        self.arb_finder = ArbFinder(min_profit_usd=1.0)
+        self.arb_finder = ArbFinder(self.ai_monitor, min_profit_usd=1.0)
 
         # State
         self.auto_scan = False
@@ -689,6 +692,7 @@ class ArbiGirl:
         print(f"  {Fore.YELLOW}auto{Style.RESET_ALL}       - Start/stop automatic scanning")
         print(f"  {Fore.YELLOW}cache{Style.RESET_ALL}      - Check cache status")
         print(f"  {Fore.YELLOW}status{Style.RESET_ALL}     - Show current status")
+        print(f"  {Fore.YELLOW}ask <question>{Style.RESET_ALL} - Ask AI about operations")
         print(f"  {Fore.YELLOW}clear{Style.RESET_ALL}      - Clear the screen")
         print(f"  {Fore.YELLOW}help{Style.RESET_ALL}       - Show this help")
         print(f"  {Fore.YELLOW}exit{Style.RESET_ALL}       - Exit ArbiGirl")
@@ -702,6 +706,9 @@ class ArbiGirl:
         fetch_time = time.time() - start_time
 
         pool_count = sum(len(pairs) for pairs in self.last_pools.values())
+
+        # Update AI monitor with pool data
+        self.ai_monitor.update_pools(self.last_pools)
 
         print(f"\n{Fore.GREEN}✅ Fetch complete!{Style.RESET_ALL}")
         print(f"  • Pools fetched: {pool_count}")
@@ -734,6 +741,9 @@ class ArbiGirl:
 
         self.last_opportunities = opportunities
 
+        # Update AI monitor with opportunities
+        self.ai_monitor.update_opportunities(opportunities)
+
         if opportunities:
             self.arb_finder.display_opportunities(opportunities, limit=5)
         else:
@@ -753,6 +763,9 @@ class ArbiGirl:
         # Step 2: Find arbitrage
         opportunities = self.arb_finder.find_opportunities(self.last_pools)
         self.last_opportunities = opportunities
+
+        # Update AI monitor with opportunities
+        self.ai_monitor.update_opportunities(opportunities)
 
         full_time = time.time() - start_time
 
@@ -885,7 +898,23 @@ class ArbiGirl:
         print(f"         🤖 ArbiGirl MEV Bot v5.0")
         print(f"{'='*60}{Style.RESET_ALL}\n")
         self._show_help()
-    
+
+    def handle_ask(self, question: str):
+        """Ask AI monitor about operations"""
+        if not question:
+            print(f"{Fore.YELLOW}Usage: ask <question>{Style.RESET_ALL}")
+            print(f"\nExamples:")
+            print(f"  • ask what coins have been scanned?")
+            print(f"  • ask what dexes have you checked?")
+            print(f"  • ask show me the stats")
+            print(f"  • ask how many opportunities found?")
+            print(f"  • ask what calculations have been done?")
+            return
+
+        print(f"\n{Fore.CYAN}🤖 AI Monitor:{Style.RESET_ALL}")
+        answer = self.ai_monitor.query(question)
+        print(f"{answer}\n")
+
     def run(self):
         say(f"{Fore.GREEN}Ready! Type commands or ask naturally.{Style.RESET_ALL}\n")
 
@@ -919,6 +948,11 @@ class ArbiGirl:
                     self.handle_clear()
                 elif command == 'help':
                     self._show_help()
+                elif command.startswith('ask '):
+                    question = user_input[4:].strip()
+                    self.handle_ask(question)
+                elif command == 'ask':
+                    self.handle_ask('')
                 else:
                     print(f"{Fore.YELLOW}Unknown command. Type 'help'{Style.RESET_ALL}")
 
