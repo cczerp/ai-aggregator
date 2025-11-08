@@ -120,6 +120,37 @@ ALGEBRA_POOL_ABI = [
     }
 ]
 
+# Multicall3 ABI (for batching RPC calls)
+# Deployed at: 0xcA11bde05977b3631167028862bE2a173976CA11 (all chains)
+MULTICALL3_ABI = [
+    {
+        "inputs": [
+            {
+                "components": [
+                    {"name": "target", "type": "address"},
+                    {"name": "allowFailure", "type": "bool"},
+                    {"name": "callData", "type": "bytes"}
+                ],
+                "name": "calls",
+                "type": "tuple[]"
+            }
+        ],
+        "name": "aggregate3",
+        "outputs": [
+            {
+                "components": [
+                    {"name": "success", "type": "bool"},
+                    {"name": "returnData", "type": "bytes"}
+                ],
+                "name": "returnData",
+                "type": "tuple[]"
+            }
+        ],
+        "stateMutability": "payable",
+        "type": "function"
+    }
+]
+
 # Curve Pool ABI (simplified)
 CURVE_POOL_ABI = [
     {

@@ -829,11 +829,11 @@ class ArbiGirl:
         print(f"  {Fore.YELLOW}exit{Style.RESET_ALL}       - Exit ArbiGirl")
     
     def handle_fetch(self):
-        """Fetch pool data"""
+        """Fetch pool data (uses batched Multicall3 for speed)"""
         print(f"\n{Fore.CYAN}📡 Fetching pool data...{Style.RESET_ALL}")
 
         start_time = time.time()
-        self.last_pools = self.price_fetcher.fetch_all_pools()
+        self.last_pools = self.price_fetcher.fetch_all_pools_batched()
         fetch_time = time.time() - start_time
 
         pool_count = sum(len(pairs) for pairs in self.last_pools.values())

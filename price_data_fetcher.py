@@ -16,9 +16,12 @@ from colorama import Fore, Style, init
 from cache import Cache
 from rpc_mgr import RPCManager
 from registries import TOKENS
-from abis import UNISWAP_V2_PAIR_ABI, UNISWAP_V3_POOL_ABI, ALGEBRA_POOL_ABI
+from abis import UNISWAP_V2_PAIR_ABI, UNISWAP_V3_POOL_ABI, ALGEBRA_POOL_ABI, MULTICALL3_ABI
 
 init(autoreset=True)
+
+# Multicall3 address (same on all chains)
+MULTICALL3_ADDRESS = "0xcA11bde05977b3631167028862bE2a173976CA11"
 
 
 class CoinGeckoPriceFetcher:
@@ -357,6 +360,121 @@ class PriceDataFetcher:
         except Exception:
             return None
 
+    def batch_fetch_pools(self, w3: Web3, pool_requests: list) -> Dict[str, Optional[Dict]]:
+        """
+        Batch fetch multiple pools using Multicall3
+
+        Args:
+            w3: Web3 instance
+            pool_requests: List of (dex, pool_address, pool_type, pair_name) tuples
+
+        Returns:
+            Dict mapping pool_address -> pool_data
+        """
+        if not pool_requests:
+            return {}
+
+        # Initialize multicall contract
+        multicall = w3.eth.contract(
+            address=Web3.to_checksum_address(MULTICALL3_ADDRESS),
+            abi=MULTICALL3_ABI
+        )
+
+        # Build calls for each pool
+        calls = []
+        call_map = []  # Track which calls belong to which pool
+
+        for dex, pool_addr, pool_type, pair_name in pool_requests:
+            pool_addr_checksum = Web3.to_checksum_address(pool_addr)
+
+            if pool_type == "v2":
+                # V2: getReserves()
+                pool_contract = w3.eth.contract(address=pool_addr_checksum, abi=UNISWAP_V2_PAIR_ABI)
+                calls.append((pool_addr_checksum, True, pool_contract.encode_abi('getReserves', [])))
+                call_map.append((dex, pool_addr, pool_type, pair_name, 'getReserves'))
+
+            elif pool_type == "v3":
+                # V3: slot0() and liquidity()
+                pool_contract = w3.eth.contract(address=pool_addr_checksum, abi=UNISWAP_V3_POOL_ABI)
+                calls.append((pool_addr_checksum, True, pool_contract.encode_abi('slot0', [])))
+                call_map.append((dex, pool_addr, pool_type, pair_name, 'slot0'))
+                calls.append((pool_addr_checksum, True, pool_contract.encode_abi('liquidity', [])))
+                call_map.append((dex, pool_addr, pool_type, pair_name, 'liquidity'))
+                calls.append((pool_addr_checksum, True, pool_contract.encode_abi('fee', [])))
+                call_map.append((dex, pool_addr, pool_type, pair_name, 'fee'))
+
+            elif pool_type == "v3_algebra":
+                # Algebra: globalState() and liquidity()
+                pool_contract = w3.eth.contract(address=pool_addr_checksum, abi=ALGEBRA_POOL_ABI)
+                calls.append((pool_addr_checksum, True, pool_contract.encode_abi('globalState', [])))
+                call_map.append((dex, pool_addr, pool_type, pair_name, 'globalState'))
+                calls.append((pool_addr_checksum, True, pool_contract.encode_abi('liquidity', [])))
+                call_map.append((dex, pool_addr, pool_type, pair_name, 'liquidity'))
+
+        # Execute multicall in batches of 100
+        batch_size = 100
+        all_results = []
+
+        for i in range(0, len(calls), batch_size):
+            batch_calls = calls[i:i+batch_size]
+            try:
+                results = multicall.functions.aggregate3(batch_calls).call()
+                all_results.extend(results)
+            except Exception as e:
+                print(f"{Fore.RED}Multicall batch failed: {e}{Style.RESET_ALL}")
+                # Return empty for this batch
+                all_results.extend([(False, b'')] * len(batch_calls))
+
+        # Decode results and group by pool
+        pool_data_map = {}
+        result_idx = 0
+
+        for dex, pool_addr, pool_type, pair_name, call_type in call_map:
+            success, return_data = all_results[result_idx]
+            result_idx += 1
+
+            if not success:
+                continue
+
+            # Initialize pool data if not exists
+            if pool_addr not in pool_data_map:
+                pool_data_map[pool_addr] = {
+                    'dex': dex,
+                    'type': pool_type,
+                    'pair_name': pair_name,
+                    'pool_address': pool_addr
+                }
+
+            # Decode based on call type
+            try:
+                if call_type == 'getReserves':
+                    decoded = w3.codec.decode(['uint112', 'uint112', 'uint32'], return_data)
+                    pool_data_map[pool_addr]['reserve0'] = decoded[0]
+                    pool_data_map[pool_addr]['reserve1'] = decoded[1]
+
+                elif call_type == 'slot0':
+                    decoded = w3.codec.decode(['uint160', 'int24', 'uint16', 'uint16', 'uint16', 'uint8', 'bool'], return_data)
+                    pool_data_map[pool_addr]['sqrt_price_x96'] = decoded[0]
+
+                elif call_type == 'liquidity':
+                    decoded = w3.codec.decode(['uint128'], return_data)
+                    pool_data_map[pool_addr]['liquidity'] = decoded[0]
+
+                elif call_type == 'fee':
+                    decoded = w3.codec.decode(['uint24'], return_data)
+                    pool_data_map[pool_addr]['fee'] = decoded[0]
+
+                elif call_type == 'globalState':
+                    decoded = w3.codec.decode(['uint160', 'int24', 'uint16', 'uint16', 'uint8', 'uint8', 'bool'], return_data)
+                    pool_data_map[pool_addr]['sqrt_price_x96'] = decoded[0]
+                    pool_data_map[pool_addr]['fee'] = decoded[2]
+
+            except Exception as e:
+                if self.rpc_manager.rpc_manager if hasattr(self, 'rpc_manager') else None:
+                    pass  # Silent decode error
+
+        return pool_data_map
+
     def fetch_pool(self, dex: str, pool_address: str, pool_type: str = "v2") -> Optional[Dict]:
         """
         Fetch pool data and cache with different durations
@@ -402,13 +520,284 @@ class PriceDataFetcher:
         except Exception:
             return None
 
-    def fetch_all_pools(self) -> Dict[str, Dict]:
+    def fetch_all_pools_batched(self) -> Dict[str, Dict]:
         """
-        Fetch all pools from registry
+        Fetch all pools from registry using Multicall3 batching
         Uses cache when available (1hr for pair prices, 3hr for TVL)
+        **Much faster than sequential fetching!**
         """
         print(f"\n{Fore.CYAN}{'='*80}")
-        print(f"🔍 FETCHING POOL DATA")
+        print(f"🔍 FETCHING POOL DATA (BATCHED)")
+        print(f"{'='*80}{Style.RESET_ALL}\n")
+
+        # Check cache status
+        warning = self.cache.get_expiration_warning()
+        if warning:
+            print(f"{Fore.YELLOW}{warning}{Style.RESET_ALL}\n")
+
+        pools = {}
+        total_checked = 0
+        valid_pools = 0
+        cached_count = 0
+
+        # Collect all pools that need fetching (not in cache)
+        pools_to_fetch = []
+
+        for dex_name, pairs in self.registry.items():
+            for pair_name, pool_data in pairs.items():
+                if "pool" in pool_data:
+                    total_checked += 1
+                    pool_addr = pool_data["pool"]
+                    pool_type = pool_data.get("type", "v2")
+
+                    # Check cache first
+                    cached_pair_prices = self.cache.get_pair_prices(dex_name, pool_addr)
+                    cached_tvl_data = self.cache.get_tvl_data(dex_name, pool_addr)
+
+                    if cached_pair_prices and cached_tvl_data:
+                        # Use cached data
+                        if dex_name not in pools:
+                            pools[dex_name] = {}
+
+                        pools[dex_name][pair_name] = {
+                            **pool_data,
+                            'pair_prices': cached_pair_prices,
+                            'tvl_data': cached_tvl_data
+                        }
+                        valid_pools += 1
+                        cached_count += 1
+                    else:
+                        # Need to fetch from blockchain
+                        pools_to_fetch.append((dex_name, pool_addr, pool_type, pair_name, pool_data))
+
+        # Batch fetch all pools that need fetching
+        if pools_to_fetch:
+            print(f"{Fore.YELLOW}⚡ Batch fetching {len(pools_to_fetch)} pools...{Style.RESET_ALL}")
+
+            # Prepare requests for batch fetching
+            batch_requests = [(dex, addr, ptype, pname) for dex, addr, ptype, pname, _ in pools_to_fetch]
+
+            # Execute batch fetch
+            def batch_fetch_func(w3):
+                return self.batch_fetch_pools(w3, batch_requests)
+
+            try:
+                batch_results = self.rpc_manager.execute_with_failover(batch_fetch_func)
+
+                # Process batch results
+                for dex_name, pool_addr, pool_type, pair_name, pool_data in pools_to_fetch:
+                    if pool_addr in batch_results:
+                        raw_data = batch_results[pool_addr]
+
+                        # Convert to full pool data format
+                        full_data = self._process_batch_result(raw_data, pool_data)
+
+                        if full_data:
+                            if dex_name not in pools:
+                                pools[dex_name] = {}
+
+                            pools[dex_name][pair_name] = {
+                                **pool_data,
+                                'pair_prices': full_data['pair_prices'],
+                                'tvl_data': full_data['tvl_data']
+                            }
+                            valid_pools += 1
+
+                            # Cache the results
+                            self.cache.set_pair_prices(dex_name, pool_addr, full_data['pair_prices'])
+                            self.cache.set_tvl_data(dex_name, pool_addr, full_data['tvl_data'])
+
+            except Exception as e:
+                print(f"{Fore.RED}❌ Batch fetch failed: {e}{Style.RESET_ALL}")
+                # Fallback to sequential fetching for failed pools
+                print(f"{Fore.YELLOW}⚠️  Falling back to sequential fetching...{Style.RESET_ALL}")
+                return self.fetch_all_pools()  # Use non-batched version as fallback
+
+        # Print summary
+        for dex_name in pools:
+            print(f"{Fore.BLUE}📊 {dex_name}: {len(pools[dex_name])} pools{Style.RESET_ALL}")
+
+        print(f"\n{Fore.CYAN}{'='*80}")
+        print(f"📊 FETCH SUMMARY")
+        print(f"{'='*80}{Style.RESET_ALL}")
+        print(f"   Total checked: {total_checked:,}")
+        print(f"   Valid pools: {valid_pools:,}")
+        print(f"   From cache: {cached_count:,} 💾")
+        print(f"   From blockchain (batched): {valid_pools - cached_count:,} ⚡")
+        print(f"{Fore.CYAN}{'='*80}{Style.RESET_ALL}\n")
+
+        # Save cache
+        self.cache.flush_all()
+
+        return pools
+
+    def _process_batch_result(self, raw_data: Dict, pool_data: Dict) -> Optional[Dict]:
+        """Process raw batch result into full pool data format"""
+        try:
+            # Get token info from pool_data
+            token0_addr = pool_data['token0']
+            token1_addr = pool_data['token1']
+
+            token0_info = self._get_token_info(token0_addr)
+            token1_info = self._get_token_info(token1_addr)
+
+            if not token0_info or not token1_info:
+                return None
+
+            # Get USD prices
+            price0 = self.price_fetcher.get_price(token0_info["symbol"])
+            price1 = self.price_fetcher.get_price(token1_info["symbol"])
+
+            if not price0 or not price1:
+                return None
+
+            pool_type = raw_data.get('type', 'v2')
+
+            if pool_type == 'v2':
+                # V2 pool processing
+                if 'reserve0' not in raw_data or 'reserve1' not in raw_data:
+                    return None
+
+                reserve0 = raw_data['reserve0']
+                reserve1 = raw_data['reserve1']
+                decimals0 = token0_info["decimals"]
+                decimals1 = token1_info["decimals"]
+
+                amount0 = reserve0 / (10 ** decimals0)
+                amount1 = reserve1 / (10 ** decimals1)
+                tvl_usd = (amount0 * price0) + (amount1 * price1)
+
+                # Only filter by TVL if min_tvl_usd > 0
+                if self.min_tvl_usd > 0 and tvl_usd < self.min_tvl_usd:
+                    return None
+
+                return {
+                    'pair_prices': {
+                        'reserve0': reserve0,
+                        'reserve1': reserve1,
+                        'token0': token0_info["symbol"],
+                        'token1': token1_info["symbol"],
+                        'token0_address': token0_addr,
+                        'token1_address': token1_addr,
+                        'decimals0': decimals0,
+                        'decimals1': decimals1,
+                        'type': 'v2'
+                    },
+                    'tvl_data': {
+                        'tvl_usd': tvl_usd,
+                        'token0': token0_info["symbol"],
+                        'token1': token1_info["symbol"],
+                        'price0_usd': price0,
+                        'price1_usd': price1
+                    }
+                }
+
+            elif pool_type == 'v3':
+                # V3 pool processing
+                if 'sqrt_price_x96' not in raw_data or 'liquidity' not in raw_data:
+                    return None
+
+                sqrt_price_x96 = raw_data['sqrt_price_x96']
+                liquidity = raw_data['liquidity']
+                fee = raw_data.get('fee', 3000)
+
+                decimals0 = token0_info["decimals"]
+                decimals1 = token1_info["decimals"]
+                price_ratio = (sqrt_price_x96 / (2 ** 96)) ** 2
+                price_adjusted = price_ratio * (10 ** decimals0) / (10 ** decimals1)
+
+                if liquidity > 0:
+                    tvl_token1 = 2 * ((liquidity * price_adjusted) ** 0.5)
+                    tvl_usd = (tvl_token1 / (10 ** decimals1)) * price1
+                else:
+                    tvl_usd = 0
+
+                # Only filter by TVL if min_tvl_usd > 0
+                if self.min_tvl_usd > 0 and tvl_usd < self.min_tvl_usd:
+                    return None
+
+                return {
+                    'pair_prices': {
+                        'sqrt_price_x96': sqrt_price_x96,
+                        'liquidity': liquidity,
+                        'fee': fee,
+                        'token0': token0_info["symbol"],
+                        'token1': token1_info["symbol"],
+                        'token0_address': token0_addr,
+                        'token1_address': token1_addr,
+                        'decimals0': decimals0,
+                        'decimals1': decimals1,
+                        'type': 'v3'
+                    },
+                    'tvl_data': {
+                        'tvl_usd': tvl_usd,
+                        'token0': token0_info["symbol"],
+                        'token1': token1_info["symbol"],
+                        'price0_usd': price0,
+                        'price1_usd': price1
+                    }
+                }
+
+            elif pool_type == 'v3_algebra':
+                # Algebra pool processing
+                if 'sqrt_price_x96' not in raw_data or 'liquidity' not in raw_data:
+                    return None
+
+                sqrt_price_x96 = raw_data['sqrt_price_x96']
+                liquidity = raw_data['liquidity']
+                fee = raw_data.get('fee', 0)
+
+                decimals0 = token0_info["decimals"]
+                decimals1 = token1_info["decimals"]
+                price_ratio = (sqrt_price_x96 / (2 ** 96)) ** 2
+                price_adjusted = price_ratio * (10 ** decimals0) / (10 ** decimals1)
+
+                if liquidity > 0:
+                    tvl_token1 = 2 * ((liquidity * price_adjusted) ** 0.5)
+                    tvl_usd = (tvl_token1 / (10 ** decimals1)) * price1
+                else:
+                    tvl_usd = 0
+
+                # Only filter by TVL if min_tvl_usd > 0
+                if self.min_tvl_usd > 0 and tvl_usd < self.min_tvl_usd:
+                    return None
+
+                return {
+                    'pair_prices': {
+                        'sqrt_price_x96': sqrt_price_x96,
+                        'liquidity': liquidity,
+                        'fee': fee,
+                        'token0': token0_info["symbol"],
+                        'token1': token1_info["symbol"],
+                        'token0_address': token0_addr,
+                        'token1_address': token1_addr,
+                        'decimals0': decimals0,
+                        'decimals1': decimals1,
+                        'type': 'v3_algebra'
+                    },
+                    'tvl_data': {
+                        'tvl_usd': tvl_usd,
+                        'token0': token0_info["symbol"],
+                        'token1': token1_info["symbol"],
+                        'price0_usd': price0,
+                        'price1_usd': price1
+                    }
+                }
+
+        except Exception as e:
+            return None
+
+        return None
+
+    def fetch_all_pools(self) -> Dict[str, Dict]:
+        """
+        Fetch all pools from registry (non-batched version)
+        Uses cache when available (1hr for pair prices, 3hr for TVL)
+
+        NOTE: Use fetch_all_pools_batched() for much better performance!
+        """
+        print(f"\n{Fore.CYAN}{'='*80}")
+        print(f"🔍 FETCHING POOL DATA (SEQUENTIAL)")
         print(f"{'='*80}{Style.RESET_ALL}\n")
 
         # Check cache status
