@@ -163,6 +163,147 @@ class ArbFinder:
             'sell_tvl_usd': sell_tvl
         }
 
+    def build_token_graph(self, pools: Dict[str, Dict]) -> Dict:
+        """
+        Build a graph of all token pairs with available pools
+        Returns: {token_a: {token_b: [pool_data1, pool_data2, ...], ...}, ...}
+        """
+        graph = {}
+
+        for dex_name, pairs in pools.items():
+            for pair_name, pool_data in pairs.items():
+                pair_prices = pool_data.get('pair_prices', {})
+                token0 = pair_prices.get('token0')
+                token1 = pair_prices.get('token1')
+
+                if not token0 or not token1:
+                    continue
+
+                # Add bidirectional edges
+                if token0 not in graph:
+                    graph[token0] = {}
+                if token1 not in graph[token0]:
+                    graph[token0][token1] = []
+                graph[token0][token1].append({
+                    'dex': dex_name,
+                    'pool_data': pool_data
+                })
+
+                if token1 not in graph:
+                    graph[token1] = {}
+                if token0 not in graph[token1]:
+                    graph[token1][token0] = []
+                graph[token1][token0].append({
+                    'dex': dex_name,
+                    'pool_data': pool_data
+                })
+
+        return graph
+
+    def find_triangular_paths(self, graph: Dict, max_paths: int = 1000) -> List[List]:
+        """
+        Find all triangular paths (A→B→C→A)
+        Returns: List of paths, where each path is [token_a, token_b, token_c]
+        """
+        paths = []
+
+        # For each starting token
+        for token_a in graph.keys():
+            # Find all tokens reachable from token_a
+            for token_b in graph.get(token_a, {}).keys():
+                # Find all tokens reachable from token_b
+                for token_c in graph.get(token_b, {}).keys():
+                    # Check if we can return to token_a from token_c
+                    if token_a in graph.get(token_c, {}):
+                        # Avoid duplicate paths (A→B→C→A is same as B→C→A→B)
+                        path = sorted([token_a, token_b, token_c])
+                        if path not in paths:
+                            paths.append([token_a, token_b, token_c])
+
+                            if len(paths) >= max_paths:
+                                return paths
+
+        return paths
+
+    def calculate_triangular_profit(
+        self,
+        path: List[str],
+        graph: Dict,
+        amount_usd: float
+    ) -> Optional[Dict]:
+        """
+        Calculate profit for a triangular arbitrage path
+
+        Args:
+            path: [token_a, token_b, token_c] representing A→B→C→A
+            graph: Token graph from build_token_graph()
+            amount_usd: Starting amount in USD
+
+        Returns:
+            Opportunity dict or None
+        """
+        if len(path) != 3:
+            return None
+
+        token_a, token_b, token_c = path
+
+        # Get all pool options for each hop
+        pools_a_to_b = graph.get(token_a, {}).get(token_b, [])
+        pools_b_to_c = graph.get(token_b, {}).get(token_c, [])
+        pools_c_to_a = graph.get(token_c, {}).get(token_a, [])
+
+        if not pools_a_to_b or not pools_b_to_c or not pools_c_to_a:
+            return None
+
+        # Use best pool for each hop (highest liquidity)
+        best_pool_a_to_b = max(pools_a_to_b, key=lambda p: p['pool_data'].get('tvl_data', {}).get('tvl_usd', 0))
+        best_pool_b_to_c = max(pools_b_to_c, key=lambda p: p['pool_data'].get('tvl_data', {}).get('tvl_usd', 0))
+        best_pool_c_to_a = max(pools_c_to_a, key=lambda p: p['pool_data'].get('tvl_data', {}).get('tvl_usd', 0))
+
+        # Get quotes for each hop (using the new quote_0to1/quote_1to0 fields)
+        # This is a simplified calculation - in reality would need to call the actual quote functions
+        # For now, use the stored quotes as approximation
+
+        try:
+            # Hop 1: A → B
+            pair_a_b = best_pool_a_to_b['pool_data'].get('pair_prices', {})
+            quote_a_to_b = pair_a_b.get('quote_0to1', 0) if pair_a_b.get('token0') == token_a else pair_a_b.get('quote_1to0', 0)
+            decimals_a = pair_a_b.get('decimals0', 18) if pair_a_b.get('token0') == token_a else pair_a_b.get('decimals1', 18)
+            decimals_b = pair_a_b.get('decimals1', 18) if pair_a_b.get('token0') == token_a else pair_a_b.get('decimals0', 18)
+
+            # Hop 2: B → C
+            pair_b_c = best_pool_b_to_c['pool_data'].get('pair_prices', {})
+            quote_b_to_c = pair_b_c.get('quote_0to1', 0) if pair_b_c.get('token0') == token_b else pair_b_c.get('quote_1to0', 0)
+            decimals_c = pair_b_c.get('decimals1', 18) if pair_b_c.get('token0') == token_b else pair_b_c.get('decimals0', 18)
+
+            # Hop 3: C → A
+            pair_c_a = best_pool_c_to_a['pool_data'].get('pair_prices', {})
+            quote_c_to_a = pair_c_a.get('quote_0to1', 0) if pair_c_a.get('token0') == token_c else pair_c_a.get('quote_1to0', 0)
+
+            # Calculate amounts through the path (simplified - assumes 1 token input)
+            amount_b = quote_a_to_b / (10 ** decimals_b)
+            amount_c = amount_b * (quote_b_to_c / (10 ** decimals_c))
+            amount_a_final = amount_c * (quote_c_to_a / (10 ** decimals_a))
+
+            # Calculate profit (simplified - would need actual USD prices)
+            profit_ratio = amount_a_final - 1.0  # Assuming started with 1 token_a
+
+            if profit_ratio <= 0:
+                return None
+
+            return {
+                'type': 'triangular',
+                'path': f"{token_a}→{token_b}→{token_c}→{token_a}",
+                'dex_path': f"{best_pool_a_to_b['dex']}→{best_pool_b_to_c['dex']}→{best_pool_c_to_a['dex']}",
+                'profit_ratio': profit_ratio,
+                'profit_usd': amount_usd * profit_ratio,
+                'roi_percent': profit_ratio * 100,
+                'trade_size_usd': amount_usd
+            }
+
+        except:
+            return None
+
     def find_opportunities(self, pools: Dict[str, Dict]) -> List[Dict]:
         """
         Find all arbitrage opportunities from cached pool data
@@ -217,18 +358,55 @@ class ArbFinder:
                     opportunities.append(opp)
                     print(f"    {Fore.GREEN}✓ PROFIT FOUND @ ${amount_usd:,.0f}: Buy {opp['dex_buy']} → Sell {opp['dex_sell']} = ${opp['profit_usd']:.2f} ({opp['roi_percent']:.2f}% ROI){Style.RESET_ALL}")
 
+        # ========== TRIANGULAR ARBITRAGE ==========
+        print(f"\n{Fore.CYAN}{'='*80}")
+        print(f"🔺 TRIANGULAR ARBITRAGE SCANNING")
+        print(f"{'='*80}{Style.RESET_ALL}\n")
+
+        # Build token graph
+        print(f"Building token graph from {len(pools)} DEXes...")
+        graph = self.build_token_graph(pools)
+        token_count = len(graph)
+        print(f"  ✅ Graph built: {token_count} tokens")
+
+        # Find all triangular paths
+        print(f"Finding all triangular paths (A→B→C→A)...")
+        paths = self.find_triangular_paths(graph, max_paths=5000)
+        print(f"  ✅ Found {len(paths)} possible triangular paths")
+
+        if paths:
+            print(f"\n{Fore.CYAN}📊 EVALUATING TRIANGULAR ROUTES:{Style.RESET_ALL}")
+            print(f"   Strategy: Token_A → Token_B → Token_C → Token_A")
+            print(f"   Testing {len(self.test_amounts_usd)} trade sizes per path\n")
+
+            triangle_checked = 0
+            for path in paths[:100]:  # Check top 100 paths
+                triangle_checked += 1
+                if triangle_checked % 10 == 0:
+                    print(f"  ...checked {triangle_checked}/{min(100, len(paths))} paths")
+
+                # Try different trade sizes
+                for amount_usd in self.test_amounts_usd:
+                    opp = self.calculate_triangular_profit(path, graph, amount_usd)
+
+                    if opp:
+                        opportunities.append(opp)
+                        print(f"  {Fore.GREEN}✓ TRIANGLE PROFIT: {opp['path']} via {opp['dex_path']} = ${opp['profit_usd']:.2f} ({opp['roi_percent']:.2f}% ROI){Style.RESET_ALL}")
+
         # Sort by profit
         opportunities.sort(key=lambda x: x['profit_usd'], reverse=True)
 
         print(f"\n{Fore.CYAN}{'='*80}")
         print(f"✅ CALCULATION COMPLETE")
         print(f"{'='*80}{Style.RESET_ALL}")
+        print(f"\n{Fore.GREEN}SIMPLE ARBITRAGE (Same Pair, Different DEXes):{Style.RESET_ALL}")
         print(f"   Total pairs: {len(pair_pools)}")
         print(f"   Pairs checked: {checked} (pairs with 2+ DEXes)")
         print(f"   Pairs skipped: {skipped} (only 1 DEX available)")
-        print(f"   Opportunities found: {len(opportunities)}")
-        print(f"\n{Fore.YELLOW}   Note: Currently only checking simple arbitrage (same pair, different DEXes)")
-        print(f"         Triangular arbitrage (A→B→C→A) not yet implemented{Style.RESET_ALL}")
+        print(f"\n{Fore.GREEN}TRIANGULAR ARBITRAGE (A→B→C→A):{Style.RESET_ALL}")
+        print(f"   Total paths found: {len(paths) if paths else 0}")
+        print(f"   Paths evaluated: {min(100, len(paths)) if paths else 0}")
+        print(f"\n{Fore.CYAN}TOTAL OPPORTUNITIES: {len(opportunities)}{Style.RESET_ALL}")
         print(f"{Fore.CYAN}{'='*80}{Style.RESET_ALL}\n")
 
         return opportunities

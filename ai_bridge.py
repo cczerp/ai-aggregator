@@ -1129,12 +1129,21 @@ class ArbiGirl:
                     else:
                         confidence = "Low"
 
-                    # Format venue/tier
+                    # Format venue/tier and determine tier priority
+                    tier_priority = 2  # Default to tier 2 (middle)
                     if pool_type == 'v3' and fee > 0:
                         fee_pct = fee / 10000
                         venue_tier = f"{dex}-{fee_pct:.2f}%"
+                        # Classify V3 tiers: 0.05% = Tier1, 0.30% = Tier2, 1.00% = Tier3
+                        if fee == 500:  # 0.05%
+                            tier_priority = 1
+                        elif fee == 3000:  # 0.30%
+                            tier_priority = 2
+                        elif fee == 10000:  # 1.00%
+                            tier_priority = 3
                     else:
                         venue_tier = dex
+                        tier_priority = 2  # V2 pools default to tier 2
 
                     table_rows.append({
                         'venue_tier': venue_tier,
@@ -1147,21 +1156,32 @@ class ArbiGirl:
                         'confidence': confidence,
                         'timestamp': current_time,
                         'token0': token0,
-                        'token1': token1
+                        'token1': token1,
+                        'tier_priority': tier_priority
                     })
 
-            # Sort by pair name, then by venue
-            table_rows.sort(key=lambda x: (x['pair'], x['venue_tier']))
+            # Sort by tier priority (1->2->3), then pair name, then venue
+            table_rows.sort(key=lambda x: (x['tier_priority'], x['pair'], x['venue_tier']))
 
             # Print CSV header
             header = f"{'Venue/Tier':<25} | {'Pair':<12} | {'CG-T0':>12} | {'CG-T1':>12} | {'DEX Price':>12} | {'Liquidity':>15} | {'Spread%':>8} | {'Confidence':<10} | {'Timestamp':<19}"
             print(f"{Fore.YELLOW}{header}{Style.RESET_ALL}")
             print(f"{'-'*160}")
 
-            # Print rows
+            # Print rows with tier sections
+            current_tier = None
             current_pair = None
             for row in table_rows:
-                # Add blank line between different pairs
+                # Add tier section header when tier changes
+                if current_tier != row['tier_priority']:
+                    current_tier = row['tier_priority']
+                    tier_name = {1: "TIER 1 (Lowest Fees)", 2: "TIER 2 (Standard Fees)", 3: "TIER 3 (Higher Fees)"}
+                    print(f"\n{Fore.CYAN}{'═'*160}")
+                    print(f"  {tier_name.get(current_tier, 'TIER 2')}")
+                    print(f"{'═'*160}{Style.RESET_ALL}")
+                    current_pair = None  # Reset pair tracking for new tier
+
+                # Add blank line between different pairs within same tier
                 if current_pair and current_pair != row['pair']:
                     print()
                 current_pair = row['pair']

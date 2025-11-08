@@ -204,22 +204,26 @@ class PriceDataFetcher:
             test_amount1 = 10 ** decimals1  # 1 token1
 
             # Get quote for token0 -> token1
+            quote_0to1 = 0
             try:
                 path0to1 = [Web3.to_checksum_address(token0_addr), Web3.to_checksum_address(token1_addr)]
                 amounts_out_0to1 = router.functions.getAmountsOut(test_amount0, path0to1).call()
                 quote_0to1 = amounts_out_0to1[1]  # Output amount
             except Exception as e:
-                # Fall back to reserve-based calculation
-                quote_0to1 = int((test_amount0 * reserve1) / reserve0) if reserve0 > 0 else 0
+                # Skip pool if quote fails - don't use reserves
+                print(f"  ⚠️  Skipping {token0_info['symbol']}/{token1_info['symbol']} on {dex} - quote failed: {str(e)[:50]}")
+                return None
 
             # Get quote for token1 -> token0
+            quote_1to0 = 0
             try:
                 path1to0 = [Web3.to_checksum_address(token1_addr), Web3.to_checksum_address(token0_addr)]
                 amounts_out_1to0 = router.functions.getAmountsOut(test_amount1, path1to0).call()
                 quote_1to0 = amounts_out_1to0[1]  # Output amount
             except Exception as e:
-                # Fall back to reserve-based calculation
-                quote_1to0 = int((test_amount1 * reserve0) / reserve1) if reserve1 > 0 else 0
+                # Skip pool if quote fails - don't use reserves
+                print(f"  ⚠️  Skipping {token0_info['symbol']}/{token1_info['symbol']} on {dex} - reverse quote failed: {str(e)[:50]}")
+                return None
 
             return {
                 'pair_prices': {
@@ -311,6 +315,7 @@ class PriceDataFetcher:
             test_amount1 = 10 ** decimals1  # 1 token1
 
             # Get quote for token0 -> token1
+            quote_0to1 = 0
             try:
                 params0to1 = {
                     'tokenIn': Web3.to_checksum_address(token0_addr),
@@ -322,11 +327,12 @@ class PriceDataFetcher:
                 result_0to1 = quoter.functions.quoteExactInputSingle(params0to1).call()
                 quote_0to1 = result_0to1[0]  # amountOut
             except Exception as e:
-                # Fall back to sqrt price calculation
-                price_ratio = (sqrt_price_x96 / (2 ** 96)) ** 2
-                quote_0to1 = int(test_amount0 * price_ratio)
+                # Skip pool if quoter fails - don't use sqrt price
+                print(f"  ⚠️  Skipping {token0_info['symbol']}/{token1_info['symbol']} on {dex} (fee:{fee}) - quoter failed: {str(e)[:50]}")
+                return None
 
             # Get quote for token1 -> token0
+            quote_1to0 = 0
             try:
                 params1to0 = {
                     'tokenIn': Web3.to_checksum_address(token1_addr),
@@ -338,9 +344,9 @@ class PriceDataFetcher:
                 result_1to0 = quoter.functions.quoteExactInputSingle(params1to0).call()
                 quote_1to0 = result_1to0[0]  # amountOut
             except Exception as e:
-                # Fall back to sqrt price calculation
-                price_ratio = (sqrt_price_x96 / (2 ** 96)) ** 2
-                quote_1to0 = int(test_amount1 / price_ratio) if price_ratio > 0 else 0
+                # Skip pool if quoter fails - don't use sqrt price
+                print(f"  ⚠️  Skipping {token0_info['symbol']}/{token1_info['symbol']} on {dex} (fee:{fee}) - reverse quoter failed: {str(e)[:50]}")
+                return None
 
             return {
                 'pair_prices': {
