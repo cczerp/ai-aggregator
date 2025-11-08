@@ -34,7 +34,7 @@ class PolygonArbBot:
     
     def __init__(
         self,
-        min_tvl: float = 10000,
+        min_tvl: float = 0,  # Default to 0 = fetch all pools
         scan_interval: int = 60,
         cache_duration_hours: int = 6,
         auto_execute: bool = False
@@ -42,7 +42,7 @@ class PolygonArbBot:
         print(f"\n{Fore.CYAN}{'='*80}")
         print(f"🤖 INITIALIZING POLYGON ARBITRAGE BOT")
         print(f"{'='*80}{Style.RESET_ALL}\n")
-        
+
         self.min_tvl = min_tvl
         self.scan_interval = scan_interval
         self.auto_execute = auto_execute
@@ -552,7 +552,7 @@ def main():
     
     # Initialize bot
     bot = PolygonArbBot(
-        min_tvl=10000,           # $10k minimum
+        min_tvl=0,               # Fetch all pools (no TVL filtering)
         scan_interval=60,        # 60 seconds
         cache_duration_hours=6,  # 6 hour cache for DEX prices
         auto_execute=False       # Manual mode

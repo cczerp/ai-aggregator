@@ -123,7 +123,7 @@ class PriceDataFetcher:
         rpc_manager: RPCManager,
         cache: Cache,
         pool_registry_path: str = "./pool_registry.json",
-        min_tvl_usd: float = 10000
+        min_tvl_usd: float = 0  # Default to 0 = fetch all pools
     ):
         self.rpc_manager = rpc_manager
         self.cache = cache
@@ -184,7 +184,8 @@ class PriceDataFetcher:
             amount1 = reserve1 / (10 ** decimals1)
             tvl_usd = (amount0 * price0) + (amount1 * price1)
 
-            if tvl_usd < self.min_tvl_usd:
+            # Only filter by TVL if min_tvl_usd > 0
+            if self.min_tvl_usd > 0 and tvl_usd < self.min_tvl_usd:
                 return None
 
             return {
@@ -254,7 +255,8 @@ class PriceDataFetcher:
             else:
                 tvl_usd = 0
 
-            if tvl_usd < self.min_tvl_usd:
+            # Only filter by TVL if min_tvl_usd > 0
+            if self.min_tvl_usd > 0 and tvl_usd < self.min_tvl_usd:
                 return None
 
             return {
@@ -326,7 +328,8 @@ class PriceDataFetcher:
             else:
                 tvl_usd = 0
 
-            if tvl_usd < self.min_tvl_usd:
+            # Only filter by TVL if min_tvl_usd > 0
+            if self.min_tvl_usd > 0 and tvl_usd < self.min_tvl_usd:
                 return None
 
             return {

@@ -666,7 +666,7 @@ class ArbiGirl:
         self.price_fetcher = PriceDataFetcher(
             self.rpc_manager,
             self.cache,
-            min_tvl_usd=10000
+            min_tvl_usd=0  # Fetch ALL pools regardless of TVL
         )
         self.arb_finder = ArbFinder(min_profit_usd=1.0)
 
