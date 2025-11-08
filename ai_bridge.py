@@ -1049,20 +1049,7 @@ class ArbiGirl:
 
     def handle_fetch(self):
         """Fetch pool data"""
-        print(f"\n{Fore.CYAN}📡 Fetching pool data...{Style.RESET_ALL}\n")
-
-        # First, fetch and display all token prices from CoinGecko (visual key map)
-        print(f"{Fore.CYAN}{'='*80}")
-        print(f"💵 TOKEN PRICES (CoinGecko)")
-        print(f"{'='*80}{Style.RESET_ALL}\n")
-
-        token_prices = self.price_fetcher.price_fetcher.fetch_all_prices()
-        if token_prices:
-            # Sort by USD price (descending)
-            sorted_tokens = sorted(token_prices.items(), key=lambda x: x[1], reverse=True)
-            for symbol, price_usd in sorted_tokens:
-                print(f"   {symbol:8} = ${price_usd:>12,.2f}")
-        print()
+        print(f"\n{Fore.CYAN}📡 Fetching POOL PAIR PRICES from DEX routers/quoters...{Style.RESET_ALL}\n")
 
         start_time = time.time()
         self.last_pools = self.price_fetcher.fetch_all_pools()
