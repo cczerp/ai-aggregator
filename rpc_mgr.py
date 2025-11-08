@@ -26,15 +26,17 @@ class RPCEndpoint:
         
     def can_call(self) -> bool:
         now = time.time()
-        
+
         # Check cooldown
         if now < self.cooldown_until:
             return False
-        
-        # Check rate limit (calls per minute)
-        if now - self.last_call < (60 / self.rate_limit):
+
+        # Check rate limit (calls per minute) with 50% tolerance for concurrency
+        # This allows endpoints to be reused more quickly when multiple endpoints are available
+        min_delay = (60 / self.rate_limit) * 0.5
+        if now - self.last_call < min_delay:
             return False
-        
+
         return self.is_alive
     
     def record_call(self):

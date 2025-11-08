@@ -345,8 +345,8 @@ class PriceDataFetcher:
         cached_count = 0
 
         for dex_name, pairs in self.registry.items():
-            if "quickswap_v3" in dex_name.lower():
-                continue  # Skip Algebra protocol
+            if "quickswap_v3" in dex_name.lower() or "algebra" in dex_name.lower():
+                continue  # Skip Algebra protocol (v3 pools not fully supported)
 
             print(f"{Fore.BLUE}📊 {dex_name}{Style.RESET_ALL}")
             pools[dex_name] = {}
