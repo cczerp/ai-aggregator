@@ -1057,6 +1057,187 @@ class ArbiGirl:
         answer = self._query_ai(question)
         print(f"{answer}\n")
 
+    def handle_show_pairs(self):
+        """Show all pair prices"""
+        if not self.last_pools:
+            print(f"{Fore.YELLOW}No pools loaded. Run 'fetch' first.{Style.RESET_ALL}\n")
+            return
+
+        print(f"\n{Fore.CYAN}{'='*80}")
+        print(f"💰 ALL PAIR PRICES")
+        print(f"{'='*80}{Style.RESET_ALL}\n")
+
+        total_pairs = 0
+        for dex_name, pairs in self.last_pools.items():
+            if pairs:
+                print(f"{Fore.BLUE}📊 {dex_name}:{Style.RESET_ALL}")
+                for pair_name, pool_data in pairs.items():
+                    if 'pair_prices' in pool_data:
+                        prices = pool_data['pair_prices']
+                        pool_type = prices.get('type', 'v2')
+
+                        if pool_type == 'v2':
+                            token0 = prices.get('token0', '?')
+                            token1 = prices.get('token1', '?')
+                            reserve0 = prices.get('reserve0', 0)
+                            reserve1 = prices.get('reserve1', 0)
+                            decimals0 = prices.get('decimals0', 18)
+                            decimals1 = prices.get('decimals1', 18)
+
+                            # Calculate price
+                            if reserve0 > 0 and reserve1 > 0:
+                                price = (reserve1 / 10**decimals1) / (reserve0 / 10**decimals0)
+                                print(f"  {pair_name:25s} 1 {token0} = {price:.8f} {token1}")
+                        else:
+                            # V3 or Algebra
+                            token0 = prices.get('token0', '?')
+                            token1 = prices.get('token1', '?')
+                            sqrt_price_x96 = prices.get('sqrt_price_x96', 0)
+                            decimals0 = prices.get('decimals0', 18)
+                            decimals1 = prices.get('decimals1', 18)
+
+                            if sqrt_price_x96 > 0:
+                                price_ratio = (sqrt_price_x96 / (2 ** 96)) ** 2
+                                price = price_ratio * (10 ** decimals0) / (10 ** decimals1)
+                                print(f"  {pair_name:25s} 1 {token0} = {price:.8f} {token1}")
+
+                        total_pairs += 1
+                print()
+
+        print(f"{Fore.CYAN}Total: {total_pairs} pairs{Style.RESET_ALL}\n")
+
+    def handle_show_pools(self):
+        """Show all pools with details"""
+        if not self.last_pools:
+            print(f"{Fore.YELLOW}No pools loaded. Run 'fetch' first.{Style.RESET_ALL}\n")
+            return
+
+        print(f"\n{Fore.CYAN}{'='*80}")
+        print(f"🏊 ALL POOLS")
+        print(f"{'='*80}{Style.RESET_ALL}\n")
+
+        total_pools = 0
+        for dex_name, pairs in self.last_pools.items():
+            if pairs:
+                print(f"{Fore.BLUE}📊 {dex_name}: {len(pairs)} pools{Style.RESET_ALL}")
+                for pair_name, pool_data in pairs.items():
+                    pool_type = pool_data.get('type', 'v2')
+                    pool_addr = pool_data.get('pool', 'N/A')[:10]
+
+                    tvl = 0
+                    if 'tvl_data' in pool_data:
+                        tvl = pool_data['tvl_data'].get('tvl_usd', 0)
+
+                    print(f"  {pair_name:25s} [{pool_type:10s}] TVL: ${tvl:>12,.0f}  {pool_addr}...")
+                    total_pools += 1
+                print()
+
+        print(f"{Fore.CYAN}Total: {total_pools} pools{Style.RESET_ALL}\n")
+
+    def handle_show_tvl(self):
+        """Show pools sorted by TVL"""
+        if not self.last_pools:
+            print(f"{Fore.YELLOW}No pools loaded. Run 'fetch' first.{Style.RESET_ALL}\n")
+            return
+
+        print(f"\n{Fore.CYAN}{'='*80}")
+        print(f"💎 POOLS BY TVL")
+        print(f"{'='*80}{Style.RESET_ALL}\n")
+
+        # Collect all pools with TVL
+        pools_with_tvl = []
+        for dex_name, pairs in self.last_pools.items():
+            for pair_name, pool_data in pairs.items():
+                if 'tvl_data' in pool_data:
+                    tvl = pool_data['tvl_data'].get('tvl_usd', 0)
+                    pools_with_tvl.append((dex_name, pair_name, tvl, pool_data))
+
+        # Sort by TVL descending
+        pools_with_tvl.sort(key=lambda x: x[2], reverse=True)
+
+        # Show top 20
+        for i, (dex_name, pair_name, tvl, pool_data) in enumerate(pools_with_tvl[:20], 1):
+            pool_type = pool_data.get('type', 'v2')
+            print(f"{i:2d}. {pair_name:20s} on {dex_name:15s} [{pool_type:10s}] ${tvl:>12,.0f}")
+
+        print(f"\n{Fore.CYAN}Total pools: {len(pools_with_tvl)}{Style.RESET_ALL}\n")
+
+    def handle_show_dexes(self):
+        """Show breakdown by DEX"""
+        if not self.last_pools:
+            print(f"{Fore.YELLOW}No pools loaded. Run 'fetch' first.{Style.RESET_ALL}\n")
+            return
+
+        print(f"\n{Fore.CYAN}{'='*80}")
+        print(f"🔀 DEX BREAKDOWN")
+        print(f"{'='*80}{Style.RESET_ALL}\n")
+
+        for dex_name, pairs in self.last_pools.items():
+            if pairs:
+                total_tvl = sum(
+                    pool_data.get('tvl_data', {}).get('tvl_usd', 0)
+                    for pool_data in pairs.values()
+                )
+                print(f"{dex_name:20s} {len(pairs):3d} pools  ${total_tvl:>15,.0f} TVL")
+
+        print(f"\n{Fore.CYAN}{'='*80}{Style.RESET_ALL}\n")
+
+    def handle_show_tokens(self):
+        """Show all tokens found"""
+        if not self.last_pools:
+            print(f"{Fore.YELLOW}No pools loaded. Run 'fetch' first.{Style.RESET_ALL}\n")
+            return
+
+        print(f"\n{Fore.CYAN}{'='*80}")
+        print(f"🪙  ALL TOKENS")
+        print(f"{'='*80}{Style.RESET_ALL}\n")
+
+        # Collect unique tokens
+        tokens = set()
+        for dex_name, pairs in self.last_pools.items():
+            for pair_name, pool_data in pairs.items():
+                if 'pair_prices' in pool_data:
+                    prices = pool_data['pair_prices']
+                    token0 = prices.get('token0')
+                    token1 = prices.get('token1')
+                    if token0:
+                        tokens.add(token0)
+                    if token1:
+                        tokens.add(token1)
+
+        # Sort and display
+        for i, token in enumerate(sorted(tokens), 1):
+            print(f"  {i:2d}. {token}")
+
+        print(f"\n{Fore.CYAN}Total: {len(tokens)} unique tokens{Style.RESET_ALL}\n")
+
+    def handle_show_opportunities(self):
+        """Show latest opportunities"""
+        if not self.last_opportunities:
+            print(f"{Fore.YELLOW}No opportunities found yet. Run 'scan' or 'full' first.{Style.RESET_ALL}\n")
+            return
+
+        print(f"\n{Fore.CYAN}{'='*80}")
+        print(f"💰 LATEST OPPORTUNITIES")
+        print(f"{'='*80}{Style.RESET_ALL}\n")
+
+        for i, opp in enumerate(self.last_opportunities[:10], 1):
+            pair = opp.get('pair', 'Unknown')
+            direction = opp.get('direction', 'N/A')
+            dex_buy = opp.get('dex_buy', 'Unknown')
+            dex_sell = opp.get('dex_sell', 'Unknown')
+            profit_usd = opp.get('profit_usd', 0)
+            roi = opp.get('roi_percent', 0)
+
+            print(f"{Fore.GREEN}{i:2d}. {pair}{Style.RESET_ALL}")
+            print(f"    Direction: {direction}")
+            print(f"    Buy:  {dex_buy}")
+            print(f"    Sell: {dex_sell}")
+            print(f"    Profit: ${profit_usd:.2f} (ROI: {roi:.2f}%)")
+            print()
+
+        print(f"{Fore.CYAN}Total: {len(self.last_opportunities)} opportunities{Style.RESET_ALL}\n")
+
     def handle_run(self, filename: str):
         """Run a Python file and diagnose any errors"""
         if not filename:
@@ -1190,6 +1371,18 @@ class ArbiGirl:
                     self.handle_run(filename)
                 elif command == 'run':
                     self.handle_run('')
+                elif command == 'show pairs':
+                    self.handle_show_pairs()
+                elif command == 'show pools':
+                    self.handle_show_pools()
+                elif command == 'show tvl':
+                    self.handle_show_tvl()
+                elif command == 'show dexes':
+                    self.handle_show_dexes()
+                elif command == 'show tokens':
+                    self.handle_show_tokens()
+                elif command == 'show opportunities':
+                    self.handle_show_opportunities()
                 else:
                     print(f"{Fore.YELLOW}Unknown command. Type 'help'{Style.RESET_ALL}")
 
