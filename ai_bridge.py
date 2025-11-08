@@ -1082,47 +1082,114 @@ class ArbiGirl:
         print(f"  • Time: {fetch_time:.2f}s")
         print(f"  • Cached: Pair prices (1hr), TVL (3hr)")
 
-        # Show what was actually fetched - grouped by pair
+        # Show what was actually fetched - CSV table format
         if pool_count > 0:
-            print(f"\n{Fore.CYAN}{'='*80}")
-            print(f"💰 FETCHED PAIR PRICES (ACTUAL DEX QUOTES)")
-            print(f"{'='*80}{Style.RESET_ALL}\n")
+            print(f"\n{Fore.CYAN}{'='*160}")
+            print(f"💰 FETCHED PAIR PRICES (CSV TABLE FORMAT)")
+            print(f"{'='*160}{Style.RESET_ALL}\n")
 
-            # Group pools by pair name (to show duplicates together)
-            pairs_by_name = {}
+            # Build table rows
+            table_rows = []
+            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
             for dex, pairs in self.last_pools.items():
                 for pair_name, pool_data in pairs.items():
-                    if pair_name not in pairs_by_name:
-                        pairs_by_name[pair_name] = []
-                    pairs_by_name[pair_name].append((dex, pool_data))
-
-            # Display grouped by pair
-            for pair_name in sorted(pairs_by_name.keys()):
-                dex_list = pairs_by_name[pair_name]
-                print(f"{Fore.YELLOW}{pair_name}{Style.RESET_ALL} ({len(dex_list)} DEX{'es' if len(dex_list) > 1 else ''})")
-
-                for dex, pool_data in dex_list:
                     pair_prices = pool_data.get('pair_prices', {})
                     tvl_data = pool_data.get('tvl_data', {})
 
                     token0 = pair_prices.get('token0', 'N/A')
                     token1 = pair_prices.get('token1', 'N/A')
                     quote_0to1 = pair_prices.get('quote_0to1', 0)
-                    quote_1to0 = pair_prices.get('quote_1to0', 0)
                     decimals0 = pair_prices.get('decimals0', 18)
                     decimals1 = pair_prices.get('decimals1', 18)
                     tvl = tvl_data.get('tvl_usd', 0)
                     pool_type = pair_prices.get('type', 'v2')
+                    fee = pair_prices.get('fee', 0)
 
-                    # Calculate human-readable prices from quotes
-                    price_0to1 = quote_0to1 / (10 ** decimals1) if quote_0to1 > 0 else 0
-                    price_1to0 = quote_1to0 / (10 ** decimals0) if quote_1to0 > 0 else 0
+                    # Get CoinGecko prices
+                    cg_price0 = tvl_data.get('price0_usd', 0)
+                    cg_price1 = tvl_data.get('price1_usd', 0)
 
-                    print(f"  {Fore.GREEN}{dex:20}{Style.RESET_ALL} | 1 {token0} = {price_0to1:.6f} {token1} | 1 {token1} = {price_1to0:.6f} {token0} | TVL: ${tvl:>10,.0f} | {pool_type.upper()}")
+                    # Calculate DEX pair price (token0 in terms of token1)
+                    dex_pair_price = quote_0to1 / (10 ** decimals1) if quote_0to1 > 0 else 0
 
-                print()
+                    # Calculate implied CoinGecko price ratio
+                    cg_implied_price = cg_price0 / cg_price1 if cg_price1 > 0 else 0
 
-            print(f"{Fore.CYAN}Total unique pairs: {len(pairs_by_name)} | Total pools: {pool_count}{Style.RESET_ALL}")
+                    # Calculate spread percentage
+                    spread_pct = 0.0
+                    if cg_implied_price > 0 and dex_pair_price > 0:
+                        spread_pct = ((dex_pair_price - cg_implied_price) / cg_implied_price) * 100
+
+                    # Determine confidence based on liquidity
+                    if tvl >= 100000:
+                        confidence = "High"
+                    elif tvl >= 10000:
+                        confidence = "Medium"
+                    else:
+                        confidence = "Low"
+
+                    # Format venue/tier
+                    if pool_type == 'v3' and fee > 0:
+                        fee_pct = fee / 10000
+                        venue_tier = f"{dex}-{fee_pct:.2f}%"
+                    else:
+                        venue_tier = dex
+
+                    table_rows.append({
+                        'venue_tier': venue_tier,
+                        'pair': pair_name,
+                        'cg_token0': cg_price0,
+                        'cg_token1': cg_price1,
+                        'dex_price': dex_pair_price,
+                        'liquidity': tvl,
+                        'spread_pct': spread_pct,
+                        'confidence': confidence,
+                        'timestamp': current_time,
+                        'token0': token0,
+                        'token1': token1
+                    })
+
+            # Sort by pair name, then by venue
+            table_rows.sort(key=lambda x: (x['pair'], x['venue_tier']))
+
+            # Print CSV header
+            header = f"{'Venue/Tier':<25} | {'Pair':<12} | {'CG-T0':>12} | {'CG-T1':>12} | {'DEX Price':>12} | {'Liquidity':>15} | {'Spread%':>8} | {'Confidence':<10} | {'Timestamp':<19}"
+            print(f"{Fore.YELLOW}{header}{Style.RESET_ALL}")
+            print(f"{'-'*160}")
+
+            # Print rows
+            current_pair = None
+            for row in table_rows:
+                # Add blank line between different pairs
+                if current_pair and current_pair != row['pair']:
+                    print()
+                current_pair = row['pair']
+
+                # Format row
+                line = (
+                    f"{row['venue_tier']:<25} | "
+                    f"{row['pair']:<12} | "
+                    f"${row['cg_token0']:>11,.2f} | "
+                    f"${row['cg_token1']:>11,.2f} | "
+                    f"{row['dex_price']:>12.6f} | "
+                    f"${row['liquidity']:>14,.0f} | "
+                    f"{row['spread_pct']:>7.2f}% | "
+                    f"{row['confidence']:<10} | "
+                    f"{row['timestamp']:<19}"
+                )
+
+                # Color code by spread
+                if abs(row['spread_pct']) > 5:
+                    print(f"{Fore.RED}{line}{Style.RESET_ALL}")  # Large spread - red
+                elif abs(row['spread_pct']) > 1:
+                    print(f"{Fore.YELLOW}{line}{Style.RESET_ALL}")  # Medium spread - yellow
+                else:
+                    print(f"{Fore.GREEN}{line}{Style.RESET_ALL}")  # Small spread - green
+
+            print(f"\n{Fore.CYAN}{'='*160}{Style.RESET_ALL}")
+            print(f"{Fore.CYAN}Total rows: {len(table_rows)} | Unique pairs: {len(set(r['pair'] for r in table_rows))}{Style.RESET_ALL}")
+            print(f"{Fore.YELLOW}Color code: {Fore.GREEN}Green (<1% spread) {Fore.YELLOW}Yellow (1-5%) {Fore.RED}Red (>5%){Style.RESET_ALL}")
             print(f"{Fore.YELLOW}Note: Pools with TVL < $3,000 were filtered out{Style.RESET_ALL}\n")
 
     def handle_calculate(self):
