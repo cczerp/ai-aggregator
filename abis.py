@@ -79,6 +79,47 @@ UNISWAP_V3_POOL_ABI = [
     }
 ]
 
+# Algebra Pool ABI (used by QuickSwap V3)
+# Key difference: uses globalState() instead of slot0()
+ALGEBRA_POOL_ABI = [
+    {
+        "inputs": [],
+        "name": "globalState",
+        "outputs": [
+            {"name": "price", "type": "uint160"},
+            {"name": "tick", "type": "int24"},
+            {"name": "fee", "type": "uint16"},
+            {"name": "timepointIndex", "type": "uint16"},
+            {"name": "communityFeeToken0", "type": "uint8"},
+            {"name": "communityFeeToken1", "type": "uint8"},
+            {"name": "unlocked", "type": "bool"}
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "liquidity",
+        "outputs": [{"name": "", "type": "uint128"}],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "token0",
+        "outputs": [{"name": "", "type": "address"}],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "token1",
+        "outputs": [{"name": "", "type": "address"}],
+        "stateMutability": "view",
+        "type": "function"
+    }
+]
+
 # Curve Pool ABI (simplified)
 CURVE_POOL_ABI = [
     {

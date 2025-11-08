@@ -16,7 +16,7 @@ from colorama import Fore, Style, init
 from cache import Cache
 from rpc_mgr import RPCManager
 from registries import TOKENS
-from abis import UNISWAP_V2_PAIR_ABI, UNISWAP_V3_POOL_ABI
+from abis import UNISWAP_V2_PAIR_ABI, UNISWAP_V3_POOL_ABI, ALGEBRA_POOL_ABI
 
 init(autoreset=True)
 
@@ -282,6 +282,78 @@ class PriceDataFetcher:
         except Exception:
             return None
 
+    def fetch_algebra_pool(self, w3: Web3, pool_address: str) -> Optional[Dict]:
+        """Fetch Algebra pool data (QuickSwap V3)"""
+        try:
+            pool = w3.eth.contract(
+                address=Web3.to_checksum_address(pool_address),
+                abi=ALGEBRA_POOL_ABI
+            )
+
+            # Get globalState (Algebra's version of slot0), liquidity, and tokens
+            global_state = pool.functions.globalState().call()
+            liquidity = pool.functions.liquidity().call()
+            token0_addr = pool.functions.token0().call()
+            token1_addr = pool.functions.token1().call()
+
+            # globalState returns: (price, tick, fee, timepointIndex, communityFee0, communityFee1, unlocked)
+            sqrt_price_x96 = global_state[0]
+            fee = global_state[2]  # fee in hundredths of a bip (1e-6)
+
+            # Get token info
+            token0_info = self._get_token_info(token0_addr)
+            token1_info = self._get_token_info(token1_addr)
+
+            if not token0_info or not token1_info:
+                return None
+
+            # Get USD prices
+            price0 = self.price_fetcher.get_price(token0_info["symbol"])
+            price1 = self.price_fetcher.get_price(token1_info["symbol"])
+
+            if not price0 or not price1:
+                return None
+
+            # Calculate TVL (simplified estimate)
+            decimals0 = token0_info["decimals"]
+            decimals1 = token1_info["decimals"]
+            price_ratio = (sqrt_price_x96 / (2 ** 96)) ** 2
+            price_adjusted = price_ratio * (10 ** decimals0) / (10 ** decimals1)
+
+            if liquidity > 0:
+                tvl_token1 = 2 * ((liquidity * price_adjusted) ** 0.5)
+                tvl_usd = (tvl_token1 / (10 ** decimals1)) * price1
+            else:
+                tvl_usd = 0
+
+            if tvl_usd < self.min_tvl_usd:
+                return None
+
+            return {
+                'pair_prices': {
+                    'sqrt_price_x96': sqrt_price_x96,
+                    'liquidity': liquidity,
+                    'fee': fee,
+                    'token0': token0_info["symbol"],
+                    'token1': token1_info["symbol"],
+                    'token0_address': token0_addr,
+                    'token1_address': token1_addr,
+                    'decimals0': decimals0,
+                    'decimals1': decimals1,
+                    'type': 'v3_algebra'
+                },
+                'tvl_data': {
+                    'tvl_usd': tvl_usd,
+                    'token0': token0_info["symbol"],
+                    'token1': token1_info["symbol"],
+                    'price0_usd': price0,
+                    'price1_usd': price1
+                }
+            }
+
+        except Exception:
+            return None
+
     def fetch_pool(self, dex: str, pool_address: str, pool_type: str = "v2") -> Optional[Dict]:
         """
         Fetch pool data and cache with different durations
@@ -303,6 +375,8 @@ class PriceDataFetcher:
         def fetch_func(w3):
             if pool_type == "v3":
                 return self.fetch_v3_pool(w3, pool_address)
+            elif pool_type == "v3_algebra":
+                return self.fetch_algebra_pool(w3, pool_address)
             else:
                 return self.fetch_v2_pool(w3, pool_address)
 
@@ -345,9 +419,6 @@ class PriceDataFetcher:
         cached_count = 0
 
         for dex_name, pairs in self.registry.items():
-            if "quickswap_v3" in dex_name.lower() or "algebra" in dex_name.lower():
-                continue  # Skip Algebra protocol (v3 pools not fully supported)
-
             print(f"{Fore.BLUE}📊 {dex_name}{Style.RESET_ALL}")
             pools[dex_name] = {}
 
