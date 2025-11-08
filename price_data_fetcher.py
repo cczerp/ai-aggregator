@@ -149,45 +149,30 @@ class PriceDataFetcher:
         return None
 
     def fetch_v2_pool(self, w3: Web3, pool_address: str, dex: str) -> Optional[Dict]:
-        """Fetch V2 pool data using ACTUAL router quotes (not reserves!)"""
+        """Fetch V2 pool data - QUOTES FIRST, then TVL"""
         try:
             pool = w3.eth.contract(
                 address=Web3.to_checksum_address(pool_address),
                 abi=UNISWAP_V2_PAIR_ABI
             )
 
-            # Get reserves and tokens (still needed for TVL)
+            # STEP 1: Get basic pool info (fast)
             reserves = pool.functions.getReserves().call()
             token0_addr = pool.functions.token0().call()
             token1_addr = pool.functions.token1().call()
-
             reserve0, reserve1 = reserves[0], reserves[1]
 
-            # Get token info
+            # STEP 2: Get token info
             token0_info = self._get_token_info(token0_addr)
             token1_info = self._get_token_info(token1_addr)
 
             if not token0_info or not token1_info:
                 return None
 
-            # Get USD prices for TVL calculation
-            price0 = self.price_fetcher.get_price(token0_info["symbol"])
-            price1 = self.price_fetcher.get_price(token1_info["symbol"])
-
-            if not price0 or not price1:
-                return None
-
-            # Calculate TVL
             decimals0 = token0_info["decimals"]
             decimals1 = token1_info["decimals"]
-            amount0 = reserve0 / (10 ** decimals0)
-            amount1 = reserve1 / (10 ** decimals1)
-            tvl_usd = (amount0 * price0) + (amount1 * price1)
 
-            if tvl_usd < self.min_tvl_usd:
-                return None
-
-            # Get ACTUAL QUOTED PRICES from router
+            # STEP 3: GET QUOTES FIRST (before wasting time on TVL)
             dex_info = DEXES.get(dex, {})
             router_addr = dex_info.get("router")
 
@@ -209,9 +194,10 @@ class PriceDataFetcher:
                 path0to1 = [Web3.to_checksum_address(token0_addr), Web3.to_checksum_address(token1_addr)]
                 amounts_out_0to1 = router.functions.getAmountsOut(test_amount0, path0to1).call()
                 quote_0to1 = amounts_out_0to1[1]  # Output amount
+                print(f"  ✅ {token0_info['symbol']}/{token1_info['symbol']} on {dex} - quote: 1 {token0_info['symbol']} = {quote_0to1 / (10**decimals1):.6f} {token1_info['symbol']}")
             except Exception as e:
-                # Skip pool if quote fails - don't use reserves
-                print(f"  ⚠️  Skipping {token0_info['symbol']}/{token1_info['symbol']} on {dex} - quote failed: {str(e)[:50]}")
+                # Skip pool if quote fails
+                print(f"  ⚠️  Skipping {token0_info['symbol']}/{token1_info['symbol']} on {dex} - quote failed: {str(e)[:80]}")
                 return None
 
             # Get quote for token1 -> token0
@@ -221,9 +207,28 @@ class PriceDataFetcher:
                 amounts_out_1to0 = router.functions.getAmountsOut(test_amount1, path1to0).call()
                 quote_1to0 = amounts_out_1to0[1]  # Output amount
             except Exception as e:
-                # Skip pool if quote fails - don't use reserves
-                print(f"  ⚠️  Skipping {token0_info['symbol']}/{token1_info['symbol']} on {dex} - reverse quote failed: {str(e)[:50]}")
+                # Skip pool if reverse quote fails
+                print(f"  ⚠️  Skipping {token0_info['symbol']}/{token1_info['symbol']} on {dex} - reverse quote failed")
                 return None
+
+            # STEP 4: NOW get TVL data (only if quotes succeeded)
+            price0 = self.price_fetcher.get_price(token0_info["symbol"])
+            price1 = self.price_fetcher.get_price(token1_info["symbol"])
+
+            if not price0 or not price1:
+                print(f"  ⚠️  No CoinGecko price for {token0_info['symbol']}/{token1_info['symbol']} - using quotes anyway")
+                # Still return the pool with quotes, just set TVL to 0
+                tvl_usd = 0
+            else:
+                # Calculate TVL
+                amount0 = reserve0 / (10 ** decimals0)
+                amount1 = reserve1 / (10 ** decimals1)
+                tvl_usd = (amount0 * price0) + (amount1 * price1)
+
+                # Check TVL threshold
+                if tvl_usd < self.min_tvl_usd:
+                    print(f"  ⚠️  Skipping {token0_info['symbol']}/{token1_info['symbol']} on {dex} - TVL ${tvl_usd:,.0f} < ${self.min_tvl_usd:,.0f}")
+                    return None
 
             return {
                 'pair_prices': {
@@ -244,8 +249,8 @@ class PriceDataFetcher:
                     'reserve1': reserve1,
                     'token0': token0_info["symbol"],
                     'token1': token1_info["symbol"],
-                    'price0_usd': price0,
-                    'price1_usd': price1
+                    'price0_usd': price0 if price0 else 0,
+                    'price1_usd': price1 if price1 else 0
                 }
             }
 
@@ -253,52 +258,32 @@ class PriceDataFetcher:
             return None
 
     def fetch_v3_pool(self, w3: Web3, pool_address: str, dex: str) -> Optional[Dict]:
-        """Fetch V3 pool data using ACTUAL quoter quotes (not sqrt calculations!)"""
+        """Fetch V3 pool data - QUOTES FIRST, then TVL"""
         try:
             pool = w3.eth.contract(
                 address=Web3.to_checksum_address(pool_address),
                 abi=UNISWAP_V3_POOL_ABI
             )
 
-            # Get slot0, liquidity, and tokens (still needed for TVL)
+            # STEP 1: Get basic pool info (fast)
             slot0 = pool.functions.slot0().call()
             liquidity = pool.functions.liquidity().call()
             token0_addr = pool.functions.token0().call()
             token1_addr = pool.functions.token1().call()
             fee = pool.functions.fee().call()
-
             sqrt_price_x96 = slot0[0]
 
-            # Get token info
+            # STEP 2: Get token info
             token0_info = self._get_token_info(token0_addr)
             token1_info = self._get_token_info(token1_addr)
 
             if not token0_info or not token1_info:
                 return None
 
-            # Get USD prices for TVL calculation
-            price0 = self.price_fetcher.get_price(token0_info["symbol"])
-            price1 = self.price_fetcher.get_price(token1_info["symbol"])
-
-            if not price0 or not price1:
-                return None
-
-            # Calculate TVL (simplified estimate)
             decimals0 = token0_info["decimals"]
             decimals1 = token1_info["decimals"]
-            price_ratio = (sqrt_price_x96 / (2 ** 96)) ** 2
-            price_adjusted = price_ratio * (10 ** decimals0) / (10 ** decimals1)
 
-            if liquidity > 0:
-                tvl_token1 = 2 * ((liquidity * price_adjusted) ** 0.5)
-                tvl_usd = (tvl_token1 / (10 ** decimals1)) * price1
-            else:
-                tvl_usd = 0
-
-            if tvl_usd < self.min_tvl_usd:
-                return None
-
-            # Get ACTUAL QUOTED PRICES from quoter
+            # STEP 3: GET QUOTES FIRST (before wasting time on TVL)
             dex_info = DEXES.get(dex, {})
             quoter_addr = dex_info.get("quoter")
 
@@ -326,9 +311,11 @@ class PriceDataFetcher:
                 }
                 result_0to1 = quoter.functions.quoteExactInputSingle(params0to1).call()
                 quote_0to1 = result_0to1[0]  # amountOut
+                fee_pct = fee / 10000
+                print(f"  ✅ {token0_info['symbol']}/{token1_info['symbol']} on {dex} ({fee_pct:.2f}%) - quote: 1 {token0_info['symbol']} = {quote_0to1 / (10**decimals1):.6f} {token1_info['symbol']}")
             except Exception as e:
-                # Skip pool if quoter fails - don't use sqrt price
-                print(f"  ⚠️  Skipping {token0_info['symbol']}/{token1_info['symbol']} on {dex} (fee:{fee}) - quoter failed: {str(e)[:50]}")
+                # Skip pool if quoter fails
+                print(f"  ⚠️  Skipping {token0_info['symbol']}/{token1_info['symbol']} on {dex} (fee:{fee}) - quoter failed: {str(e)[:80]}")
                 return None
 
             # Get quote for token1 -> token0
@@ -344,9 +331,33 @@ class PriceDataFetcher:
                 result_1to0 = quoter.functions.quoteExactInputSingle(params1to0).call()
                 quote_1to0 = result_1to0[0]  # amountOut
             except Exception as e:
-                # Skip pool if quoter fails - don't use sqrt price
-                print(f"  ⚠️  Skipping {token0_info['symbol']}/{token1_info['symbol']} on {dex} (fee:{fee}) - reverse quoter failed: {str(e)[:50]}")
+                # Skip pool if reverse quoter fails
+                print(f"  ⚠️  Skipping {token0_info['symbol']}/{token1_info['symbol']} on {dex} (fee:{fee}) - reverse quoter failed")
                 return None
+
+            # STEP 4: NOW get TVL data (only if quotes succeeded)
+            price0 = self.price_fetcher.get_price(token0_info["symbol"])
+            price1 = self.price_fetcher.get_price(token1_info["symbol"])
+
+            if not price0 or not price1:
+                print(f"  ⚠️  No CoinGecko price for {token0_info['symbol']}/{token1_info['symbol']} - using quotes anyway")
+                # Still return the pool with quotes, just set TVL to 0
+                tvl_usd = 0
+            else:
+                # Calculate TVL (simplified estimate)
+                price_ratio = (sqrt_price_x96 / (2 ** 96)) ** 2
+                price_adjusted = price_ratio * (10 ** decimals0) / (10 ** decimals1)
+
+                if liquidity > 0:
+                    tvl_token1 = 2 * ((liquidity * price_adjusted) ** 0.5)
+                    tvl_usd = (tvl_token1 / (10 ** decimals1)) * price1
+                else:
+                    tvl_usd = 0
+
+                # Check TVL threshold
+                if tvl_usd < self.min_tvl_usd:
+                    print(f"  ⚠️  Skipping {token0_info['symbol']}/{token1_info['symbol']} on {dex} (fee:{fee}) - TVL ${tvl_usd:,.0f} < ${self.min_tvl_usd:,.0f}")
+                    return None
 
             return {
                 'pair_prices': {
@@ -369,8 +380,8 @@ class PriceDataFetcher:
                     'liquidity': liquidity,
                     'token0': token0_info["symbol"],
                     'token1': token1_info["symbol"],
-                    'price0_usd': price0,
-                    'price1_usd': price1
+                    'price0_usd': price0 if price0 else 0,
+                    'price1_usd': price1 if price1 else 0
                 }
             }
 
