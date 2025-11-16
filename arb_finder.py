@@ -42,35 +42,152 @@ class ArbFinder:
 
     # Math functions now imported from price_math.py
 
+    def calculate_swap_output_with_slippage(
+        self,
+        pool_data: Dict,
+        token_in_symbol: str,
+        token_out_symbol: str,
+        amount_in_usd: float
+    ) -> Optional[Dict]:
+        """
+        Calculate swap output accounting for slippage using actual pool reserves.
+
+        Args:
+            pool_data: Pool data with pair_prices and tvl_data
+            token_in_symbol: Input token symbol
+            token_out_symbol: Output token symbol
+            amount_in_usd: Trade size in USD
+
+        Returns:
+            Dict with amount_out, slippage_pct, effective_price, or None
+        """
+        pair_prices = pool_data.get('pair_prices')
+        tvl_data = pool_data.get('tvl_data')
+
+        if not pair_prices or not tvl_data:
+            return None
+
+        pool_type = pair_prices.get('type')
+        token0 = pair_prices.get('token0')
+        token1 = pair_prices.get('token1')
+        decimals0 = pair_prices.get('decimals0', 18)
+        decimals1 = pair_prices.get('decimals1', 18)
+
+        # Determine direction
+        is_0_to_1 = (token_in_symbol == token0 and token_out_symbol == token1)
+        is_1_to_0 = (token_in_symbol == token1 and token_out_symbol == token0)
+
+        if not (is_0_to_1 or is_1_to_0):
+            return None
+
+        # Get token prices in USD to convert amount
+        price_in_usd = tvl_data.get('price0_usd' if is_0_to_1 else 'price1_usd', 0)
+        price_out_usd = tvl_data.get('price1_usd' if is_0_to_1 else 'price0_usd', 0)
+
+        if price_in_usd == 0:
+            return None
+
+        # Convert USD to token amount (in wei)
+        amount_in_token = amount_in_usd / price_in_usd
+        amount_in = int(amount_in_token * (10 ** (decimals0 if is_0_to_1 else decimals1)))
+
+        if amount_in == 0:
+            return None
+
+        # Calculate output based on pool type
+        if pool_type == 'v2':
+            # Get reserves from tvl_data (NOT pair_prices!)
+            reserve0 = tvl_data.get('reserve0', 0)
+            reserve1 = tvl_data.get('reserve1', 0)
+
+            if reserve0 == 0 or reserve1 == 0:
+                return None
+
+            # Determine fee
+            dex = pair_prices.get('dex', '')
+            fee_bps = self.dex_fees.get(dex, 30)
+
+            # Use constant product formula with slippage
+            reserve_in = reserve0 if is_0_to_1 else reserve1
+            reserve_out = reserve1 if is_0_to_1 else reserve0
+
+            amount_out = calculate_v2_output_amount(
+                amount_in, reserve_in, reserve_out, fee_bps
+            )
+
+        elif pool_type == 'v3':
+            # For V3, the stored quote is for 1 token
+            # We need to scale it, but V3 has concentrated liquidity so linear scaling is approximate
+            quote_ref = pair_prices.get('quote_0to1' if is_0_to_1 else 'quote_1to0', 0)
+
+            if quote_ref == 0:
+                return None
+
+            # Get fee from pool
+            fee = pair_prices.get('fee', 3000)
+            fee_bps = fee // 100  # Convert from hundredths of bip to bps
+
+            # Linear approximation (not perfect for V3, but better than nothing)
+            # In production, you'd call the quoter contract for the exact amount
+            amount_ref = 10 ** (decimals0 if is_0_to_1 else decimals1)
+            scale = amount_in / amount_ref
+            amount_out = int(quote_ref * scale)
+
+            # Apply fee
+            amount_out = amount_out * (10000 - fee_bps) // 10000
+        else:
+            return None
+
+        if amount_out == 0 or price_out_usd == 0:
+            return None
+
+        # Convert output to USD
+        decimals_out = decimals1 if is_0_to_1 else decimals0
+        amount_out_token = amount_out / (10 ** decimals_out)
+        amount_out_usd = amount_out_token * price_out_usd
+
+        # Calculate slippage
+        # Expected: amount_in_usd should equal amount_out_usd (before fees)
+        # Actual: less due to slippage and fees
+        slippage_pct = ((amount_in_usd - amount_out_usd) / amount_in_usd) * 100
+
+        # Effective price
+        effective_price = amount_out_token / amount_in_token if amount_in_token > 0 else 0
+
+        return {
+            'amount_in': amount_in,
+            'amount_out': amount_out,
+            'amount_in_usd': amount_in_usd,
+            'amount_out_usd': amount_out_usd,
+            'slippage_pct': slippage_pct,
+            'effective_price': effective_price,
+            'token_in': token_in_symbol,
+            'token_out': token_out_symbol
+        }
+
     def get_pool_price(self, pool_data: Dict) -> Optional[float]:
         """
-        Get effective price from pool data
+        Get effective price from pool data using actual quotes
         Returns: price of token1 in terms of token0
         """
         pair_prices = pool_data.get('pair_prices')
         if not pair_prices:
             return None
 
-        pool_type = pair_prices.get('type')
+        # Use the actual stored quotes (these are REAL quotes from DEX contracts)
+        quote_0to1 = pair_prices.get('quote_0to1', 0)
+        quote_1to0 = pair_prices.get('quote_1to0', 0)
+        decimals0 = pair_prices.get('decimals0', 18)
+        decimals1 = pair_prices.get('decimals1', 18)
 
-        if pool_type == 'v2':
-            reserve0 = pair_prices.get('reserve0', 0)
-            reserve1 = pair_prices.get('reserve1', 0)
-            decimals0 = pair_prices.get('decimals0', 18)
-            decimals1 = pair_prices.get('decimals1', 18)
+        if quote_0to1 == 0 or quote_1to0 == 0:
+            return None
 
-            # Use price_math function
-            return get_price_from_v2_reserves(reserve0, reserve1, decimals0, decimals1)
+        # The quotes represent: 1 token0 → ? token1
+        # Price = how much token1 you get for 1 token0
+        price = (quote_0to1 / (10 ** decimals1)) / (10 ** decimals0 / (10 ** decimals0))
 
-        elif pool_type == 'v3':
-            sqrt_price_x96 = pair_prices.get('sqrt_price_x96', 0)
-            decimals0 = pair_prices.get('decimals0', 18)
-            decimals1 = pair_prices.get('decimals1', 18)
-
-            # Use price_math function
-            return get_price_from_v3_sqrt_price(sqrt_price_x96, decimals0, decimals1)
-
-        return None
+        return price
 
     def calculate_arbitrage(
         self,
@@ -79,7 +196,7 @@ class ArbFinder:
         amount_usd: float
     ) -> Optional[Dict]:
         """
-        Calculate arbitrage for a specific pair and trade size
+        Calculate arbitrage for a specific pair and trade size using ACTUAL swap quotes with slippage
 
         Args:
             pair_name: Token pair (e.g., "USDC/WETH")
@@ -92,76 +209,99 @@ class ArbFinder:
         if len(pools) < 2:
             return None
 
-        # Get prices from each pool
-        pool_prices = []
+        # Parse pair to get tokens
+        tokens = pair_name.split('/')
+        if len(tokens) != 2:
+            return None
+
+        token0, token1 = tokens
+
+        # For each pool, calculate swap outputs in BOTH directions with slippage
+        pool_swaps = []
 
         for pool in pools:
-            price = self.get_pool_price(pool['pool_data'])
+            # Direction 1: token0 -> token1
+            swap_0to1 = self.calculate_swap_output_with_slippage(
+                pool['pool_data'], token0, token1, amount_usd
+            )
 
-            if price and price > 0:
-                pool_prices.append({
+            # Direction 2: token1 -> token0
+            swap_1to0 = self.calculate_swap_output_with_slippage(
+                pool['pool_data'], token1, token0, amount_usd
+            )
+
+            if swap_0to1 and swap_1to0:
+                pool_swaps.append({
                     'dex': pool['dex'],
                     'pool_data': pool['pool_data'],
-                    'price': price
+                    'swap_0to1': swap_0to1,
+                    'swap_1to0': swap_1to0
                 })
 
-        if len(pool_prices) < 2:
+        if len(pool_swaps) < 2:
             return None
 
-        # Find best buy (lowest price) and sell (highest price)
-        best_buy = min(pool_prices, key=lambda x: x['price'])
-        best_sell = max(pool_prices, key=lambda x: x['price'])
+        # Find best arbitrage opportunity
+        # Strategy: Buy token1 on one DEX, sell token1 on another
+        best_arb = None
+        max_profit = 0
 
-        # Calculate profit
-        if best_sell['price'] <= best_buy['price']:
-            return None
+        for i, buy_pool in enumerate(pool_swaps):
+            for j, sell_pool in enumerate(pool_swaps):
+                if i == j:
+                    continue
 
-        # Get DEX fees
-        buy_dex = best_buy['dex']
-        sell_dex = best_sell['dex']
+                # Path: Start with amount_usd in token0
+                # Buy token1 on buy_pool: token0 -> token1
+                buy_swap = buy_pool['swap_0to1']
+                amount_token1_usd = buy_swap['amount_out_usd']
 
-        buy_fee = self.dex_fees.get(buy_dex, 30)
-        sell_fee = self.dex_fees.get(sell_dex, 30)
+                # Sell token1 on sell_pool: token1 -> token0
+                # Need to recalculate for the actual amount we have
+                sell_swap = self.calculate_swap_output_with_slippage(
+                    sell_pool['pool_data'],
+                    token1,
+                    token0,
+                    amount_token1_usd
+                )
 
-        # For V3, use pool-specific fee
-        if best_buy['pool_data'].get('pair_prices', {}).get('type') == 'v3':
-            buy_fee = best_buy['pool_data']['pair_prices'].get('fee', 3000) // 100
+                if not sell_swap:
+                    continue
 
-        if best_sell['pool_data'].get('pair_prices', {}).get('type') == 'v3':
-            sell_fee = best_sell['pool_data']['pair_prices'].get('fee', 3000) // 100
+                # Final amount in token0 (USD)
+                final_amount_usd = sell_swap['amount_out_usd']
 
-        # Calculate profit after fees
-        price_diff = best_sell['price'] - best_buy['price']
-        profit_ratio = price_diff / best_buy['price']
+                # Profit
+                profit_usd = final_amount_usd - amount_usd
 
-        # Subtract fees
-        total_fee_ratio = (buy_fee + sell_fee) / 10000
-        net_profit_ratio = profit_ratio - total_fee_ratio
+                if profit_usd > max_profit and profit_usd >= self.min_profit_usd:
+                    max_profit = profit_usd
+                    roi_percent = (profit_usd / amount_usd) * 100
 
-        if net_profit_ratio <= 0:
-            return None
+                    # Get TVL for reference
+                    buy_tvl = buy_pool['pool_data'].get('tvl_data', {}).get('tvl_usd', 0)
+                    sell_tvl = sell_pool['pool_data'].get('tvl_data', {}).get('tvl_usd', 0)
 
-        profit_usd = net_profit_ratio * amount_usd
+                    best_arb = {
+                        'pair': pair_name,
+                        'direction': f'Buy {token1} on {buy_pool["dex"]}, Sell {token1} on {sell_pool["dex"]}',
+                        'dex_buy': buy_pool['dex'],
+                        'dex_sell': sell_pool['dex'],
+                        'buy_price': buy_swap['effective_price'],
+                        'sell_price': sell_swap['effective_price'],
+                        'profit_usd': profit_usd,
+                        'net_profit_usd': profit_usd,  # Will subtract gas later
+                        'roi_percent': roi_percent,
+                        'roi': roi_percent,
+                        'trade_size_usd': amount_usd,
+                        'buy_tvl_usd': buy_tvl,
+                        'sell_tvl_usd': sell_tvl,
+                        'buy_slippage_pct': buy_swap['slippage_pct'],
+                        'sell_slippage_pct': sell_swap['slippage_pct'],
+                        'total_slippage_pct': buy_swap['slippage_pct'] + sell_swap['slippage_pct']
+                    }
 
-        if profit_usd < self.min_profit_usd:
-            return None
-
-        # Get TVL for reference
-        buy_tvl = best_buy['pool_data'].get('tvl_data', {}).get('tvl_usd', 0)
-        sell_tvl = best_sell['pool_data'].get('tvl_data', {}).get('tvl_usd', 0)
-
-        return {
-            'pair': pair_name,
-            'dex_buy': buy_dex,
-            'dex_sell': sell_dex,
-            'buy_price': best_buy['price'],
-            'sell_price': best_sell['price'],
-            'profit_usd': profit_usd,
-            'roi_percent': net_profit_ratio * 100,
-            'trade_size_usd': amount_usd,
-            'buy_tvl_usd': buy_tvl,
-            'sell_tvl_usd': sell_tvl
-        }
+        return best_arb
 
     def build_token_graph(self, pools: Dict[str, Dict]) -> Dict:
         """
