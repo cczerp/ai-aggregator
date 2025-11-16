@@ -99,22 +99,22 @@ class PolygonArbBot:
     def simulate_strategy(self, strategy: dict) -> dict:
         """
         Simulate a strategy before execution (ArbiGirl compatibility)
-        
+
         Args:
             strategy: Dict with est_profit_usd, pair, payload
-        
+
         Returns:
             Dict with simulation results
         """
         try:
             profit_usd = float(strategy.get("est_profit_usd", 0))
             payload = strategy.get("payload", {})
-            
+
             # Extract parameters
             token_in = payload.get("token_in")
             token_out = payload.get("token_out")
             amount_in_wei = int(payload.get("amountInWei", 0))
-            
+
             if not all([token_in, token_out, amount_in_wei > 0]):
                 return {
                     "success": False,
@@ -123,14 +123,40 @@ class PolygonArbBot:
                     "gas_usd": 0,
                     "net_profit_usd": 0
                 }
-            
-            # Estimate gas cost dynamically (Polygon: ~400k gas @ 40 gwei)
-            # Using POL price of $0.40 (can be made dynamic with price oracle)
-            estimated_gas_units = 400000
-            gas_price_gwei = 40
-            gas_cost_pol = (estimated_gas_units * gas_price_gwei) / 1e9
-            pol_price_usd = 0.40  # Can be fetched from oracle if available
-            estimated_gas_cost_usd = gas_cost_pol * pol_price_usd
+
+            # Estimate gas cost DYNAMICALLY using GasOptimizationManager
+            try:
+                from tx_builder import GasOptimizationManager
+                gas_mgr = GasOptimizationManager(rpc_manager=self.rpc_manager)
+
+                # Get current gas params
+                gas_params = gas_mgr.get_optimized_gas_params()
+                max_fee_per_gas = gas_params.get('maxFeePerGas', 40e9)  # Default 40 gwei
+
+                # Estimate gas units (typical arbitrage: 350-450k gas)
+                # Use conservative estimate
+                estimated_gas_units = 400000
+
+                # Calculate gas cost in POL (wei)
+                gas_cost_wei = estimated_gas_units * max_fee_per_gas
+                gas_cost_pol = gas_cost_wei / 1e18
+
+                # Get POL price dynamically from CoinGecko
+                pol_price_usd = self.price_fetcher.price_fetcher.get_price("WPOL")
+                if not pol_price_usd:
+                    pol_price_usd = 0.40  # Fallback
+
+                estimated_gas_cost_usd = gas_cost_pol * pol_price_usd
+
+            except Exception as e:
+                # Fallback to conservative estimate
+                print(f"⚠️ Dynamic gas estimation failed: {e}, using fallback")
+                estimated_gas_units = 400000
+                max_fee_per_gas = 40e9  # 40 gwei
+                gas_cost_pol = (estimated_gas_units * max_fee_per_gas) / 1e18
+                pol_price_usd = 0.40
+                estimated_gas_cost_usd = gas_cost_pol * pol_price_usd
+
             net_profit = profit_usd - estimated_gas_cost_usd
             
             if net_profit < 0.5:

@@ -469,13 +469,13 @@ class GasOptimizationManager:
         # 1. Check cooldown
         if not self.check_trade_cooldown():
             return None
-        
+
         # 2. Generate trade ID for replay protection
         trade_id = f"{contract_address}:{function_data}:{int(time.time())}"
         if self.is_trade_executed(trade_id):
             logger.warning("⚠️ Trade already executed (replay protection)")
             return None
-        
+
         try:
             # 3. Build transaction
             account = Account.from_key(private_key)
@@ -485,22 +485,27 @@ class GasOptimizationManager:
                 from_address=account.address,
                 value=value
             )
-            
+
             # 4. Sign transaction
             signed_tx = self.w3.eth.account.sign_transaction(tx, private_key)
-            
+
             # 5. Send transaction (private if requested)
             if use_private_tx:
                 tx_hash = self.send_private_transaction(signed_tx.raw_transaction.hex())
             else:
                 tx_hash = self.w3.eth.send_raw_transaction(signed_tx.raw_transaction).hex()
-            
+
             # 6. Mark as executed
             self.mark_trade_executed(tx_hash)
-            
+
             logger.info(f"✅ Trade executed: {tx_hash}")
             return tx_hash
-            
+
         except Exception as e:
             logger.error(f"❌ Trade execution failed: {e}")
             return None
+
+
+# Alias for backward compatibility with Polygon bot
+# (Flashbots doesn't exist on Polygon - we use Alchemy private TX instead)
+FlashbotsTxBuilder = GasOptimizationManager
