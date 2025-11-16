@@ -827,6 +827,76 @@ class ArbiGirl:
         print(f"  {Fore.YELLOW}clear{Style.RESET_ALL}      - Clear the screen")
         print(f"  {Fore.YELLOW}help{Style.RESET_ALL}       - Show this help")
         print(f"  {Fore.YELLOW}exit{Style.RESET_ALL}       - Exit ArbiGirl")
+
+    def _display_pools_csv(self):
+        """Display all pools in CSV-style spreadsheet format"""
+        if not self.last_pools:
+            return
+
+        print(f"\n{Fore.CYAN}{'='*120}")
+        print(f"📊 ALL POOL PAIR PRICES (CSV FORMAT)")
+        print(f"{'='*120}{Style.RESET_ALL}\n")
+
+        # CSV header
+        print(f"{Fore.GREEN}DEX,Pair,Type,Token0,Token1,Price (Token0/Token1),TVL (USD),Pool Address{Style.RESET_ALL}")
+        print(f"{'-'*120}")
+
+        total_count = 0
+        total_tvl = 0
+
+        # Sort DEXes for consistent output
+        for dex_name in sorted(self.last_pools.keys()):
+            pairs = self.last_pools[dex_name]
+
+            # Sort pairs alphabetically
+            for pair_name in sorted(pairs.keys()):
+                pool_data = pairs[pair_name]
+
+                if 'pair_prices' not in pool_data:
+                    continue
+
+                prices = pool_data['pair_prices']
+                pool_type = prices.get('type', 'v2')
+                token0 = prices.get('token0', 'N/A')
+                token1 = prices.get('token1', 'N/A')
+                pool_addr = pool_data.get('pool', 'N/A')[:10]
+
+                # Get TVL
+                tvl_usd = 0
+                if 'tvl_data' in pool_data:
+                    tvl_usd = pool_data['tvl_data'].get('tvl_usd', 0)
+                    total_tvl += tvl_usd
+
+                # Calculate price based on pool type
+                price_str = "N/A"
+                if pool_type == 'v2':
+                    reserve0 = prices.get('reserve0', 0)
+                    reserve1 = prices.get('reserve1', 0)
+                    decimals0 = prices.get('decimals0', 18)
+                    decimals1 = prices.get('decimals1', 18)
+
+                    if reserve0 > 0 and reserve1 > 0:
+                        price = (reserve1 / 10**decimals1) / (reserve0 / 10**decimals0)
+                        price_str = f"{price:.8f}"
+
+                elif pool_type in ['v3', 'v3_algebra']:
+                    sqrt_price_x96 = prices.get('sqrt_price_x96', 0)
+                    decimals0 = prices.get('decimals0', 18)
+                    decimals1 = prices.get('decimals1', 18)
+
+                    if sqrt_price_x96 > 0:
+                        price_ratio = (sqrt_price_x96 / (2 ** 96)) ** 2
+                        price = price_ratio * (10 ** decimals0) / (10 ** decimals1)
+                        price_str = f"{price:.8f}"
+
+                # Print CSV row
+                print(f"{dex_name},{pair_name},{pool_type},{token0},{token1},{price_str},${tvl_usd:,.0f},{pool_addr}...")
+                total_count += 1
+
+        # Summary
+        print(f"\n{Fore.CYAN}{'='*120}")
+        print(f"SUMMARY: {total_count} pools | Total TVL: ${total_tvl:,.0f}")
+        print(f"{'='*120}{Style.RESET_ALL}\n")
     
     def handle_fetch(self):
         """Fetch pool data (uses batched Multicall3 for speed)"""
@@ -849,6 +919,9 @@ class ArbiGirl:
         print(f"  • Pools fetched: {pool_count}")
         print(f"  • Time: {fetch_time:.2f}s")
         print(f"  • Cached: Pair prices (1hr), TVL (3hr)")
+
+        # Automatically display CSV-style output
+        self._display_pools_csv()
 
     def handle_scan(self):
         """Find arbitrage from cached data"""
