@@ -268,12 +268,11 @@ ai-aggregator/
 ├── arb_scanner.py             # Arbitrage detection logic
 ├── pool_scanner.py            # Pool discovery and scanning
 ├── price_math.py              # Price calculations (V2/V3)
-├── tx_builder.py              # Transaction builder
+├── tx_builder.py              # Transaction builder + Gas optimization
 ├── flashloan_contract.py      # Contract ABI and helpers
 ├── flashloanbot.sol           # Solidity flashloan contract
 ├── trade_database.py          # SQLite persistence layer
 ├── rpc_mgr.py                 # RPC manager with failover
-├── gas_optimization_manager.py # Gas optimization
 ├── polygon_arb_bot.py         # Main bot orchestrator
 ├── registries.py              # Token and DEX registries
 ├── abis.py                    # Contract ABIs
