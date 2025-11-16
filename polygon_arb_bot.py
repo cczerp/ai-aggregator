@@ -35,7 +35,6 @@ class PolygonArbBot:
         self,
         min_tvl: float = 3000,
         scan_interval: int = 60,
-        cache_duration_hours: int = 6,
         auto_execute: bool = False
     ):
         print(f"\n{Fore.CYAN}{'='*80}")
@@ -57,10 +56,7 @@ class PolygonArbBot:
         
         # Initialize Persistent Cache
         print(f"\n{Fore.YELLOW}💾 Initializing Persistent Cache...{Style.RESET_ALL}")
-        self.cache = Cache(
-            cache_dir="./cache",
-            cache_duration_hours=cache_duration_hours
-        )
+        self.cache = Cache(cache_dir="./cache")
         
         # Initialize Price Data Fetcher
         print(f"\n{Fore.YELLOW}🔍 Initializing Price Data Fetcher...{Style.RESET_ALL}")
@@ -342,7 +338,6 @@ class PolygonArbBot:
         print(f"   ✅ Valid (>${self.min_tvl:,.0f} TVL): {valid_pools:,}")
         print(f"   ⚠️  Low liquidity:         {low_liquidity_pools:,}")
         print(f"   💰 Opportunities found:   {len(opportunities):,}")
-        print(f"   ⏰ Cache valid for:       {self.cache.cache_duration / 3600:.0f} hours")
         print(f"{Fore.CYAN}{'='*80}{Style.RESET_ALL}\n")
         
         # RPC stats
@@ -579,7 +574,6 @@ def main():
     bot = PolygonArbBot(
         min_tvl=3000,            # $3k minimum
         scan_interval=60,        # 60 seconds
-        cache_duration_hours=6,  # 6 hour cache for DEX prices
         auto_execute=False       # Manual mode
     )
     
