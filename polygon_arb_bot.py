@@ -69,7 +69,7 @@ class PolygonArbBot:
         # Initialize Arbitrage Finder
         print(f"\n{Fore.YELLOW}🎯 Initializing Arbitrage Finder...{Style.RESET_ALL}")
         self.arb_finder = ArbFinder(
-            min_profit_usd=1.0
+            min_profit_usd=0.10  # $0.10 minimum for testing
         )
         
         # Statistics
@@ -153,8 +153,8 @@ class PolygonArbBot:
                 estimated_gas_cost_usd = gas_cost_pol * pol_price_usd
 
             net_profit = profit_usd - estimated_gas_cost_usd
-            
-            if net_profit < 0.5:
+
+            if net_profit < 0.10:  # Lower threshold for testing
                 return {
                     "success": False,
                     "profit_usd": profit_usd,
@@ -572,7 +572,7 @@ def main():
     
     # Initialize bot
     bot = PolygonArbBot(
-        min_tvl=3000,            # $3k minimum
+        min_tvl=100,             # $100 minimum for testing (low for testing)
         scan_interval=60,        # 60 seconds
         auto_execute=False       # Manual mode
     )
