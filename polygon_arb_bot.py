@@ -9,6 +9,7 @@ Optimized Polygon Arbitrage Bot with:
 """
 import time
 import sys
+import os
 from datetime import datetime
 from colorama import Fore, Style, init
 
@@ -17,6 +18,7 @@ from rpc_mgr import RPCManager
 from cache import Cache
 from price_data_fetcher import PriceDataFetcher
 from arb_finder import ArbFinder
+from auto_executor import AutoExecutor, ExecutionLimits
 
 # Import existing modules (you already have these)
 try:
@@ -76,15 +78,38 @@ class PolygonArbBot:
         self.arb_finder = ArbFinder(
             min_profit_usd=1.0
         )
-        
+
+        # Initialize Auto-Executor if enabled
+        self.auto_executor = None
+        if auto_execute:
+            print(f"\n{Fore.YELLOW}⚡ Initializing Auto-Executor...{Style.RESET_ALL}")
+            limits = ExecutionLimits(
+                max_trade_size_usd=float(os.getenv("MAX_TRADE_SIZE_USD", "10000")),
+                min_profit_after_gas=float(os.getenv("MIN_PROFIT_AFTER_GAS", "2.0")),
+                max_slippage_pct=float(os.getenv("MAX_SLIPPAGE_PCT", "2.0")),
+                max_gas_cost_pct=float(os.getenv("MAX_GAS_COST_PCT", "30.0")),
+                max_trades_per_hour=int(os.getenv("MAX_TRADES_PER_HOUR", "20")),
+                max_daily_loss=float(os.getenv("MAX_DAILY_LOSS", "100.0")),
+                cooldown_seconds=int(os.getenv("COOLDOWN_SECONDS", "30")),
+                kill_on_failed_trades=int(os.getenv("KILL_ON_FAILED_TRADES", "3"))
+            )
+            self.auto_executor = AutoExecutor(
+                price_fetcher=self.price_fetcher,
+                arb_finder=self.arb_finder,
+                limits=limits
+            )
+            print(f"{Fore.GREEN}✅ Auto-Executor ready with safety limits{Style.RESET_ALL}")
+
         # Statistics
         self.total_scans = 0
         self.total_opportunities = 0
         self.total_trades = 0
         self.start_time = time.time()
-        
+
         print(f"\n{Fore.GREEN}{'='*80}")
         print(f"✅ BOT INITIALIZED SUCCESSFULLY")
+        if auto_execute:
+            print(f"⚡ AUTO-EXECUTION ENABLED")
         print(f"{'='*80}{Style.RESET_ALL}\n")
     
     def scan_pools(self) -> dict:
@@ -479,7 +504,43 @@ class PolygonArbBot:
             
             # Print opportunities
             self.print_opportunities(opportunities)
-            
+
+            # ⚡ AUTO-EXECUTE if enabled
+            if self.auto_executor and opportunities:
+                print(f"\n{Fore.YELLOW}{'='*80}")
+                print(f"⚡ AUTO-EXECUTION MODE ACTIVE")
+                print(f"{'='*80}{Style.RESET_ALL}\n")
+
+                for i, opp in enumerate(opportunities, 1):
+                    print(f"\n{Fore.CYAN}[{i}/{len(opportunities)}] Evaluating opportunity...{Style.RESET_ALL}")
+
+                    # Check if should execute
+                    should_exec, reason, updated_opp = self.auto_executor.should_execute(opp)
+
+                    if should_exec:
+                        # Execute the opportunity
+                        result = self.auto_executor.execute_opportunity(updated_opp or opp, self)
+
+                        if result.get("success"):
+                            self.total_trades += 1
+                            print(f"{Fore.GREEN}✅ Trade #{self.total_trades} completed successfully!{Style.RESET_ALL}\n")
+                        else:
+                            print(f"{Fore.RED}❌ Trade failed: {result.get('error')}{Style.RESET_ALL}\n")
+                    else:
+                        print(f"{Fore.YELLOW}⏭️  Skipped: {reason}{Style.RESET_ALL}\n")
+
+                # Print executor stats
+                exec_stats = self.auto_executor.get_stats()
+                print(f"\n{Fore.CYAN}{'='*80}")
+                print(f"📊 AUTO-EXECUTOR STATISTICS")
+                print(f"{'='*80}{Style.RESET_ALL}")
+                print(f"  Total trades: {exec_stats['total_trades']}")
+                print(f"  Successful: {exec_stats['successful_trades']}")
+                print(f"  Success rate: {exec_stats['success_rate']:.1f}%")
+                print(f"  Daily P&L: ${exec_stats['daily_pnl']:.2f}")
+                print(f"  Kill switch: {'🔴 ACTIVE' if exec_stats['kill_switch_active'] else '🟢 INACTIVE'}")
+                print(f"{Fore.CYAN}{'='*80}{Style.RESET_ALL}\n")
+
             # Print summary
             self.print_scan_summary(
                 pools_scanned=total_pools,
@@ -487,9 +548,9 @@ class PolygonArbBot:
                 low_liquidity_pools=0,  # Not tracked separately
                 opportunities=opportunities
             )
-            
+
             print(f"   ⏱️  Scan completed in {elapsed:.2f}s\n")
-            
+
             return opportunities
         
         except Exception as e:
