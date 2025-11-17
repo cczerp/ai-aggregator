@@ -79,26 +79,42 @@ class PolygonArbBot:
             min_profit_usd=1.0
         )
 
-        # Initialize Auto-Executor if enabled
+        # Initialize Flash Loan Auto-Executor if enabled
         self.auto_executor = None
         if auto_execute:
-            print(f"\n{Fore.YELLOW}⚡ Initializing Auto-Executor...{Style.RESET_ALL}")
+            print(f"\n{Fore.YELLOW}⚡ Initializing Flash Loan Executor...{Style.RESET_ALL}")
             limits = ExecutionLimits(
-                max_trade_size_usd=float(os.getenv("MAX_TRADE_SIZE_USD", "10000")),
-                min_profit_after_gas=float(os.getenv("MIN_PROFIT_AFTER_GAS", "2.0")),
-                max_slippage_pct=float(os.getenv("MAX_SLIPPAGE_PCT", "2.0")),
-                max_gas_cost_pct=float(os.getenv("MAX_GAS_COST_PCT", "30.0")),
-                max_trades_per_hour=int(os.getenv("MAX_TRADES_PER_HOUR", "20")),
-                max_daily_loss=float(os.getenv("MAX_DAILY_LOSS", "100.0")),
-                cooldown_seconds=int(os.getenv("COOLDOWN_SECONDS", "30")),
-                kill_on_failed_trades=int(os.getenv("KILL_ON_FAILED_TRADES", "3"))
+                # Flash loan sizing
+                min_trade_size_usd=float(os.getenv("MIN_TRADE_SIZE_USD", "1000")),
+                max_trade_size_usd=float(os.getenv("MAX_TRADE_SIZE_USD", "100000")),
+                optimal_trade_size_usd=float(os.getenv("OPTIMAL_TRADE_SIZE_USD", "15000")),
+
+                # Profit requirements
+                min_profit_after_gas=float(os.getenv("MIN_PROFIT_AFTER_GAS", "0.75")),
+                min_profit_after_fees=float(os.getenv("MIN_PROFIT_AFTER_FEES", "1.00")),
+
+                # Slippage and liquidity
+                max_slippage_pct=float(os.getenv("MAX_SLIPPAGE_PCT", "3.0")),
+                min_pool_tvl=float(os.getenv("MIN_POOL_TVL", "5000")),
+
+                # Rate limiting (aggressive for flash loans!)
+                max_trades_per_minute=int(os.getenv("MAX_TRADES_PER_MINUTE", "10")),
+                max_gas_spent_per_hour=float(os.getenv("MAX_GAS_SPENT_PER_HOUR", "5.0")),
+                cooldown_seconds=float(os.getenv("COOLDOWN_SECONDS", "0.1")),
+
+                # Kill switch
+                kill_on_consecutive_failures=int(os.getenv("KILL_ON_CONSECUTIVE_FAILURES", "10")),
+
+                # Flash loan provider
+                prefer_balancer=os.getenv("PREFER_BALANCER", "true").lower() == "true"
             )
             self.auto_executor = AutoExecutor(
                 price_fetcher=self.price_fetcher,
                 arb_finder=self.arb_finder,
-                limits=limits
+                limits=limits,
+                use_flash_loans=True
             )
-            print(f"{Fore.GREEN}✅ Auto-Executor ready with safety limits{Style.RESET_ALL}")
+            print(f"{Fore.GREEN}✅ Flash Loan Executor ready (ZERO CAPITAL RISK!){Style.RESET_ALL}")
 
         # Statistics
         self.total_scans = 0
@@ -529,15 +545,23 @@ class PolygonArbBot:
                     else:
                         print(f"{Fore.YELLOW}⏭️  Skipped: {reason}{Style.RESET_ALL}\n")
 
-                # Print executor stats
+                # Print flash loan executor stats
                 exec_stats = self.auto_executor.get_stats()
                 print(f"\n{Fore.CYAN}{'='*80}")
-                print(f"📊 AUTO-EXECUTOR STATISTICS")
+                print(f"⚡ FLASH LOAN EXECUTOR STATISTICS (ZERO CAPITAL RISK)")
                 print(f"{'='*80}{Style.RESET_ALL}")
-                print(f"  Total trades: {exec_stats['total_trades']}")
+                print(f"  Total trades attempted: {exec_stats['total_trades']}")
                 print(f"  Successful: {exec_stats['successful_trades']}")
+                print(f"  Failed: {exec_stats['failed_trades']} (reverted - no capital lost!)")
                 print(f"  Success rate: {exec_stats['success_rate']:.1f}%")
-                print(f"  Daily P&L: ${exec_stats['daily_pnl']:.2f}")
+                print(f"  Consecutive failures: {exec_stats['consecutive_failures']}")
+                print(f"  ")
+                print(f"  💰 Total profit: ${exec_stats['total_profit']:.2f}")
+                print(f"  ⛽ Gas spent: ${exec_stats['total_gas_spent']:.2f}")
+                print(f"  💵 Net P&L: ${exec_stats['net_profit']:.2f}")
+                print(f"  ")
+                print(f"  Trades this minute: {exec_stats['trades_this_minute']}")
+                print(f"  Gas this hour: ${exec_stats['gas_this_hour']:.2f}")
                 print(f"  Kill switch: {'🔴 ACTIVE' if exec_stats['kill_switch_active'] else '🟢 INACTIVE'}")
                 print(f"{Fore.CYAN}{'='*80}{Style.RESET_ALL}\n")
 

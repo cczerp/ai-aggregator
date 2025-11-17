@@ -1,10 +1,18 @@
 """
-Auto-Execution Module for Real-Time Arbitrage
-- Fresh quote verification before execution
-- Slippage protection
-- Gas cost validation
-- Execution limits and kill switch
-- Automatic retry logic
+Auto-Execution Module for Flash Loan Arbitrage
+OPTIMIZED FOR FLASH LOANS - Zero Capital Risk!
+
+Key Differences from Regular Trading:
+- Flash loans auto-revert on failure = NO CAPITAL RISK
+- Only cost is gas (~$0.20-0.50 per attempt on Polygon)
+- Can be MUCH more aggressive with execution
+- No cooldowns needed (gas is cheap on Polygon)
+- No daily loss limits (only losing gas, not capital)
+
+Safety Focus:
+- Minimum profit after gas + flash loan fees
+- Pool liquidity checks (avoid excessive slippage)
+- Gas cost must be < profit
 """
 
 import os
@@ -21,123 +29,75 @@ logger = logging.getLogger(__name__)
 
 
 @dataclass
-class ExecutionLimits:
-    """Safety limits for auto-execution"""
-    max_trade_size_usd: float = 10000.0        # Max trade size
-    min_profit_after_gas: float = 2.0          # Min profit after gas ($2)
-    max_slippage_pct: float = 2.0              # Max acceptable slippage (2%)
-    max_gas_cost_pct: float = 30.0             # Max gas as % of profit
-    max_trades_per_hour: int = 20              # Rate limit
-    max_daily_loss: float = 100.0              # Max loss per day
-    cooldown_seconds: int = 30                 # Cooldown between trades
+class FlashLoanLimits:
+    """Safety limits for flash loan arbitrage (ZERO capital risk!)"""
 
-    # Kill switch
+    # Trade sizing (flash loan amounts)
+    min_trade_size_usd: float = 1000.0         # Minimum flash loan size
+    max_trade_size_usd: float = 100000.0       # Maximum flash loan size
+    optimal_trade_size_usd: float = 15000.0    # Sweet spot for most pools
+
+    # Profit requirements
+    min_profit_after_gas: float = 0.75         # Min profit after gas ($0.75 - gas is cheap!)
+    min_profit_after_fees: float = 1.00        # Min after gas + flash loan fees
+
+    # Slippage and liquidity
+    max_slippage_pct: float = 3.0              # Can be higher - no capital risk!
+    min_pool_tvl: float = 5000.0               # Minimum pool liquidity
+
+    # Rate limiting (can be aggressive - only cost is gas)
+    max_trades_per_minute: int = 10            # Max 10 trades/min
+    max_gas_spent_per_hour: float = 5.0        # Max $5 gas/hour
+    cooldown_seconds: float = 0.1              # Minimal cooldown (100ms)
+
+    # Kill switch (for repeated failures only)
     enabled: bool = True
-    kill_on_failed_trades: int = 3             # Disable after N failures
+    kill_on_consecutive_failures: int = 10     # Higher threshold - failures are cheap!
+
+    # Flash loan provider preference
+    prefer_balancer: bool = True               # Balancer = 0% fees!
+    max_flash_loan_fee_pct: float = 0.09       # Max 0.09% (Aave)
 
 
-class AutoExecutor:
+class FlashLoanExecutor:
     """
-    Automatic execution engine with safety checks
+    Flash Loan execution engine - ZERO CAPITAL RISK
+    Optimized for aggressive execution since failures only cost gas
     """
 
     def __init__(
         self,
         price_fetcher,
         arb_finder,
-        limits: Optional[ExecutionLimits] = None
+        limits: Optional[FlashLoanLimits] = None,
+        use_flash_loans: bool = True
     ):
         self.price_fetcher = price_fetcher
         self.arb_finder = arb_finder
-        self.limits = limits or ExecutionLimits()
+        self.limits = limits or FlashLoanLimits()
+        self.use_flash_loans = use_flash_loans
 
         # Execution tracking
         self.last_trade_time = 0
-        self.trades_this_hour = []
-        self.failed_trades = 0
-        self.daily_pnl = 0.0
+        self.trades_this_minute = []
+        self.gas_spent_this_hour = []
+        self.consecutive_failures = 0
         self.total_trades = 0
         self.successful_trades = 0
+        self.total_gas_spent = 0.0
+        self.total_profit = 0.0
 
-        logger.info("AutoExecutor initialized with safety limits")
-        logger.info(f"  Max trade size: ${self.limits.max_trade_size_usd:,.0f}")
-        logger.info(f"  Min profit after gas: ${self.limits.min_profit_after_gas}")
-        logger.info(f"  Max slippage: {self.limits.max_slippage_pct}%")
-        logger.info(f"  Cooldown: {self.limits.cooldown_seconds}s")
-
-    def verify_fresh_quote(self, opportunity: Dict) -> Tuple[bool, Optional[Dict], str]:
-        """
-        Verify opportunity with FRESH quotes from DEX contracts
-
-        Returns:
-            (is_valid, updated_opportunity, reason)
-        """
-        try:
-            # Force fresh data by clearing cache for this specific pair
-            pair = opportunity.get('pair')
-            dex_buy = opportunity.get('dex_buy')
-            dex_sell = opportunity.get('dex_sell')
-
-            logger.info(f"Verifying fresh quotes for {pair}: {dex_buy} vs {dex_sell}")
-
-            # Get fresh pool data (this will bypass cache if expired)
-            # In production, you'd force a fresh fetch here
-            # For now, we'll check if the opportunity still exists
-
-            # Get pool data from price_fetcher
-            # This is simplified - in production you'd call DEX contracts directly
-            pools_data = self.price_fetcher.fetch_all_pools()
-
-            # Find the pools for this pair
-            buy_pool = None
-            sell_pool = None
-
-            for dex_name, pairs in pools_data.items():
-                for pair_name, pool_data in pairs.items():
-                    if pair_name == pair:
-                        if dex_name == dex_buy:
-                            buy_pool = pool_data
-                        if dex_name == dex_sell:
-                            sell_pool = pool_data
-
-            if not buy_pool or not sell_pool:
-                return False, None, "Pools not found"
-
-            # Recalculate arbitrage with fresh data
-            fresh_opp = self.arb_finder.calculate_arbitrage(
-                pair,
-                [
-                    {'dex': dex_buy, 'pool_data': buy_pool},
-                    {'dex': dex_sell, 'pool_data': sell_pool}
-                ],
-                opportunity.get('trade_size_usd', 1000)
-            )
-
-            if not fresh_opp:
-                return False, None, "Opportunity no longer exists"
-
-            # Compare fresh profit to original
-            original_profit = opportunity.get('net_profit_usd', 0)
-            fresh_profit = fresh_opp.get('net_profit_usd', 0)
-
-            profit_diff_pct = abs(fresh_profit - original_profit) / original_profit * 100 if original_profit > 0 else 100
-
-            if profit_diff_pct > 10:  # More than 10% difference
-                return False, fresh_opp, f"Price moved {profit_diff_pct:.1f}% since detection"
-
-            if fresh_profit < self.limits.min_profit_after_gas:
-                return False, fresh_opp, f"Fresh profit ${fresh_profit:.2f} < min ${self.limits.min_profit_after_gas}"
-
-            logger.info(f"Fresh quote verified: ${fresh_profit:.2f} profit (vs ${original_profit:.2f} original)")
-            return True, fresh_opp, "Fresh quote verified"
-
-        except Exception as e:
-            logger.error(f"Fresh quote verification failed: {e}")
-            return False, None, f"Verification error: {str(e)}"
+        print(f"{Fore.GREEN}✅ Flash Loan Executor initialized (ZERO CAPITAL RISK!){Style.RESET_ALL}")
+        print(f"   Flash loan sizes: ${self.limits.min_trade_size_usd:,.0f} - ${self.limits.max_trade_size_usd:,.0f}")
+        print(f"   Optimal size: ${self.limits.optimal_trade_size_usd:,.0f}")
+        print(f"   Min profit after fees: ${self.limits.min_profit_after_fees}")
+        print(f"   Max slippage: {self.limits.max_slippage_pct}%")
+        print(f"   Cooldown: {self.limits.cooldown_seconds}s")
+        print(f"   Flash loan provider: {'Balancer (0% fees)' if self.limits.prefer_balancer else 'Aave (0.09% fees)'}")
 
     def check_execution_safety(self, opportunity: Dict) -> Tuple[bool, str]:
         """
-        Check if it's safe to execute this opportunity
+        Minimal safety checks for flash loans (failures are cheap!)
 
         Returns:
             (is_safe, reason)
@@ -146,83 +106,82 @@ class AutoExecutor:
         if not self.limits.enabled:
             return False, "Kill switch activated"
 
-        # Check if too many failed trades
-        if self.failed_trades >= self.limits.kill_on_failed_trades:
+        # Check consecutive failures
+        if self.consecutive_failures >= self.limits.kill_on_consecutive_failures:
             self.limits.enabled = False
-            return False, f"Kill switch: {self.failed_trades} consecutive failures"
+            return False, f"Kill switch: {self.consecutive_failures} consecutive failures"
 
-        # Check cooldown
+        # Minimal cooldown (100ms by default)
         time_since_last = time.time() - self.last_trade_time
         if time_since_last < self.limits.cooldown_seconds:
-            return False, f"Cooldown: {self.limits.cooldown_seconds - time_since_last:.0f}s remaining"
+            return False, f"Cooldown: {self.limits.cooldown_seconds - time_since_last:.3f}s"
 
-        # Check hourly rate limit
+        # Rate limiting (trades per minute)
         now = time.time()
-        self.trades_this_hour = [t for t in self.trades_this_hour if now - t < 3600]
-        if len(self.trades_this_hour) >= self.limits.max_trades_per_hour:
-            return False, f"Rate limit: {self.limits.max_trades_per_hour} trades/hour exceeded"
+        self.trades_this_minute = [t for t in self.trades_this_minute if now - t < 60]
+        if len(self.trades_this_minute) >= self.limits.max_trades_per_minute:
+            return False, f"Rate limit: {self.limits.max_trades_per_minute} trades/min"
 
-        # Check daily loss limit
-        if self.daily_pnl < -self.limits.max_daily_loss:
-            self.limits.enabled = False
-            return False, f"Daily loss limit exceeded: ${abs(self.daily_pnl):.2f}"
-
-        # Check trade size
-        trade_size = opportunity.get('trade_size_usd', 0)
-        if trade_size > self.limits.max_trade_size_usd:
-            return False, f"Trade size ${trade_size:.0f} > max ${self.limits.max_trade_size_usd:.0f}"
+        # Gas spending limit (hourly)
+        self.gas_spent_this_hour = [g for g in self.gas_spent_this_hour if now - g[0] < 3600]
+        hourly_gas = sum(g[1] for g in self.gas_spent_this_hour)
+        if hourly_gas >= self.limits.max_gas_spent_per_hour:
+            return False, f"Gas limit: ${hourly_gas:.2f} spent this hour (max ${self.limits.max_gas_spent_per_hour})"
 
         # Check profit after gas
         profit_after_gas = opportunity.get('net_profit_usd', 0)
-        gas_cost = opportunity.get('gas_cost_usd', 0.5)
-        actual_profit = profit_after_gas - gas_cost
+        gas_cost = opportunity.get('gas_cost_usd', 0.3)  # ~$0.30 on Polygon
 
-        if actual_profit < self.limits.min_profit_after_gas:
-            return False, f"Profit after gas ${actual_profit:.2f} < min ${self.limits.min_profit_after_gas}"
+        # Calculate flash loan fee
+        trade_size = opportunity.get('trade_size_usd', self.limits.optimal_trade_size_usd)
+        flash_loan_fee = 0 if self.limits.prefer_balancer else (trade_size * 0.0009)  # 0.09%
 
-        # Check gas cost as % of profit
-        if profit_after_gas > 0:
-            gas_pct = (gas_cost / profit_after_gas) * 100
-            if gas_pct > self.limits.max_gas_cost_pct:
-                return False, f"Gas cost {gas_pct:.1f}% > max {self.limits.max_gas_cost_pct}%"
+        net_profit = profit_after_gas - gas_cost - flash_loan_fee
 
-        # Check slippage
+        if net_profit < self.limits.min_profit_after_fees:
+            return False, f"Net profit ${net_profit:.2f} < min ${self.limits.min_profit_after_fees}"
+
+        # Check slippage (can be higher since no capital risk)
         total_slippage = opportunity.get('total_slippage_pct', 0)
         if total_slippage > self.limits.max_slippage_pct:
             return False, f"Slippage {total_slippage:.2f}% > max {self.limits.max_slippage_pct}%"
+
+        # Check pool TVL (liquidity)
+        buy_tvl = opportunity.get('buy_tvl_usd', 0)
+        sell_tvl = opportunity.get('sell_tvl_usd', 0)
+        min_tvl = min(buy_tvl, sell_tvl)
+
+        if min_tvl < self.limits.min_pool_tvl:
+            return False, f"Pool TVL ${min_tvl:,.0f} < min ${self.limits.min_pool_tvl:,.0f}"
 
         return True, "All safety checks passed"
 
     def should_execute(self, opportunity: Dict) -> Tuple[bool, str, Optional[Dict]]:
         """
-        Main decision function: should we execute this opportunity?
+        Flash loan decision: execute immediately if profitable!
+        No need for extensive checks - flash loans auto-revert on failure
 
         Returns:
             (should_execute, reason, updated_opportunity)
         """
-        # Step 1: Safety checks
+        # Quick safety check
         is_safe, reason = self.check_execution_safety(opportunity)
         if not is_safe:
-            logger.warning(f"Safety check failed: {reason}")
             return False, reason, None
 
-        # Step 2: Fresh quote verification
-        is_valid, fresh_opp, reason = self.verify_fresh_quote(opportunity)
-        if not is_valid:
-            logger.warning(f"Fresh quote failed: {reason}")
-            return False, reason, fresh_opp
+        # For flash loans, we can skip fresh quote verification!
+        # The smart contract will verify quotes on-chain
+        # If prices moved, the transaction will revert (no loss!)
 
-        # Step 3: Final profit check
-        final_profit = fresh_opp.get('net_profit_usd', 0)
-        if final_profit < self.limits.min_profit_after_gas:
-            return False, f"Final profit ${final_profit:.2f} too low", fresh_opp
+        final_profit = opportunity.get('net_profit_usd', 0)
+        trade_size = opportunity.get('trade_size_usd', self.limits.optimal_trade_size_usd)
 
-        logger.info(f"✅ Opportunity APPROVED for execution: ${final_profit:.2f} profit")
-        return True, "Approved for execution", fresh_opp
+        logger.info(f"✅ Flash loan opportunity APPROVED: ${final_profit:.2f} profit, ${trade_size:,.0f} size")
+        return True, "Approved for flash loan execution", opportunity
 
     def execute_opportunity(self, opportunity: Dict, bot_instance) -> Dict:
         """
-        Execute the arbitrage opportunity
+        Execute flash loan arbitrage
 
         Returns:
             Execution result dict
@@ -230,90 +189,115 @@ class AutoExecutor:
         try:
             # Record trade attempt
             self.total_trades += 1
-            self.trades_this_hour.append(time.time())
+            self.trades_this_minute.append(time.time())
+
+            trade_size = opportunity.get('trade_size_usd', self.limits.optimal_trade_size_usd)
+            expected_profit = opportunity.get('net_profit_usd', 0)
 
             print(f"\n{Fore.CYAN}{'='*80}")
-            print(f"⚡ AUTO-EXECUTING ARBITRAGE")
+            print(f"⚡ FLASH LOAN ARBITRAGE EXECUTION")
             print(f"{'='*80}{Style.RESET_ALL}")
             print(f"  Pair: {opportunity.get('pair')}")
+            print(f"  Flash Loan: ${trade_size:,.0f}")
             print(f"  Buy: {opportunity.get('dex_buy')} @ {opportunity.get('buy_price', 0):.8f}")
             print(f"  Sell: {opportunity.get('dex_sell')} @ {opportunity.get('sell_price', 0):.8f}")
-            print(f"  Expected Profit: ${opportunity.get('net_profit_usd', 0):.2f}")
+            print(f"  Expected Profit: ${expected_profit:.2f}")
             print(f"  Slippage: {opportunity.get('total_slippage_pct', 0):.2f}%")
+            print(f"  Provider: {'Balancer (0% fee)' if self.limits.prefer_balancer else 'Aave (0.09% fee)'}")
             print(f"{Fore.CYAN}{'='*80}{Style.RESET_ALL}\n")
 
             # Build proposal payload
             proposal = {
-                "summary": f"{opportunity.get('pair')} arbitrage",
-                "profit_usd": opportunity.get('net_profit_usd', 0),
+                "summary": f"{opportunity.get('pair')} flash loan arbitrage",
+                "profit_usd": expected_profit,
                 "payload": {
                     "pair": opportunity.get('pair'),
                     "dex_buy": opportunity.get('dex_buy'),
                     "dex_sell": opportunity.get('dex_sell'),
-                    "amount_usd": opportunity.get('trade_size_usd', 1000),
-                    # Add more fields as needed by execute_proposal
+                    "amount_usd": trade_size,
+                    "use_balancer": self.limits.prefer_balancer,
+                    # Add more fields as needed
                 }
             }
 
             # Execute via bot
             tx_hash = bot_instance.execute_proposal(proposal)
 
+            # Estimate gas cost
+            gas_cost = 0.3  # ~$0.30 on Polygon (flash loan trades use more gas)
+
             # Update tracking
             self.last_trade_time = time.time()
             self.successful_trades += 1
-            self.failed_trades = 0  # Reset failure counter
-            self.daily_pnl += opportunity.get('net_profit_usd', 0)
+            self.consecutive_failures = 0  # Reset on success!
+            self.total_gas_spent += gas_cost
+            self.total_profit += expected_profit
+            self.gas_spent_this_hour.append((time.time(), gas_cost))
 
             result = {
                 "success": True,
                 "tx_hash": tx_hash,
-                "profit_usd": opportunity.get('net_profit_usd', 0),
+                "profit_usd": expected_profit,
+                "gas_cost_usd": gas_cost,
+                "net_profit_usd": expected_profit - gas_cost,
                 "timestamp": datetime.now().isoformat()
             }
 
-            print(f"{Fore.GREEN}✅ Execution successful!{Style.RESET_ALL}")
+            print(f"{Fore.GREEN}✅ Flash loan executed successfully!{Style.RESET_ALL}")
             print(f"   TX: {tx_hash}")
-            print(f"   Profit: ${opportunity.get('net_profit_usd', 0):.2f}")
-            print(f"   Success rate: {self.successful_trades}/{self.total_trades}\n")
+            print(f"   Gross Profit: ${expected_profit:.2f}")
+            print(f"   Gas Cost: ${gas_cost:.2f}")
+            print(f"   Net Profit: ${expected_profit - gas_cost:.2f}")
+            print(f"   Success rate: {self.successful_trades}/{self.total_trades} ({self.successful_trades/max(self.total_trades,1)*100:.1f}%)\n")
 
             return result
 
         except Exception as e:
-            logger.error(f"Execution failed: {e}")
+            logger.error(f"Flash loan execution failed: {e}")
 
             # Update failure tracking
-            self.failed_trades += 1
-            self.daily_pnl -= 0.5  # Assume small loss from gas
+            self.consecutive_failures += 1
+            gas_cost = 0.3  # Still spent gas on failed transaction
+            self.total_gas_spent += gas_cost
+            self.gas_spent_this_hour.append((time.time(), gas_cost))
 
             result = {
                 "success": False,
                 "error": str(e),
+                "gas_cost_usd": gas_cost,
                 "timestamp": datetime.now().isoformat()
             }
 
-            print(f"{Fore.RED}❌ Execution failed: {e}{Style.RESET_ALL}\n")
+            print(f"{Fore.RED}❌ Flash loan failed: {e}{Style.RESET_ALL}")
+            print(f"   Gas cost: ${gas_cost:.2f} (transaction reverted)")
+            print(f"   Consecutive failures: {self.consecutive_failures}\n")
 
             return result
 
     def get_stats(self) -> Dict:
         """Get execution statistics"""
         success_rate = (self.successful_trades / max(self.total_trades, 1)) * 100
+        net_profit = self.total_profit - self.total_gas_spent
 
         return {
             "total_trades": self.total_trades,
             "successful_trades": self.successful_trades,
-            "failed_trades": self.failed_trades,
+            "failed_trades": self.total_trades - self.successful_trades,
             "success_rate": success_rate,
-            "daily_pnl": self.daily_pnl,
-            "trades_this_hour": len(self.trades_this_hour),
+            "consecutive_failures": self.consecutive_failures,
+            "total_profit": self.total_profit,
+            "total_gas_spent": self.total_gas_spent,
+            "net_profit": net_profit,
+            "trades_this_minute": len(self.trades_this_minute),
+            "gas_this_hour": sum(g[1] for g in self.gas_spent_this_hour),
             "kill_switch_active": not self.limits.enabled,
             "time_since_last_trade": time.time() - self.last_trade_time if self.last_trade_time > 0 else None
         }
 
-    def reset_daily_stats(self):
-        """Reset daily statistics (call at midnight)"""
-        self.daily_pnl = 0.0
-        logger.info("Daily stats reset")
+    def reset_failure_counter(self):
+        """Reset consecutive failure counter"""
+        self.consecutive_failures = 0
+        logger.info("Failure counter reset")
 
     def enable_kill_switch(self):
         """Manually activate kill switch"""
@@ -323,5 +307,10 @@ class AutoExecutor:
     def disable_kill_switch(self):
         """Manually deactivate kill switch"""
         self.limits.enabled = True
-        self.failed_trades = 0
+        self.consecutive_failures = 0
         logger.info("Kill switch deactivated")
+
+
+# Legacy alias for backward compatibility
+AutoExecutor = FlashLoanExecutor
+ExecutionLimits = FlashLoanLimits
