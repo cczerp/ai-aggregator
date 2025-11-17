@@ -22,11 +22,10 @@ from auto_executor import AutoExecutor, ExecutionLimits
 
 # Import existing modules (you already have these)
 try:
-    from tx_builder import FlashbotsTxBuilder
-    from gas_optimization_manager import GasOptimizationManager
+    from tx_builder import FlashbotsTxBuilder, GasOptimizationManager
 except ImportError as e:
     print(f"{Fore.RED}❌ Missing module: {e}{Style.RESET_ALL}")
-    print("Please ensure tx_builder.py and gas_optimization_manager.py are in the same directory")
+    print("Please ensure tx_builder.py is in the same directory")
     sys.exit(1)
 
 init(autoreset=True)
