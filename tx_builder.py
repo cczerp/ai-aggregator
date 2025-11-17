@@ -43,6 +43,12 @@ class GasOptimizationManager:
             "private_tx": f"https://polygon-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_API_KEY')}",
             "priority": 2
         },
+        "alchemy_premium": {
+            "name": "Alchemy Premium (Pay-as-you-go tracking)",
+            "http": f"https://polygon-mainnet.g.alchemy.com/v2/{os.getenv('PREMIUM_ALCHEMY_KEY', os.getenv('ALCHEMY_API_KEY'))}",
+            "private_tx": f"https://polygon-mainnet.g.alchemy.com/v2/{os.getenv('PREMIUM_ALCHEMY_KEY', os.getenv('ALCHEMY_API_KEY'))}",
+            "priority": 0  # Highest priority for premium calls
+        },
         "nodies": {
             "name": "Nodies",
             "http": f"https://lb.nodies.app/v1/{os.getenv('NODIES_API_KEY')}",
@@ -317,9 +323,22 @@ class GasOptimizationManager:
         return result
     
     def estimate_gas_with_padding(self, transaction: Dict) -> int:
-        """Estimate gas and add safety padding"""
+        """
+        Estimate gas and add safety padding
+        Uses PREMIUM_ALCHEMY_KEY for easier cost tracking on pay-as-you-go
+        """
         try:
-            estimated = self._make_rpc_call(self.w3.eth.estimate_gas, transaction)
+            # Use premium Alchemy endpoint for gas estimation (premium call)
+            if os.getenv('PREMIUM_ALCHEMY_KEY') and 'alchemy_premium' in self.PROVIDERS:
+                premium_url = self.PROVIDERS['alchemy_premium']['http']
+                premium_w3 = Web3(Web3.HTTPProvider(premium_url, request_kwargs={'timeout': 10}))
+                estimated = premium_w3.eth.estimate_gas(transaction)
+                logger.info(f"✓ Gas estimate via PREMIUM_ALCHEMY_KEY: {estimated}")
+            else:
+                # Fallback to regular endpoint
+                estimated = self._make_rpc_call(self.w3.eth.estimate_gas, transaction)
+                logger.info(f"✓ Gas estimate via regular RPC: {estimated}")
+
             padded = int(estimated * (1 + self.GAS_PADDING_PCT / 100))
             logger.info(f"Gas estimate: {estimated} → {padded} (+{self.GAS_PADDING_PCT}%)")
             return padded
@@ -369,13 +388,18 @@ class GasOptimizationManager:
     ) -> str:
         """
         Send private transaction via Alchemy to prevent frontrunning
+        Uses PREMIUM_ALCHEMY_KEY for cost tracking (premium call)
         """
-        if "ALCHEMY_API_KEY" not in os.environ:
-            logger.warning("Alchemy API key not set, sending as regular tx")
+        # Use premium key if available, otherwise fall back to regular key
+        alchemy_key = os.getenv('PREMIUM_ALCHEMY_KEY') or os.getenv('ALCHEMY_API_KEY')
+
+        if not alchemy_key:
+            logger.warning("No Alchemy API key set, sending as regular tx")
             return self.w3.eth.send_raw_transaction(signed_tx).hex()
-        
+
         try:
-            url = self.PROVIDERS["alchemy"]["private_tx"]
+            # Use premium endpoint for private transactions
+            url = f"https://polygon-mainnet.g.alchemy.com/v2/{alchemy_key}"
             payload = {
                 "jsonrpc": "2.0",
                 "id": 1,
@@ -388,17 +412,18 @@ class GasOptimizationManager:
                     }
                 }]
             }
-            
+
             response = requests.post(url, json=payload, timeout=10)
             result = response.json()
-            
+
             if "error" in result:
                 raise Exception(f"Alchemy private tx error: {result['error']}")
-            
+
             tx_hash = result["result"]
-            logger.info(f"🔒 Private transaction sent: {tx_hash}")
+            key_type = "PREMIUM" if os.getenv('PREMIUM_ALCHEMY_KEY') else "REGULAR"
+            logger.info(f"🔒 Private transaction sent via {key_type} Alchemy key: {tx_hash}")
             return tx_hash
-            
+
         except Exception as e:
             logger.warning(f"Private tx failed, falling back to public: {e}")
             return self.w3.eth.send_raw_transaction(signed_tx).hex()
