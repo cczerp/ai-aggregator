@@ -131,7 +131,6 @@ def get_bot() -> PolygonArbBot:
         _bot_instance = PolygonArbBot(
             min_tvl=float(os.getenv("MIN_TVL_USD", "3000")),
             scan_interval=60,
-            cache_duration_hours=6,
             auto_execute=AUTO_EXECUTE
         )
         logger.info("PolygonArbBot instance created")
