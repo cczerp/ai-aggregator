@@ -17,17 +17,17 @@ init(autoreset=True)
 
 class Cache:
     """Multi-duration cache system with timestamp-based expiration"""
-    
-    # Cache durations (in seconds)
+
+    # Cache durations (in seconds) - OPTIMIZED FOR REAL-TIME ARBITRAGE ⚡
     DURATIONS = {
-        'pair_prices': 1 * 3600,              # 1 hour - pair price data
-        'tvl_data': 3 * 3600,                 # 3 hours - TVL/liquidity data
-        'pool_registry': 3 * 3600,            # 3 hours - pool registry (TVL)
+        'pair_prices': 10,                    # 10 seconds - pair price data (CRITICAL!)
+        'tvl_data': 5 * 60,                   # 5 minutes - TVL/liquidity data
+        'pool_registry': 10 * 60,             # 10 minutes - pool registry (TVL)
         'dex_health': 30 * 24 * 3600,         # 30 days - DEX health status
-        'oracle': 1 * 3600,                   # 1 hour - oracle price feeds
-        'router_gas': 12 * 3600,              # 12 hours - gas estimates
-        'arb_opportunity': 5 * 60,            # 5 minutes - opportunities
-        'default': 24 * 3600                  # 24 hours - fallback
+        'oracle': 30,                         # 30 seconds - oracle price feeds
+        'router_gas': 2 * 60,                 # 2 minutes - gas estimates
+        'arb_opportunity': 5,                 # 5 seconds - opportunities (VERY volatile!)
+        'default': 60                         # 60 seconds - fallback
     }
     
     def __init__(self, cache_dir: str = "./cache"):
@@ -56,15 +56,19 @@ class Cache:
         self.stats = {cache_type: {'hits': 0, 'misses': 0, 'writes': 0} 
                      for cache_type in self.cache_files.keys()}
         
-        print(f"{Fore.GREEN}✅ Cache System Initialized{Style.RESET_ALL}")
+        print(f"{Fore.GREEN}✅ Cache System Initialized (REAL-TIME MODE){Style.RESET_ALL}")
         print(f"   Location: {self.cache_dir}")
         for cache_type, duration in self.DURATIONS.items():
             count = len(self.caches.get(cache_type, {}))
-            hours = duration / 3600
-            if hours >= 24:
-                duration_str = f"{hours/24:.0f}d"
+            # Format duration appropriately
+            if duration >= 86400:
+                duration_str = f"{duration/86400:.0f}d"
+            elif duration >= 3600:
+                duration_str = f"{duration/3600:.1f}h"
+            elif duration >= 60:
+                duration_str = f"{duration/60:.0f}m"
             else:
-                duration_str = f"{hours:.0f}h"
+                duration_str = f"{duration:.0f}s"
             print(f"   • {cache_type}: {count} entries ({duration_str})")
     
     def _load_cache(self, filepath: Path) -> Dict:
@@ -153,7 +157,7 @@ class Cache:
         return self.get(cache_type, *key_parts) is not None
     
     def get_pair_prices(self, dex: str, pool: str) -> Optional[Dict]:
-        """Get pair price data (1-hour cache)"""
+        """Get pair price data (10-second cache - REAL-TIME!)"""
         return self.get('pair_prices', dex, pool)
 
     def set_pair_prices(self, dex: str, pool: str, data: Dict):
@@ -161,7 +165,7 @@ class Cache:
         self.set('pair_prices', data, dex, pool)
 
     def get_tvl_data(self, dex: str, pool: str) -> Optional[Dict]:
-        """Get pool TVL data (3-hour cache)"""
+        """Get pool TVL data (5-minute cache)"""
         return self.get('tvl_data', dex, pool)
 
     def set_tvl_data(self, dex: str, pool: str, data: Dict):
@@ -169,23 +173,23 @@ class Cache:
         self.set('tvl_data', data, dex, pool)
 
     def get_pool_liquidity(self, dex: str, pool: str) -> Optional[Dict]:
-        """Get pool liquidity/TVL (3-hour cache) - legacy alias"""
+        """Get pool liquidity/TVL (5-minute cache) - legacy alias"""
         return self.get('tvl_data', dex, pool)
 
     def set_pool_liquidity(self, dex: str, pool: str, data: Dict):
         """Cache pool liquidity/TVL - legacy alias"""
         self.set('tvl_data', data, dex, pool)
-    
+
     def get_oracle_price(self, token: str) -> Optional[float]:
-        """Get token price (1-hour cache)"""
+        """Get token price (30-second cache)"""
         return self.get('oracle', token)
-    
+
     def set_oracle_price(self, token: str, price: float):
         """Cache token price"""
         self.set('oracle', price, token)
-    
+
     def get_router_gas(self, dex: str) -> Optional[int]:
-        """Get router gas estimate (12-hour cache)"""
+        """Get router gas estimate (2-minute cache)"""
         return self.get('router_gas', dex)
     
     def set_router_gas(self, dex: str, gas: int):
