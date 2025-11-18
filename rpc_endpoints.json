@@ -7,10 +7,8 @@
       "https://polygon-mainnet.g.alchemy.com/v2/ZLaM_KFVqrOCJ3PbWDipS"
     ],
     "infura": [
-      "https://polygon-mainnet.infura.io/v3/c01ff3cd3b004e6a9b07953930349cc6"
-    ],
-    "quicknode": [
-      "https://alien-maximum-surf.matic.quiknode.pro/32a404850104aa202e19a0160dfc14ca100f3f9a/"
+      "https://polygon-mainnet.infura.io/v3/c01ff3cd3b004e6a9b07953930349cc6",
+      "https://polygon-mainnet.infura.io/v3/7d3a29132eb742a6b79d6506c620833e"
     ]
   },
   "secondary": [
