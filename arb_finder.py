@@ -26,8 +26,8 @@ class ArbFinder:
     def __init__(self, min_profit_usd: float = 1.0):
         self.min_profit_usd = min_profit_usd
 
-        # Test amounts in USD
-        self.test_amounts_usd = [1000, 10000, 100000]
+        # Test amounts in USD (larger sizes = better arb opportunities)
+        self.test_amounts_usd = [10000, 100000, 300000]
 
         # DEX fees (basis points: 30 = 0.3%)
         self.dex_fees = {
