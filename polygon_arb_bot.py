@@ -503,7 +503,9 @@ class PolygonArbBot:
         print(f"   ✅ Valid (>${self.min_tvl:,.0f} TVL): {valid_pools:,}")
         print(f"   ⚠️  Low liquidity:         {low_liquidity_pools:,}")
         print(f"   💰 Opportunities found:   {len(opportunities):,}")
-        print(f"   ⏰ Cache valid for:       {self.cache.cache_duration / 3600:.0f} hours")
+        # Show pair_prices cache duration (most relevant for arbitrage)
+        pair_cache_seconds = self.cache.DURATIONS.get('pair_prices', 60)
+        print(f"   ⏰ Price cache valid for: {pair_cache_seconds} seconds")
         print(f"{Fore.CYAN}{'='*80}{Style.RESET_ALL}\n")
         
         # RPC stats
