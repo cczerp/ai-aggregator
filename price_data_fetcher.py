@@ -31,8 +31,8 @@ class CoinGeckoPriceFetcher:
         "USDC": "usd-coin",
         "USDT": "tether",
         "DAI": "dai",
-        "WPOL": "matic-network",
-        "WMATIC": "matic-network",
+        "WPOL": "polygon-ecosystem-token",  # Updated after MATIC→POL migration
+        "WMATIC": "polygon-ecosystem-token",  # Updated after MATIC→POL migration
         "LINK": "chainlink",
         "AAVE": "aave",
         "UNI": "uniswap",
