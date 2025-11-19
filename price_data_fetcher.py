@@ -27,7 +27,7 @@ class CoinGeckoPriceFetcher:
     # Map token symbols to CoinGecko IDs
     COINGECKO_IDS = {
         "WETH": "ethereum",
-        "WBTC": "bitcoin",
+        "WBTC": "wrapped-bitcoin",  # Wrapped BTC (not native bitcoin)
         "USDC": "usd-coin",
         "USDT": "tether",
         "DAI": "dai",
