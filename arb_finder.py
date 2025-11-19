@@ -245,6 +245,7 @@ class ArbFinder:
         # Strategy: Buy token1 on one DEX, sell token1 on another
         best_arb = None
         max_profit = 0
+        all_attempts = []  # Track all attempts for debugging
 
         for i, buy_pool in enumerate(pool_swaps):
             for j, sell_pool in enumerate(pool_swaps):
@@ -273,33 +274,43 @@ class ArbFinder:
 
                 # Profit
                 profit_usd = final_amount_usd - amount_usd
+                roi_percent = (profit_usd / amount_usd) * 100
 
+                # Get TVL for reference
+                buy_tvl = buy_pool['pool_data'].get('tvl_data', {}).get('tvl_usd', 0)
+                sell_tvl = sell_pool['pool_data'].get('tvl_data', {}).get('tvl_usd', 0)
+
+                # Track this attempt (even if not profitable)
+                attempt = {
+                    'pair': pair_name,
+                    'direction': f'Buy {token1} on {buy_pool["dex"]}, Sell {token1} on {sell_pool["dex"]}',
+                    'dex_buy': buy_pool['dex'],
+                    'dex_sell': sell_pool['dex'],
+                    'buy_price': buy_swap['effective_price'],
+                    'sell_price': sell_swap['effective_price'],
+                    'profit_usd': profit_usd,
+                    'net_profit_usd': profit_usd,  # Will subtract gas later
+                    'roi_percent': roi_percent,
+                    'roi': roi_percent,
+                    'trade_size_usd': amount_usd,
+                    'buy_tvl_usd': buy_tvl,
+                    'sell_tvl_usd': sell_tvl,
+                    'buy_slippage_pct': buy_swap['slippage_pct'],
+                    'sell_slippage_pct': sell_swap['slippage_pct'],
+                    'total_slippage_pct': buy_swap['slippage_pct'] + sell_swap['slippage_pct']
+                }
+                all_attempts.append(attempt)
+
+                # Track best profitable opportunity
                 if profit_usd > max_profit and profit_usd >= self.min_profit_usd:
                     max_profit = profit_usd
-                    roi_percent = (profit_usd / amount_usd) * 100
+                    best_arb = attempt
 
-                    # Get TVL for reference
-                    buy_tvl = buy_pool['pool_data'].get('tvl_data', {}).get('tvl_usd', 0)
-                    sell_tvl = sell_pool['pool_data'].get('tvl_data', {}).get('tvl_usd', 0)
-
-                    best_arb = {
-                        'pair': pair_name,
-                        'direction': f'Buy {token1} on {buy_pool["dex"]}, Sell {token1} on {sell_pool["dex"]}',
-                        'dex_buy': buy_pool['dex'],
-                        'dex_sell': sell_pool['dex'],
-                        'buy_price': buy_swap['effective_price'],
-                        'sell_price': sell_swap['effective_price'],
-                        'profit_usd': profit_usd,
-                        'net_profit_usd': profit_usd,  # Will subtract gas later
-                        'roi_percent': roi_percent,
-                        'roi': roi_percent,
-                        'trade_size_usd': amount_usd,
-                        'buy_tvl_usd': buy_tvl,
-                        'sell_tvl_usd': sell_tvl,
-                        'buy_slippage_pct': buy_swap['slippage_pct'],
-                        'sell_slippage_pct': sell_swap['slippage_pct'],
-                        'total_slippage_pct': buy_swap['slippage_pct'] + sell_swap['slippage_pct']
-                    }
+        # If no profitable arb found, return best attempt (for debugging)
+        if not best_arb and all_attempts:
+            # Return best attempt even if not profitable (for visibility)
+            best_arb = max(all_attempts, key=lambda x: x['profit_usd'])
+            best_arb['_debug_mode'] = True  # Mark as non-profitable
 
         return best_arb
 
@@ -536,6 +547,10 @@ class ArbFinder:
         # Sort by profit
         opportunities.sort(key=lambda x: x['profit_usd'], reverse=True)
 
+        # Separate profitable from debug (non-profitable) opportunities
+        profitable = [o for o in opportunities if not o.get('_debug_mode', False)]
+        debug_opps = [o for o in opportunities if o.get('_debug_mode', False)]
+
         print(f"\n{Fore.CYAN}{'='*80}")
         print(f"✅ CALCULATION COMPLETE")
         print(f"{'='*80}{Style.RESET_ALL}")
@@ -546,10 +561,27 @@ class ArbFinder:
         print(f"\n{Fore.GREEN}TRIANGULAR ARBITRAGE (A→B→C→A):{Style.RESET_ALL}")
         print(f"   Total paths found: {len(paths) if paths else 0}")
         print(f"   Paths evaluated: {min(100, len(paths)) if paths else 0}")
-        print(f"\n{Fore.CYAN}TOTAL OPPORTUNITIES: {len(opportunities)}{Style.RESET_ALL}")
+        print(f"\n{Fore.CYAN}TOTAL OPPORTUNITIES: {len(profitable)}{Style.RESET_ALL}")
         print(f"{Fore.CYAN}{'='*80}{Style.RESET_ALL}\n")
 
-        return opportunities
+        # Show debug info if no profitable opportunities
+        if len(profitable) == 0 and len(debug_opps) > 0:
+            print(f"\n{Fore.YELLOW}{'='*80}")
+            print(f"📊 TOP 10 CLOSEST ATTEMPTS (All were unprofitable)")
+            print(f"{'='*80}{Style.RESET_ALL}")
+            print(f"{Fore.YELLOW}Showing why no opportunities were found...{Style.RESET_ALL}\n")
+
+            for i, opp in enumerate(debug_opps[:10], 1):
+                color = Fore.RED if opp['profit_usd'] < -10 else Fore.YELLOW
+                print(f"{color}{i}. {opp['pair']} @ ${opp['trade_size_usd']:,.0f}")
+                print(f"   Buy:  {opp['dex_buy']:<15} @ {opp['buy_price']:.8f}")
+                print(f"   Sell: {opp['dex_sell']:<15} @ {opp['sell_price']:.8f}")
+                print(f"   {Fore.RED}Loss: ${opp['profit_usd']:.2f} ({opp['roi_percent']:.2f}%) | Slippage: {opp['total_slippage_pct']:.2f}%{Style.RESET_ALL}")
+                print()
+
+            print(f"{Fore.YELLOW}Note: Losses are due to swap fees (0.3%) and slippage. Gas costs would add ~$0.30-0.50 more loss.{Style.RESET_ALL}\n")
+
+        return profitable  # Only return profitable opportunities
 
     def display_opportunities(self, opportunities: List[Dict], limit: int = 10):
         """Display top opportunities"""

@@ -20,13 +20,13 @@ class Cache:
 
     # Cache durations (in seconds) - OPTIMIZED FOR REAL-TIME ARBITRAGE ⚡
     DURATIONS = {
-        'pair_prices': 10,                    # 10 seconds - pair price data (CRITICAL!)
-        'tvl_data': 5 * 60,                   # 5 minutes - TVL/liquidity data
-        'pool_registry': 10 * 60,             # 10 minutes - pool registry (TVL)
+        'pair_prices': 60 * 60,               # 1 hour - pair price data (DEX prices don't change that fast)
+        'tvl_data': 3 * 60 * 60,              # 3 hours - TVL/liquidity data
+        'pool_registry': 10 * 60,             # 10 minutes - pool registry
         'dex_health': 30 * 24 * 3600,         # 30 days - DEX health status
-        'oracle': 30,                         # 30 seconds - oracle price feeds
+        'oracle': 5 * 60,                     # 5 minutes - oracle price feeds (CoinGecko)
         'router_gas': 2 * 60,                 # 2 minutes - gas estimates
-        'arb_opportunity': 5,                 # 5 seconds - opportunities (VERY volatile!)
+        'arb_opportunity': 30,                # 30 seconds - opportunities (still fast enough)
         'default': 60                         # 60 seconds - fallback
     }
     
