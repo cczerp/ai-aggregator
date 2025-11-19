@@ -180,3 +180,100 @@ ERC20_ABI = [
         "type": "function"
     }
 ]
+
+# Flashloan Trading Bot Contract ABI
+# Contract: remix bot/flashloanbot.sol
+FLASHLOAN_CONTRACT_ABI = [
+    {
+        "inputs": [
+            {"internalType": "address", "name": "_aave", "type": "address"},
+            {"internalType": "address", "name": "_balancer", "type": "address"}
+        ],
+        "stateMutability": "nonpayable",
+        "type": "constructor"
+    },
+    {
+        "anonymous": False,
+        "inputs": [
+            {"indexed": False, "internalType": "address", "name": "tokenIn", "type": "address"},
+            {"indexed": False, "internalType": "address", "name": "tokenOut", "type": "address"},
+            {"indexed": False, "internalType": "uint256", "name": "profit", "type": "uint256"}
+        ],
+        "name": "TradeExecuted",
+        "type": "event"
+    },
+    {
+        "inputs": [],
+        "name": "owner",
+        "outputs": [{"internalType": "address", "name": "", "type": "address"}],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {"internalType": "address", "name": "caller", "type": "address"},
+            {"internalType": "bool", "name": "status", "type": "bool"}
+        ],
+        "name": "authorizeCaller",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {"internalType": "address", "name": "tokenIn", "type": "address"},
+            {"internalType": "address", "name": "tokenOut", "type": "address"},
+            {"internalType": "address", "name": "dex1", "type": "address"},
+            {"internalType": "address", "name": "dex2", "type": "address"},
+            {"internalType": "uint8", "name": "dex1Version", "type": "uint8"},
+            {"internalType": "uint8", "name": "dex2Version", "type": "uint8"},
+            {"internalType": "uint256", "name": "amountIn", "type": "uint256"},
+            {"internalType": "uint256", "name": "minProfitAmount", "type": "uint256"},
+            {"internalType": "bytes", "name": "dex1Data", "type": "bytes"},
+            {"internalType": "bytes", "name": "dex2Data", "type": "bytes"}
+        ],
+        "name": "executeFlashloan",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {"internalType": "address", "name": "tokenIn", "type": "address"},
+            {"internalType": "address", "name": "tokenOut", "type": "address"},
+            {"internalType": "address", "name": "dex1", "type": "address"},
+            {"internalType": "address", "name": "dex2", "type": "address"},
+            {"internalType": "uint8", "name": "dex1Version", "type": "uint8"},
+            {"internalType": "uint8", "name": "dex2Version", "type": "uint8"},
+            {"internalType": "uint256", "name": "amountIn", "type": "uint256"},
+            {"internalType": "uint256", "name": "minProfitAmount", "type": "uint256"},
+            {"internalType": "bytes", "name": "dex1Data", "type": "bytes"},
+            {"internalType": "bytes", "name": "dex2Data", "type": "bytes"}
+        ],
+        "name": "executeBalancerFlashloan",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [{"internalType": "address", "name": "token", "type": "address"}],
+        "name": "withdrawToken",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "withdrawETH",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [{"internalType": "address", "name": "newOwner", "type": "address"}],
+        "name": "transferOwnership",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    }
+]
