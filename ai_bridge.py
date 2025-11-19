@@ -801,9 +801,12 @@ class ArbiGirl:
                         venue_tier = dex
                         tier_priority = 2  # V2 pools default to tier 2
 
+                    # Use actual token order from blockchain, not registry pair name
+                    actual_pair_name = f"{token0}/{token1}"
+
                     table_rows.append({
                         'venue_tier': venue_tier,
-                        'pair': pair_name,
+                        'pair': actual_pair_name,
                         'cg_token0': cg_price0,
                         'cg_token1': cg_price1,
                         'dex_price': dex_pair_price,
@@ -819,10 +822,11 @@ class ArbiGirl:
             # Sort by tier priority (1->2->3), then pair name, then venue
             table_rows.sort(key=lambda x: (x['tier_priority'], x['pair'], x['venue_tier']))
 
-            # Print CSV header
-            header = f"{'Venue/Tier':<25} | {'Pair':<12} | {'CG-T0':>12} | {'CG-T1':>12} | {'DEX Price':>12} | {'Liquidity':>15} | {'Spread%':>8} | {'Confidence':<10} | {'Timestamp':<19}"
+            # Print CSV header with clearer column labels
+            header = f"{'Venue/Tier':<25} | {'Pair (T0/T1)':<12} | {'CG Price T0':>12} | {'CG Price T1':>12} | {'DEX Quote':>12} | {'Liquidity':>15} | {'Spread%':>8} | {'Confidence':<10} | {'Timestamp':<19}"
             print(f"{Fore.YELLOW}{header}{Style.RESET_ALL}")
             print(f"{'-'*160}")
+            print(f"{Fore.CYAN}Note: 'DEX Quote' shows how much T1 you get for 1 T0 (e.g., WETH/QUICK: 1 WETH → X QUICK){Style.RESET_ALL}")
 
             # Print rows with tier sections
             current_tier = None
@@ -842,14 +846,14 @@ class ArbiGirl:
                     print()
                 current_pair = row['pair']
 
-                # Format row
+                # Format row (pair name shows actual token0/token1 order)
                 line = (
                     f"{row['venue_tier']:<25} | "
                     f"{row['pair']:<12} | "
-                    f"${row['cg_token0']:>11,.2f} | "
-                    f"${row['cg_token1']:>11,.2f} | "
-                    f"{row['dex_price']:>12.6f} | "
-                    f"${row['liquidity']:>14,.0f} | "
+                    f"$   {row['cg_token0']:>8,.2f} | "
+                    f"$   {row['cg_token1']:>8,.2f} | "
+                    f"  {row['dex_price']:>10.6f} | "
+                    f"$   {row['liquidity']:>11,.0f} | "
                     f"{row['spread_pct']:>7.2f}% | "
                     f"{row['confidence']:<10} | "
                     f"{row['timestamp']:<19}"
