@@ -1,1 +1,377 @@
-{}
+{
+  "quickswap_v2:0x90bc3e68ba8393a3bf2d79309365089975341a43": {
+    "timestamp": 1763548233.4303575,
+    "data": {
+      "quote_0to1": 16104280869201690267,
+      "quote_1to0": 56444977365818725,
+      "token0": "WETH",
+      "token1": "AAVE",
+      "token0_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "token1_address": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "decimals0": 18,
+      "decimals1": 18,
+      "type": "v2",
+      "dex": "QuickSwap_V2"
+    }
+  },
+  "quickswap_v2:0x59153f27eefe07e5ece4f9304ebba1da6f53ca88": {
+    "timestamp": 1763548244.221734,
+    "data": {
+      "quote_0to1": 994459,
+      "quote_1to0": 999545010453504831,
+      "token0": "DAI",
+      "token1": "USDT",
+      "token0_address": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 18,
+      "decimals1": 6,
+      "type": "v2",
+      "dex": "QuickSwap_V2"
+    }
+  },
+  "quickswap_v2:0x4a35582a710e1f4b2030a3f826da20bfb6703c09": {
+    "timestamp": 1763548246.2216332,
+    "data": {
+      "quote_0to1": 2880694083071105882638,
+      "quote_1to0": 321534715308263,
+      "token0": "WETH",
+      "token1": "DAI",
+      "token0_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "token1_address": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "decimals0": 18,
+      "decimals1": 18,
+      "type": "v2",
+      "dex": "QuickSwap_V2"
+    }
+  },
+  "quickswap_v2:0xeef611894ceae652979c9d0dae1deb597790c6ee": {
+    "timestamp": 1763548247.2684839,
+    "data": {
+      "quote_0to1": 147185838252231720,
+      "quote_1to0": 6752349198065615728,
+      "token0": "WPOL",
+      "token1": "DAI",
+      "token0_address": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      "token1_address": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "decimals0": 18,
+      "decimals1": 18,
+      "type": "v2",
+      "dex": "QuickSwap_V2"
+    }
+  },
+  "quickswap_v2:0x5ca6ca6c3709e1e6cfe74a50cf6b2b6ba2dadd67": {
+    "timestamp": 1763548251.672065,
+    "data": {
+      "quote_0to1": 4345955964830749,
+      "quote_1to0": 222540087632413283974,
+      "token0": "LINK",
+      "token1": "WETH",
+      "token0_address": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "token1_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "decimals0": 18,
+      "decimals1": 18,
+      "type": "v2",
+      "dex": "QuickSwap_V2"
+    }
+  },
+  "quickswap_v2:0x60e70705b52a4a5bdc1d8614426ba5016a68ab38": {
+    "timestamp": 1763548256.033326,
+    "data": {
+      "quote_0to1": 118221762071384782746399,
+      "quote_1to0": 4993759359412,
+      "token0": "WETH",
+      "token1": "QUICK",
+      "token0_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "token1_address": "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
+      "decimals0": 18,
+      "decimals1": 18,
+      "type": "v2",
+      "dex": "QuickSwap_V2"
+    }
+  },
+  "quickswap_v2:0xf3eb2f17eafbf35e92c965a954c6e7693187057d": {
+    "timestamp": 1763548257.1164794,
+    "data": {
+      "quote_0to1": 9546823718001596235,
+      "quote_1to0": 104118540419359560,
+      "token0": "WPOL",
+      "token1": "QUICK",
+      "token0_address": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      "token1_address": "0xB5C064F955D8e7F38fE0460C556a72987494eE17",
+      "decimals0": 18,
+      "decimals1": 18,
+      "type": "v2",
+      "dex": "QuickSwap_V2"
+    }
+  },
+  "quickswap_v2:0xf7135272a5584eb116f5a77425118a8b4a2ddfdb": {
+    "timestamp": 1763548266.206021,
+    "data": {
+      "quote_0to1": 324406048240638819987,
+      "quote_1to0": 2377470030774165,
+      "token0": "WETH",
+      "token1": "UNI",
+      "token0_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "token1_address": "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
+      "decimals0": 18,
+      "decimals1": 18,
+      "type": "v2",
+      "dex": "QuickSwap_V2"
+    }
+  },
+  "quickswap_v2:0xe43ab6540c0929ef29d216a34ab1f0eacc5c3825": {
+    "timestamp": 1763548268.2836304,
+    "data": {
+      "quote_0to1": 996759,
+      "quote_1to0": 996030,
+      "token0": "USDC",
+      "token1": "USDT",
+      "token0_address": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 6,
+      "decimals1": 6,
+      "type": "v2",
+      "dex": "QuickSwap_V2"
+    }
+  },
+  "quickswap_v2:0x7baf833f82bb1971f99a5a5d84bed1d5d0dedd70": {
+    "timestamp": 1763548270.001083,
+    "data": {
+      "quote_0to1": 321616365058149,
+      "quote_1to0": 2506342600,
+      "token0": "USDC",
+      "token1": "WETH",
+      "token0_address": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "token1_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "decimals0": 6,
+      "decimals1": 18,
+      "type": "v2",
+      "dex": "QuickSwap_V2"
+    }
+  },
+  "quickswap_v2:0xf6422b997c7f54d1c6a6e103bcb1499eea0a7046": {
+    "timestamp": 1763548272.8318195,
+    "data": {
+      "quote_0to1": 2983457583,
+      "quote_1to0": 321395896641088,
+      "token0": "WETH",
+      "token1": "USDT",
+      "token0_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 18,
+      "decimals1": 6,
+      "type": "v2",
+      "dex": "QuickSwap_V2"
+    }
+  },
+  "quickswap_v2:0x604229c960e5cacf2aaeac8be68ac07ba9df81c3": {
+    "timestamp": 1763548273.7689705,
+    "data": {
+      "quote_0to1": 147087,
+      "quote_1to0": 6757844914694970733,
+      "token0": "WPOL",
+      "token1": "USDT",
+      "token0_address": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 18,
+      "decimals1": 6,
+      "type": "v2",
+      "dex": "QuickSwap_V2"
+    }
+  },
+  "quickswap_v2:0xdc9232e2df177d7a12fdff6ecbab114e2231198d": {
+    "timestamp": 1763548274.6899388,
+    "data": {
+      "quote_0to1": 22087477145661774439,
+      "quote_1to0": 3336687,
+      "token0": "WBTC",
+      "token1": "WETH",
+      "token0_address": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "token1_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "decimals0": 8,
+      "decimals1": 18,
+      "type": "v2",
+      "dex": "QuickSwap_V2"
+    }
+  },
+  "quickswap_v2:0xf6b87181bf250af082272e3f448ec3238746ce3d": {
+    "timestamp": 1763548275.859912,
+    "data": {
+      "quote_0to1": 160,
+      "quote_1to0": 41200419883871316381578,
+      "token0": "WPOL",
+      "token1": "WBTC",
+      "token0_address": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      "token1_address": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "decimals0": 18,
+      "decimals1": 8,
+      "type": "v2",
+      "dex": "QuickSwap_V2"
+    }
+  },
+  "quickswap_v2:0xadbf1854e5883eb8aa7baf50705338739e558e5b": {
+    "timestamp": 1763548276.7517292,
+    "data": {
+      "quote_0to1": 47485930323647,
+      "quote_1to0": 20745129022005537393681,
+      "token0": "WPOL",
+      "token1": "WETH",
+      "token0_address": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      "token1_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "decimals0": 18,
+      "decimals1": 18,
+      "type": "v2",
+      "dex": "QuickSwap_V2"
+    }
+  },
+  "sushiswap:0x2813d43463c374a680f235c428fb1d7f08de0b69": {
+    "timestamp": 1763548285.1222103,
+    "data": {
+      "quote_0to1": 17016574011338321070,
+      "quote_1to0": 56555166636656305,
+      "token0": "WETH",
+      "token1": "AAVE",
+      "token0_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "token1_address": "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
+      "decimals0": 18,
+      "decimals1": 18,
+      "type": "v2",
+      "dex": "SushiSwap"
+    }
+  },
+  "sushiswap:0x396e655c309676caf0acf4607a868e0cded876db": {
+    "timestamp": 1763548290.6793425,
+    "data": {
+      "quote_0to1": 138789223833133,
+      "quote_1to0": 6478536598712178091762,
+      "token0": "CRV",
+      "token1": "WETH",
+      "token0_address": "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
+      "token1_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "decimals0": 18,
+      "decimals1": 18,
+      "type": "v2",
+      "dex": "SushiSwap"
+    }
+  },
+  "sushiswap:0x6ff62bfb8c12109e8000935a6de54dad83a4f39f": {
+    "timestamp": 1763548298.038158,
+    "data": {
+      "quote_0to1": 2902754822675159027049,
+      "quote_1to0": 321882179016358,
+      "token0": "WETH",
+      "token1": "DAI",
+      "token0_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "token1_address": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "decimals0": 18,
+      "decimals1": 18,
+      "type": "v2",
+      "dex": "SushiSwap"
+    }
+  },
+  "sushiswap:0x74d23f21f780ca26b47db16b0504f2e3832b9321": {
+    "timestamp": 1763548302.8142583,
+    "data": {
+      "quote_0to1": 4347332081473105,
+      "quote_1to0": 218886809835695705861,
+      "token0": "LINK",
+      "token1": "WETH",
+      "token0_address": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39",
+      "token1_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "decimals0": 18,
+      "decimals1": 18,
+      "type": "v2",
+      "dex": "SushiSwap"
+    }
+  },
+  "sushiswap:0x116ff0d1caa91a6b94276b3471f33dbeb52073e7": {
+    "timestamp": 1763548305.1760874,
+    "data": {
+      "quote_0to1": 221178701504592,
+      "quote_1to0": 2692942112420951512404,
+      "token0": "SNX",
+      "token1": "WETH",
+      "token0_address": "0x50B728D8D964fd00C2d0AAD81718b71311feF68a",
+      "token1_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "decimals0": 18,
+      "decimals1": 18,
+      "type": "v2",
+      "dex": "SushiSwap"
+    }
+  },
+  "sushiswap:0xb5846453b67d0b4b4ce655930cf6e4129f4416d7": {
+    "timestamp": 1763548309.7840714,
+    "data": {
+      "quote_0to1": 148783725566358,
+      "quote_1to0": 4144202579448750453393,
+      "token0": "SUSHI",
+      "token1": "WETH",
+      "token0_address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+      "token1_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "decimals0": 18,
+      "decimals1": 18,
+      "type": "v2",
+      "dex": "SushiSwap"
+    }
+  },
+  "sushiswap:0xc2755915a85c6f6c1c0f3a86ac8c058f11caa9c9": {
+    "timestamp": 1763548319.3359501,
+    "data": {
+      "quote_0to1": 2955816055,
+      "quote_1to0": 321595999849782,
+      "token0": "WETH",
+      "token1": "USDT",
+      "token0_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 18,
+      "decimals1": 6,
+      "type": "v2",
+      "dex": "SushiSwap"
+    }
+  },
+  "sushiswap:0x55ff76bffc3cdd9d5fdbbc2ece4528ecce45047e": {
+    "timestamp": 1763548320.0797453,
+    "data": {
+      "quote_0to1": 147115,
+      "quote_1to0": 6755439751220793124,
+      "token0": "WPOL",
+      "token1": "USDT",
+      "token0_address": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      "token1_address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "decimals0": 18,
+      "decimals1": 6,
+      "type": "v2",
+      "dex": "SushiSwap"
+    }
+  },
+  "sushiswap:0xe62ec2e799305e0d367b0cc3ee2cda135bf89816": {
+    "timestamp": 1763548320.8362355,
+    "data": {
+      "quote_0to1": 22711393240618801733,
+      "quote_1to0": 3340663,
+      "token0": "WBTC",
+      "token1": "WETH",
+      "token0_address": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "token1_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "decimals0": 8,
+      "decimals1": 18,
+      "type": "v2",
+      "dex": "SushiSwap"
+    }
+  },
+  "sushiswap:0xc4e595acdd7d12fec385e5da5d43160e8a0bac0e": {
+    "timestamp": 1763548322.847429,
+    "data": {
+      "quote_0to1": 47480657939720,
+      "quote_1to0": 20615825206407868392896,
+      "token0": "WPOL",
+      "token1": "WETH",
+      "token0_address": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      "token1_address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "decimals0": 18,
+      "decimals1": 18,
+      "type": "v2",
+      "dex": "SushiSwap"
+    }
+  }
+}
