@@ -19,6 +19,11 @@ from web3.exceptions import TransactionNotFound
 from colorama import Fore, Style, init
 import logging
 
+# Import new modules
+from swap_decoder import SwapDecoder
+from execution_router import ExecutionRouter, ExecutionPath, format_execution_decision
+from dynamic_gas_tuner import DynamicGasTuner
+
 init(autoreset=True)
 logger = logging.getLogger(__name__)
 
@@ -57,12 +62,15 @@ class MempoolMonitor:
         self.rpc_manager = rpc_manager
         self.cache = cache
         self.min_value_usd = min_value_usd
-        
+
         self.w3 = rpc_manager.get_web3()
         self.pending_txs = deque(maxlen=1000)  # Recent pending txs
         self.monitored_pools = set()  # Pools to watch
         self.price_impacts = {}  # predicted_pool_address -> impact_data
-        
+
+        # Initialize swap decoder
+        self.swap_decoder = SwapDecoder()
+
         logger.info(f"{Fore.GREEN}✅ Mempool Monitor initialized{Style.RESET_ALL}")
         logger.info(f"   Tracking swaps > ${min_value_usd:,.0f}")
     
@@ -88,29 +96,34 @@ class MempoolMonitor:
     
     def decode_swap_params(self, tx: Dict, dex_name: str) -> Optional[Dict]:
         """
-        Decode swap parameters from transaction input data
+        Decode swap parameters from transaction input data using SwapDecoder
         Returns: {token_in, token_out, amount_in, path, ...}
         """
         try:
             input_data = tx.get('input', '0x')
             if len(input_data) < 10:
                 return None
-            
-            # This is a simplified decoder - you'd need proper ABI decoding
-            # For production, use web3.py contract decoding with actual ABIs
-            
-            # Basic structure for V2 swaps:
-            # swapExactTokensForTokens(amountIn, amountOutMin, path, to, deadline)
-            
-            # Placeholder - implement full ABI decoding based on function signature
-            return {
-                'tx_hash': tx.get('hash', ''),
-                'from': tx.get('from', ''),
-                'dex': dex_name,
-                'gas_price': tx.get('gasPrice', 0),
-                'input_data': input_data
-            }
-            
+
+            # Use SwapDecoder for full ABI decoding
+            decoded = self.swap_decoder.decode_input(input_data)
+
+            if not decoded:
+                return None
+
+            # Enrich with transaction metadata
+            decoded['tx_hash'] = tx.get('hash', '')
+            decoded['from'] = tx.get('from', '')
+            decoded['dex'] = dex_name
+            decoded['gas_price'] = tx.get('gasPrice', 0)
+            decoded['value'] = tx.get('value', 0)
+
+            # Log decoded swap
+            logger.info(f"{Fore.CYAN}📥 Decoded {decoded['function']} on {dex_name}{Style.RESET_ALL}")
+            logger.info(f"   Path: {' → '.join([addr[:8]+'...' for addr in decoded.get('path', [])])}")
+            logger.info(f"   Amount In: {decoded.get('amountIn', 0):,}")
+
+            return decoded
+
         except Exception as e:
             logger.debug(f"Failed to decode swap: {e}")
             return None
@@ -304,18 +317,25 @@ class GraphArbitrageFinder:
     Builds a directed graph of all trading pairs and finds profitable cycles
     """
     
-    def __init__(self, arb_finder):
+    def __init__(self, arb_finder, gas_manager=None):
         """
         Args:
             arb_finder: Your existing ArbFinder instance
+            gas_manager: GasOptimizationManager for dynamic tuning (optional)
         """
         self.arb_finder = arb_finder
-        
+        self.gas_manager = gas_manager
+
         # Graph: token -> [(connected_token, edge_data)]
         self.graph = defaultdict(list)
         self.pools = {}  # (token_a, token_b, dex) -> pool_data
-        
+
+        # Initialize gas tuner if gas_manager provided
+        self.gas_tuner = DynamicGasTuner(gas_manager, use_flash_loans=True) if gas_manager else None
+
         logger.info(f"{Fore.GREEN}✅ Graph Arbitrage Finder initialized{Style.RESET_ALL}")
+        if self.gas_tuner:
+            logger.info(f"   🔧 Dynamic gas tuning: ENABLED")
     
     def build_graph(self, pools_data: Dict[str, Dict]):
         """
@@ -489,38 +509,59 @@ class GraphArbitrageFinder:
         self,
         pools_data: Dict,
         base_tokens: List[str] = ['USDC', 'WETH', 'WPOL'],
-        test_amounts: List[float] = [1000, 5000, 10000]
+        test_amounts: List[float] = None,
+        pol_price_usd: float = 0.40
     ) -> List[Dict]:
         """
         Find all arbitrage opportunities using graph pathfinding
+        Uses dynamic gas tuning if gas_tuner is available
         """
         logger.info(f"\n{Fore.CYAN}{'='*80}")
         logger.info(f"🔍 GRAPH-BASED ARBITRAGE SCAN")
         logger.info(f"{'='*80}{Style.RESET_ALL}\n")
-        
+
+        # Get dynamic parameters from gas tuner (if available)
+        if self.gas_tuner:
+            params = self.gas_tuner.get_optimal_params(pol_price_usd)
+            self.gas_tuner.print_params(params)
+
+            # Use tuned parameters
+            max_hops = params.max_hops
+            min_profit = params.min_profit_after_gas
+            test_amounts = test_amounts or params.test_amounts_usd
+            max_paths = params.max_paths
+            min_tvl = params.min_pool_tvl_usd
+        else:
+            # Use defaults
+            max_hops = 3
+            min_profit = 1.0
+            test_amounts = test_amounts or [1000, 5000, 10000]
+            max_paths = 50
+            min_tvl = 5000
+
         # Build graph
         self.build_graph(pools_data)
-        
+
         opportunities = []
-        
+
         # Find paths from each base token
         for base_token in base_tokens:
             if base_token not in self.graph:
                 continue
-            
+
             logger.info(f"🎯 Scanning paths from {base_token}...")
-            
-            # Find triangular paths
-            paths = self.find_triangular_paths(base_token, max_hops=3, max_paths=50)
-            
+
+            # Find triangular paths with dynamic max_hops
+            paths = self.find_triangular_paths(base_token, max_hops=max_hops, max_paths=max_paths)
+
             logger.info(f"   Found {len(paths)} potential paths")
-            
+
             # Test each path with different amounts
             for path in paths:
                 for amount in test_amounts:
                     result = self.calculate_path_profit(path, amount, pools_data)
-                    
-                    if result and result['profit_usd'] > 1.0:
+
+                    if result and result['profit_usd'] > min_profit:
                         opportunities.append(result)
                         logger.info(f"   ✅ {result['path']} = ${result['profit_usd']:.2f}")
         
@@ -539,29 +580,40 @@ class AdvancedMEVModule:
     Integrates seamlessly with your existing PolygonArbBot
     """
     
-    def __init__(self, polygon_bot):
+    def __init__(self, polygon_bot, gas_manager=None):
         """
         Args:
             polygon_bot: Your PolygonArbBot instance
+            gas_manager: GasOptimizationManager for dynamic tuning (optional)
         """
         self.bot = polygon_bot
-        
+        self.gas_manager = gas_manager
+
         # Initialize components
         self.mempool_monitor = MempoolMonitor(
             polygon_bot.rpc_manager,
             polygon_bot.cache,
             min_value_usd=10000
         )
-        
+
         self.ws_feed = WebSocketPriceFeed(
             polygon_bot.rpc_manager,
             polygon_bot.cache
         )
-        
+
         self.graph_finder = GraphArbitrageFinder(
-            polygon_bot.arb_finder
+            polygon_bot.arb_finder,
+            gas_manager=gas_manager
         )
-        
+
+        # Initialize execution router
+        if gas_manager:
+            self.execution_router = ExecutionRouter(gas_manager, min_profit_usd=1.0)
+            logger.info(f"{Fore.GREEN}✅ Execution Router initialized{Style.RESET_ALL}")
+        else:
+            self.execution_router = None
+            logger.warning(f"{Fore.YELLOW}⚠️  No gas_manager provided, execution routing disabled{Style.RESET_ALL}")
+
         logger.info(f"{Fore.GREEN}✅ Advanced MEV Module initialized{Style.RESET_ALL}")
     
     async def start_mempool_monitoring(self):
@@ -585,13 +637,52 @@ class AdvancedMEVModule:
         # Cache is automatically invalidated
         # Next arb scan will use fresh data
     
-    def find_graph_opportunities(self) -> List[Dict]:
-        """Run graph-based arbitrage finding"""
+    def find_graph_opportunities(self, pol_price_usd: float = 0.40) -> List[Dict]:
+        """Run graph-based arbitrage finding with dynamic gas tuning"""
         # Use your existing pool data
         pools = self.bot.price_fetcher.fetch_all_pools()
-        
-        # Find opportunities using graph
-        return self.graph_finder.find_all_opportunities(pools)
+
+        # Find opportunities using graph (with dynamic gas tuning)
+        return self.graph_finder.find_all_opportunities(pools, pol_price_usd=pol_price_usd)
+
+    def analyze_and_route_opportunity(
+        self,
+        opportunity: Dict,
+        pol_price_usd: float = 0.40,
+        has_capital: bool = False
+    ) -> Dict:
+        """
+        Analyze opportunity and route to best execution path
+
+        Args:
+            opportunity: Arbitrage opportunity from graph_finder
+            pol_price_usd: Current POL price
+            has_capital: Whether wallet has capital for direct swaps
+
+        Returns:
+            Dict with execution decision and details
+        """
+        if not self.execution_router:
+            return {
+                'success': False,
+                'error': 'Execution router not initialized (no gas_manager)'
+            }
+
+        # Route the opportunity
+        decision = self.execution_router.decide_execution_path(
+            opportunity,
+            pol_price_usd=pol_price_usd,
+            has_capital=has_capital
+        )
+
+        # Print decision
+        print(format_execution_decision(decision))
+
+        return {
+            'success': True,
+            'decision': decision,
+            'should_execute': decision.path != ExecutionPath.SKIP
+        }
 
 
 # Example usage with existing bot
