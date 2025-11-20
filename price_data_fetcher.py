@@ -194,7 +194,10 @@ class PriceDataFetcher:
                 path0to1 = [Web3.to_checksum_address(token0_addr), Web3.to_checksum_address(token1_addr)]
                 amounts_out_0to1 = router.functions.getAmountsOut(test_amount0, path0to1).call()
                 quote_0to1 = amounts_out_0to1[1]  # Output amount
-                print(f"  ✅ {token0_info['symbol']}/{token1_info['symbol']} on {dex} - quote: 1 {token0_info['symbol']} = {quote_0to1 / (10**decimals1):.6f} {token1_info['symbol']}")
+                normalized_quote = quote_0to1 / (10**decimals1)
+                print(f"  ✅ {token0_info['symbol']}/{token1_info['symbol']} on {dex}")
+                print(f"     Quote: 1 {token0_info['symbol']} = {normalized_quote:.8f} {token1_info['symbol']}")
+                print(f"     Raw: {quote_0to1} (decimals: {decimals0}/{decimals1})")
             except Exception as e:
                 # Skip pool if quote fails
                 print(f"  ⚠️  Skipping {token0_info['symbol']}/{token1_info['symbol']} on {dex} - quote failed: {str(e)[:80]}")
@@ -215,20 +218,35 @@ class PriceDataFetcher:
             price0 = self.price_fetcher.get_price(token0_info["symbol"])
             price1 = self.price_fetcher.get_price(token1_info["symbol"])
 
-            if not price0 or not price1:
-                print(f"  ⚠️  No CoinGecko price for {token0_info['symbol']}/{token1_info['symbol']} - using quotes anyway")
-                # Still return the pool with quotes, just set TVL to 0
-                tvl_usd = 0
-            else:
-                # Calculate TVL
+            # Try to derive missing prices from on-chain quotes
+            if not price0 and price1:
+                # Derive price0 from quote: 1 token0 = X token1
+                # price0_usd = (quote_0to1 / 10**decimals1) * price1
+                price0 = (quote_0to1 / (10 ** decimals1)) * price1
+                if price0 > 0:
+                    print(f"  💡 Derived {token0_info['symbol']} price from on-chain quote: ${price0:.6f}")
+
+            if not price1 and price0:
+                # Derive price1 from quote: 1 token1 = X token0
+                # price1_usd = (quote_1to0 / 10**decimals0) * price0
+                price1 = (quote_1to0 / (10 ** decimals0)) * price0
+                if price1 > 0:
+                    print(f"  💡 Derived {token1_info['symbol']} price from on-chain quote: ${price1:.6f}")
+
+            # Calculate TVL if we have prices
+            if price0 and price1:
                 amount0 = reserve0 / (10 ** decimals0)
                 amount1 = reserve1 / (10 ** decimals1)
                 tvl_usd = (amount0 * price0) + (amount1 * price1)
+            else:
+                # No way to calculate TVL without prices
+                print(f"  ⚠️  Skipping {token0_info['symbol']}/{token1_info['symbol']} on {dex} - no USD price available for both tokens")
+                return None
 
-                # Check TVL threshold
-                if tvl_usd < self.min_tvl_usd:
-                    print(f"  ⚠️  Skipping {token0_info['symbol']}/{token1_info['symbol']} on {dex} - TVL ${tvl_usd:,.0f} < ${self.min_tvl_usd:,.0f}")
-                    return None
+            # Check TVL threshold (ALWAYS CHECK, even if derived prices)
+            if tvl_usd < self.min_tvl_usd:
+                print(f"  ⚠️  Skipping {token0_info['symbol']}/{token1_info['symbol']} on {dex} - TVL ${tvl_usd:,.0f} < ${self.min_tvl_usd:,.0f}")
+                return None
 
             return {
                 'pair_prices': {
@@ -339,11 +357,21 @@ class PriceDataFetcher:
             price0 = self.price_fetcher.get_price(token0_info["symbol"])
             price1 = self.price_fetcher.get_price(token1_info["symbol"])
 
-            if not price0 or not price1:
-                print(f"  ⚠️  No CoinGecko price for {token0_info['symbol']}/{token1_info['symbol']} - using quotes anyway")
-                # Still return the pool with quotes, just set TVL to 0
-                tvl_usd = 0
-            else:
+            # Try to derive missing prices from on-chain quotes
+            if not price0 and price1:
+                # Derive price0 from quote: 1 token0 = X token1
+                price0 = (quote_0to1 / (10 ** decimals1)) * price1
+                if price0 > 0:
+                    print(f"  💡 Derived {token0_info['symbol']} price from on-chain quote: ${price0:.6f}")
+
+            if not price1 and price0:
+                # Derive price1 from quote: 1 token1 = X token0
+                price1 = (quote_1to0 / (10 ** decimals0)) * price0
+                if price1 > 0:
+                    print(f"  💡 Derived {token1_info['symbol']} price from on-chain quote: ${price1:.6f}")
+
+            # Calculate TVL if we have prices
+            if price0 and price1:
                 # Calculate TVL (simplified estimate)
                 price_ratio = (sqrt_price_x96 / (2 ** 96)) ** 2
                 price_adjusted = price_ratio * (10 ** decimals0) / (10 ** decimals1)
@@ -353,11 +381,15 @@ class PriceDataFetcher:
                     tvl_usd = (tvl_token1 / (10 ** decimals1)) * price1
                 else:
                     tvl_usd = 0
+            else:
+                # No way to calculate TVL without prices
+                print(f"  ⚠️  Skipping {token0_info['symbol']}/{token1_info['symbol']} on {dex} (fee:{fee}) - no USD price available for both tokens")
+                return None
 
-                # Check TVL threshold
-                if tvl_usd < self.min_tvl_usd:
-                    print(f"  ⚠️  Skipping {token0_info['symbol']}/{token1_info['symbol']} on {dex} (fee:{fee}) - TVL ${tvl_usd:,.0f} < ${self.min_tvl_usd:,.0f}")
-                    return None
+            # Check TVL threshold (ALWAYS CHECK)
+            if tvl_usd < self.min_tvl_usd:
+                print(f"  ⚠️  Skipping {token0_info['symbol']}/{token1_info['symbol']} on {dex} (fee:{fee}) - TVL ${tvl_usd:,.0f} < ${self.min_tvl_usd:,.0f}")
+                return None
 
             return {
                 'pair_prices': {

@@ -323,50 +323,72 @@ class GraphArbitrageFinder:
         Each edge represents a potential swap
         """
         logger.info(f"{Fore.CYAN}🏗️  Building arbitrage graph...{Style.RESET_ALL}")
-        
+
         self.graph.clear()
         self.pools.clear()
-        
+
         edge_count = 0
-        
+        skipped_no_tokens = 0
+        skipped_no_quote = 0
+        skipped_low_tvl = 0
+
         for dex_name, pairs in pools_data.items():
             for pair_name, pool_data in pairs.items():
                 pair_prices = pool_data.get('pair_prices', {})
                 tvl_data = pool_data.get('tvl_data', {})
-                
+
                 token0 = pair_prices.get('token0')
                 token1 = pair_prices.get('token1')
-                
+
                 if not token0 or not token1:
+                    skipped_no_tokens += 1
                     continue
-                
+
+                # Check quotes
+                quote_0to1 = pair_prices.get('quote_0to1', 0)
+                quote_1to0 = pair_prices.get('quote_1to0', 0)
+
+                if quote_0to1 == 0 or quote_1to0 == 0:
+                    skipped_no_quote += 1
+                    logger.debug(f"   Skipping {token0}/{token1} on {dex_name} - no valid quote")
+                    continue
+
+                # Check TVL
+                tvl = tvl_data.get('tvl_usd', 0)
+                if tvl < 3000:
+                    skipped_low_tvl += 1
+                    logger.debug(f"   Skipping {token0}/{token1} on {dex_name} - TVL ${tvl:.0f} < $3,000")
+                    continue
+
                 # Add bidirectional edges
                 edge0to1 = {
                     'dex': dex_name,
                     'pool_address': pool_data.get('pool'),
-                    'quote': pair_prices.get('quote_0to1', 0),
+                    'quote': quote_0to1,
                     'fee': self._get_fee(dex_name, pair_prices),
-                    'tvl': tvl_data.get('tvl_usd', 0),
+                    'tvl': tvl,
                     'decimals0': pair_prices.get('decimals0', 18),
                     'decimals1': pair_prices.get('decimals1', 18),
                 }
-                
+
                 edge1to0 = {
                     'dex': dex_name,
                     'pool_address': pool_data.get('pool'),
-                    'quote': pair_prices.get('quote_1to0', 0),
+                    'quote': quote_1to0,
                     'fee': self._get_fee(dex_name, pair_prices),
-                    'tvl': tvl_data.get('tvl_usd', 0),
+                    'tvl': tvl,
                     'decimals0': pair_prices.get('decimals1', 18),
                     'decimals1': pair_prices.get('decimals0', 18),
                 }
-                
+
                 self.graph[token0].append((token1, edge0to1))
                 self.graph[token1].append((token0, edge1to0))
-                
+
                 edge_count += 2
-        
-        logger.info(f"   Graph: {len(self.graph)} tokens, {edge_count} edges")
+
+        logger.info(f"{Fore.GREEN}   ✅ Graph built: {len(self.graph)} tokens, {edge_count} edges{Style.RESET_ALL}")
+        if skipped_no_tokens + skipped_no_quote + skipped_low_tvl > 0:
+            logger.info(f"{Fore.YELLOW}   ⚠️  Skipped: {skipped_no_tokens} (no tokens), {skipped_no_quote} (no quotes), {skipped_low_tvl} (low TVL){Style.RESET_ALL}")
     
     def _get_fee(self, dex_name: str, pair_prices: Dict) -> float:
         """Get trading fee for a DEX"""
@@ -408,8 +430,8 @@ class GraphArbitrageFinder:
             
             # Explore neighbors
             for next_token, edge_data in self.graph.get(current_token, []):
-                # Skip if insufficient liquidity
-                if edge_data['tvl'] < 5000:
+                # Skip if insufficient liquidity (use same threshold as pool fetcher)
+                if edge_data['tvl'] < 3000:
                     continue
                 
                 path.append(next_token)
@@ -429,60 +451,83 @@ class GraphArbitrageFinder:
         price_data: Dict
     ) -> Optional[Dict]:
         """
-        Calculate profit for a specific path using actual pool quotes
+        Calculate profit for a specific path using actual pool quotes with proper decimal handling
         """
         if len(path) < 3:  # Need at least A->B->A
             return None
-        
+
         try:
-            current_amount = amount_in_usd
+            # We need to track both USD value and token amounts
+            # Start with USD amount for the first token
+            current_amount_usd = amount_in_usd
             route_details = []
-            
+
             # Execute each hop
             for i in range(len(path) - 1):
                 token_in = path[i]
                 token_out = path[i + 1]
-                
+
                 # Find best edge for this hop
                 edges = [
                     edge for next_token, edge in self.graph[token_in]
                     if next_token == token_out
                 ]
-                
+
                 if not edges:
                     return None
-                
+
                 # Use highest liquidity pool
                 best_edge = max(edges, key=lambda e: e['tvl'])
-                
-                # Calculate output (simplified - use your actual swap math)
-                fee_multiplier = 1 - best_edge['fee']
-                current_amount *= fee_multiplier
-                
+
+                # Get the actual quote for this direction
+                quote = best_edge['quote']  # This is the RAW quote (e.g., 1 token_in → X token_out in wei)
+                decimals_in = best_edge['decimals0']  # Input token decimals
+                decimals_out = best_edge['decimals1']  # Output token decimals
+                fee = best_edge['fee']
+
+                if quote == 0:
+                    return None
+
+                # The quote represents: 1 token_in → (quote / 10**decimals_out) token_out
+                # So the exchange rate is: quote / (10**decimals_out)
+                # For amount_in tokens, we get: amount_in * quote / (10**decimals_out)
+                # But we're working in USD, so we need to convert
+
+                # For simplicity, we'll use the ratio and apply fees
+                # exchange_rate = quote / (10**decimals_out)
+                # After fees: exchange_rate * (1 - fee)
+                exchange_rate = (quote / (10 ** decimals_out)) * (1 - fee)
+
+                # Scale the USD amount (this is approximate since we don't have exact USD prices for each token)
+                # In a real implementation, you'd convert USD → token_in amount → swap → token_out amount → USD
+                # For now, we'll use the exchange rate as a proxy
+                current_amount_usd *= exchange_rate
+
                 route_details.append({
                     'from': token_in,
                     'to': token_out,
                     'dex': best_edge['dex'],
-                    'amount': current_amount
+                    'exchange_rate': exchange_rate,
+                    'amount_usd': current_amount_usd
                 })
-            
+
             # Calculate profit
-            profit = current_amount - amount_in_usd
+            profit = current_amount_usd - amount_in_usd
             roi = (profit / amount_in_usd) * 100 if amount_in_usd > 0 else 0
-            
+
             if profit > 0:
                 return {
                     'path': ' → '.join(path),
                     'route': route_details,
                     'amount_in': amount_in_usd,
-                    'amount_out': current_amount,
+                    'amount_out': current_amount_usd,
                     'profit_usd': profit,
                     'roi_percent': roi
                 }
-            
+
         except Exception as e:
             logger.debug(f"Path calculation failed: {e}")
-        
+
         return None
     
     def find_all_opportunities(
