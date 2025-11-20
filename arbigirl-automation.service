@@ -1,0 +1,32 @@
+[Unit]
+Description=ArbiGirl Graph-Based Arbitrage Automation
+After=network.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=user
+WorkingDirectory=/home/user/ai-aggregator
+Environment="PATH=/usr/local/bin:/usr/bin:/bin"
+EnvironmentFile=/home/user/ai-aggregator/.env
+
+# Main execution command
+ExecStart=/usr/bin/python3 /home/user/ai-aggregator/run_graph_automation.py
+
+# Restart policy
+Restart=always
+RestartSec=10
+
+# Logging
+StandardOutput=append:/home/user/ai-aggregator/logs/automation.log
+StandardError=append:/home/user/ai-aggregator/logs/automation-error.log
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+
+# Resource limits
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
