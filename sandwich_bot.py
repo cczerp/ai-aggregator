@@ -24,6 +24,7 @@ import logging
 from swap_decoder import SwapDecoder
 from registries import TOKENS, DEXES, get_token_address
 from tx_builder import GasOptimizationManager
+from token_approval import TokenApprovalManager
 
 init(autoreset=True)
 logger = logging.getLogger(__name__)
@@ -306,6 +307,7 @@ class SandwichBot:
         self.swap_decoder = SwapDecoder()
         self.gas_manager = GasOptimizationManager(rpc_manager=rpc_manager)
         self.calculator = SandwichCalculator(self.w3, self.gas_manager)
+        self.approval_manager = TokenApprovalManager(self.w3, private_key)
 
         # Stats
         self.pending_swaps_seen = 0
@@ -432,17 +434,92 @@ class SandwichBot:
             logger.error(f"Sandwich attempt error: {e}")
 
     async def _get_pool_reserves(self, victim_swap: Dict) -> Optional[Dict]:
-        """
-        Get current pool reserves
-        TODO: Implement real pool data fetching
-        """
-        # This is a placeholder - implement real reserve fetching
-        return {
-            'reserve0': 1000000 * 1e6,  # 1M USDC
-            'reserve1': 500 * 1e18,     # 500 WETH
-            'pool_address': '0x...',
-            'dex': victim_swap['dex']
-        }
+        """Get current pool reserves for the swap path"""
+        try:
+            path = victim_swap.get('path', [])
+            if len(path) < 2:
+                return None
+
+            token0 = path[0]
+            token1 = path[1]
+            dex_name = victim_swap['dex']
+
+            # Get factory and create pair address
+            dex_info = DEXES.get(dex_name, {})
+            factory_address = dex_info.get('factory')
+
+            if not factory_address:
+                return None
+
+            # Factory ABI for getPair
+            factory_abi = [{
+                "constant": True,
+                "inputs": [
+                    {"name": "tokenA", "type": "address"},
+                    {"name": "tokenB", "type": "address"}
+                ],
+                "name": "getPair",
+                "outputs": [{"name": "pair", "type": "address"}],
+                "type": "function"
+            }]
+
+            factory = self.w3.eth.contract(
+                address=Web3.to_checksum_address(factory_address),
+                abi=factory_abi
+            )
+
+            # Get pair address
+            pair_address = factory.functions.getPair(
+                Web3.to_checksum_address(token0),
+                Web3.to_checksum_address(token1)
+            ).call()
+
+            if pair_address == '0x0000000000000000000000000000000000000000':
+                return None
+
+            # Get reserves from pair
+            pair_abi = [{
+                "constant": True,
+                "inputs": [],
+                "name": "getReserves",
+                "outputs": [
+                    {"name": "reserve0", "type": "uint112"},
+                    {"name": "reserve1", "type": "uint112"},
+                    {"name": "blockTimestampLast", "type": "uint32"}
+                ],
+                "type": "function"
+            }, {
+                "constant": True,
+                "inputs": [],
+                "name": "token0",
+                "outputs": [{"name": "", "type": "address"}],
+                "type": "function"
+            }]
+
+            pair = self.w3.eth.contract(
+                address=Web3.to_checksum_address(pair_address),
+                abi=pair_abi
+            )
+
+            reserves = pair.functions.getReserves().call()
+            pair_token0 = pair.functions.token0().call()
+
+            # Determine correct reserve order
+            if pair_token0.lower() == token0.lower():
+                reserve0, reserve1 = reserves[0], reserves[1]
+            else:
+                reserve0, reserve1 = reserves[1], reserves[0]
+
+            return {
+                'reserve0': reserve0,
+                'reserve1': reserve1,
+                'pool_address': pair_address,
+                'dex': dex_name
+            }
+
+        except Exception as e:
+            logger.debug(f"Failed to get pool reserves: {e}")
+            return None
 
     async def _execute_sandwich(
         self,
@@ -462,22 +539,222 @@ class SandwichBot:
 
             logger.info(f"\n{Fore.YELLOW}🚀 Building sandwich bundle...{Style.RESET_ALL}")
 
-            # TODO: Build actual transactions
-            # 1. Frontrun: Buy token_out with token_in
-            # 2. Include victim's tx hash
-            # 3. Backrun: Sell token_out for token_in
+            # Ensure token approvals for both tokens
+            logger.info(f"   Checking token approvals...")
 
-            # TODO: Submit to Flashbots
-            # bundle = [frontrun_tx, victim_tx_hash, backrun_tx]
-            # flashbots.submit_bundle(bundle, target_block)
+            # Get DEX router first (need it for approvals)
+            dex_info = DEXES.get(opportunity['dex'], {})
+            router_address = dex_info.get('router')
 
-            logger.info(f"{Fore.YELLOW}⚠️  Flashbots submission not yet implemented{Style.RESET_ALL}")
-            logger.info(f"   (Would submit bundle with bribe: ${opportunity['flashbots_bribe_usd']:.2f})")
+            if not router_address:
+                logger.error("No router address found")
+                return False
 
-            return False  # Not implemented yet
+            # Approve token_in for frontrun (buying)
+            token_in_approved = self.approval_manager.ensure_approval(
+                opportunity['token_in'],
+                router_address,
+                opportunity['frontrun_amount']
+            )
+
+            if not token_in_approved:
+                logger.error(f"Failed to approve token_in: {opportunity['token_in']}")
+                return False
+
+            # Approve token_out for backrun (selling)
+            token_out_approved = self.approval_manager.ensure_approval(
+                opportunity['token_out'],
+                router_address,
+                opportunity['backrun_amount']
+            )
+
+            if not token_out_approved:
+                logger.error(f"Failed to approve token_out: {opportunity['token_out']}")
+                return False
+
+            logger.info(f"   ✅ Token approvals confirmed")
+
+            # Get current nonce
+            nonce = self.w3.eth.get_transaction_count(self.account.address)
+
+            # Get gas params
+            gas_params = self.gas_manager.get_optimized_gas_params()
+            base_fee = gas_params['maxFeePerGas']
+            priority_fee = gas_params['maxPriorityFeePerGas']
+
+            # Calculate bribe (priority fee for competing with other MEV bots)
+            bribe_gwei = int(opportunity['flashbots_bribe_usd'] / 0.40 * 1e9)  # Convert USD to gwei
+            priority_fee_with_bribe = priority_fee + bribe_gwei
+
+            # Router ABI for swaps (router_address already retrieved for approvals)
+            router_abi = [{
+                "inputs": [
+                    {"name": "amountIn", "type": "uint256"},
+                    {"name": "amountOutMin", "type": "uint256"},
+                    {"name": "path", "type": "address[]"},
+                    {"name": "to", "type": "address"},
+                    {"name": "deadline", "type": "uint256"}
+                ],
+                "name": "swapExactTokensForTokens",
+                "outputs": [{"name": "amounts", "type": "uint256[]"}],
+                "type": "function"
+            }]
+
+            router = self.w3.eth.contract(
+                address=Web3.to_checksum_address(router_address),
+                abi=router_abi
+            )
+
+            # Build FRONTRUN transaction (our buy)
+            deadline = int(time.time()) + 300  # 5 min deadline
+
+            frontrun_path = [
+                Web3.to_checksum_address(opportunity['token_in']),
+                Web3.to_checksum_address(opportunity['token_out'])
+            ]
+
+            frontrun_tx = router.functions.swapExactTokensForTokens(
+                opportunity['frontrun_amount'],
+                0,  # Accept any amount (we calculated profit already)
+                frontrun_path,
+                self.account.address,
+                deadline
+            ).build_transaction({
+                'from': self.account.address,
+                'nonce': nonce,
+                'gas': 200000,
+                'maxFeePerGas': base_fee + priority_fee_with_bribe,
+                'maxPriorityFeePerGas': priority_fee_with_bribe,
+                'chainId': 137  # Polygon
+            })
+
+            # Sign frontrun tx
+            signed_frontrun = self.account.sign_transaction(frontrun_tx)
+
+            # Build BACKRUN transaction (our sell)
+            backrun_path = [
+                Web3.to_checksum_address(opportunity['token_out']),
+                Web3.to_checksum_address(opportunity['token_in'])
+            ]
+
+            backrun_tx = router.functions.swapExactTokensForTokens(
+                opportunity['backrun_amount'],
+                0,  # Accept any amount
+                backrun_path,
+                self.account.address,
+                deadline
+            ).build_transaction({
+                'from': self.account.address,
+                'nonce': nonce + 1,  # Next nonce
+                'gas': 200000,
+                'maxFeePerGas': base_fee + priority_fee_with_bribe,
+                'maxPriorityFeePerGas': priority_fee_with_bribe,
+                'chainId': 137
+            })
+
+            # Sign backrun tx
+            signed_backrun = self.account.sign_transaction(backrun_tx)
+
+            # Get target block
+            current_block = self.w3.eth.block_number
+            target_block = current_block + 1
+
+            logger.info(f"   Frontrun TX: {signed_frontrun.hash.hex()[:10]}...")
+            logger.info(f"   Victim TX: {opportunity['victim_tx_hash'][:10]}...")
+            logger.info(f"   Backrun TX: {signed_backrun.hash.hex()[:10]}...")
+            logger.info(f"   Target block: {target_block}")
+            logger.info(f"   Bribe: {priority_fee_with_bribe / 1e9:.2f} gwei (${opportunity['flashbots_bribe_usd']:.2f})")
+
+            # Submit to Flashbots
+            success = await self._submit_to_flashbots(
+                signed_frontrun=signed_frontrun,
+                victim_tx_hash=opportunity['victim_tx_hash'],
+                signed_backrun=signed_backrun,
+                target_block=target_block
+            )
+
+            return success
 
         except Exception as e:
             logger.error(f"Sandwich execution error: {e}")
+            return False
+
+    async def _submit_to_flashbots(
+        self,
+        signed_frontrun,
+        victim_tx_hash: str,
+        signed_backrun,
+        target_block: int
+    ) -> bool:
+        """Submit sandwich bundle to Flashbots relay"""
+        try:
+            import aiohttp
+
+            # Build bundle
+            bundle = [
+                {"signed_transaction": signed_frontrun.rawTransaction.hex()},
+                {"hash": victim_tx_hash},  # Victim's tx (already in mempool)
+                {"signed_transaction": signed_backrun.rawTransaction.hex()}
+            ]
+
+            # Flashbots RPC payload
+            payload = {
+                "jsonrpc": "2.0",
+                "id": 1,
+                "method": "eth_sendBundle",
+                "params": [{
+                    "txs": [
+                        signed_frontrun.rawTransaction.hex(),
+                        victim_tx_hash,
+                        signed_backrun.rawTransaction.hex()
+                    ],
+                    "blockNumber": hex(target_block),
+                    "minTimestamp": 0,
+                    "maxTimestamp": int(time.time()) + 120
+                }]
+            }
+
+            # Sign request for Flashbots
+            message = Web3.solidity_keccak(
+                ['uint256', 'address'],
+                [target_block, self.account.address]
+            )
+            signature = self.account.signHash(message)
+
+            headers = {
+                'Content-Type': 'application/json',
+                'X-Flashbots-Signature': f"{self.account.address}:{signature.signature.hex()}"
+            }
+
+            # Submit to Flashbots
+            async with aiohttp.ClientSession() as session:
+                async with session.post(
+                    self.flashbots_relay_url,
+                    json=payload,
+                    headers=headers,
+                    timeout=aiohttp.ClientTimeout(total=10)
+                ) as response:
+                    result = await response.json()
+
+                    if 'error' in result:
+                        logger.error(f"Flashbots error: {result['error']}")
+                        return False
+
+                    bundle_hash = result.get('result', {}).get('bundleHash')
+                    logger.info(f"{Fore.GREEN}✅ Bundle submitted to Flashbots{Style.RESET_ALL}")
+                    logger.info(f"   Bundle hash: {bundle_hash}")
+
+                    # Wait for bundle inclusion (simplified - should check multiple blocks)
+                    await asyncio.sleep(12)  # Wait for block
+
+                    # Check if bundle was included
+                    # TODO: Implement proper bundle inclusion checking
+                    logger.info(f"   Checking bundle inclusion...")
+
+                    return True  # Assume success for now
+
+        except Exception as e:
+            logger.error(f"Flashbots submission error: {e}")
             return False
 
     def get_stats(self) -> str:
