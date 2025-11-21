@@ -400,6 +400,19 @@ class GraphArbitrageFinder:
                 'QuickSwap_V2': 0.003,
                 'SushiSwap': 0.003,
                 'Algebra': 0.003,
+                'Retro': 0.002,
+                'Dystopia': 0.002,
+                # NEW DEXES
+                'ApeSwap': 0.002,
+                'Dfyn': 0.003,
+                'Polycat': 0.002,
+                'JetSwap': 0.003,
+                'WaultSwap': 0.002,
+                'Kyber_DMM': 0.0008,
+                'Meshswap': 0.003,
+                'Polydex': 0.003,
+                'DinoSwap': 0.0025,
+                'MM_Finance': 0.0017,
             }
             return fee_map.get(dex_name, 0.003)
     

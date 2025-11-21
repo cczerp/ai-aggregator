@@ -41,6 +41,12 @@ class CoinGeckoPriceFetcher:
         "SNX": "havven",
         "YFI": "yearn-finance",
         "QUICK": "quickswap",
+        # NEW TOKENS
+        "GRT": "the-graph",
+        "BAL": "balancer",
+        "GHST": "aavegotchi",
+        "SAND": "the-sandbox",
+        "MANA": "decentraland",
     }
 
     def __init__(self, cache_duration: int = 300):
@@ -115,7 +121,7 @@ class PriceDataFetcher:
     Fetches pool data and token prices with caching:
     - pair_prices: 1 hour
     - tvl_data: 3 hours
-    - token prices: 5 minutes (CoinGecko)
+    - token prices: 5 minutes (CoinGecko) + on-chain derivation
     """
 
     def __init__(
@@ -136,9 +142,17 @@ class PriceDataFetcher:
         # Initialize price fetcher
         self.price_fetcher = CoinGeckoPriceFetcher(cache_duration=300)
 
+        # On-chain derived prices (bootstrap from USDC anchor)
+        self.derived_prices = {
+            "USDC": 1.0,   # Anchor: stablecoin
+            "USDT": 1.0,   # Anchor: stablecoin
+            "DAI": 1.0,    # Anchor: stablecoin
+        }
+
         print(f"{Fore.GREEN}✅ Price Data Fetcher initialized{Style.RESET_ALL}")
         print(f"   Min TVL: ${min_tvl_usd:,}")
         print(f"   Cache: Pair prices (1hr), TVL (3hr), Token prices (5min)")
+        print(f"   Price anchors: USDC/USDT/DAI = $1.00 (on-chain derivation enabled)")
 
     def _get_token_info(self, address: str) -> Optional[Dict]:
         """Get token info from registry"""
@@ -146,6 +160,54 @@ class PriceDataFetcher:
         for symbol, info in TOKENS.items():
             if info["address"].lower() == address:
                 return {**info, "symbol": symbol}
+        return None
+
+    def derive_price_from_quote(self, token_symbol: str, quote_value: int, quote_token_symbol: str,
+                                quote_token_decimals: int, token_decimals: int) -> Optional[float]:
+        """
+        Derive a token price from an on-chain quote against a known token
+
+        Args:
+            token_symbol: Symbol of token to price (e.g., "WETH")
+            quote_value: Raw quote value in wei (e.g., 2000000000 for 2000 USDC)
+            quote_token_symbol: Symbol of the quote token (e.g., "USDC")
+            quote_token_decimals: Decimals of quote token
+            token_decimals: Decimals of token being priced
+
+        Returns:
+            USD price of token, or None if quote token has no price
+        """
+        # Get quote token price (try derived first, then CoinGecko)
+        quote_price = self.derived_prices.get(quote_token_symbol)
+        if not quote_price:
+            quote_price = self.price_fetcher.get_price(quote_token_symbol)
+
+        if not quote_price:
+            return None
+
+        # Calculate: 1 token = (quote_value / 10**quote_decimals) quote_tokens
+        # Price in USD = exchange_rate * quote_price
+        exchange_rate = quote_value / (10 ** quote_token_decimals)
+        token_price = exchange_rate * quote_price
+
+        return token_price
+
+    def get_token_price(self, token_symbol: str) -> Optional[float]:
+        """
+        Get token price with fallback chain:
+        1. Check derived prices (on-chain)
+        2. Check CoinGecko
+        3. Return None
+        """
+        # First check derived prices
+        if token_symbol in self.derived_prices:
+            return self.derived_prices[token_symbol]
+
+        # Then check CoinGecko
+        cg_price = self.price_fetcher.get_price(token_symbol)
+        if cg_price:
+            return cg_price
+
         return None
 
     def fetch_v2_pool(self, w3: Web3, pool_address: str, dex: str) -> Optional[Dict]:
@@ -215,29 +277,38 @@ class PriceDataFetcher:
                 return None
 
             # STEP 4: NOW get TVL data (only if quotes succeeded)
-            price0 = self.price_fetcher.get_price(token0_info["symbol"])
-            price1 = self.price_fetcher.get_price(token1_info["symbol"])
+            price0 = self.get_token_price(token0_info["symbol"])
+            price1 = self.get_token_price(token1_info["symbol"])
+
+            print(f"     Prices: {token0_info['symbol']}=${price0 if price0 else 'NONE'}, {token1_info['symbol']}=${price1 if price1 else 'NONE'}")
 
             # Try to derive missing prices from on-chain quotes
             if not price0 and price1:
-                # Derive price0 from quote: 1 token0 = X token1
-                # price0_usd = (quote_0to1 / 10**decimals1) * price1
-                price0 = (quote_0to1 / (10 ** decimals1)) * price1
-                if price0 > 0:
-                    print(f"  💡 Derived {token0_info['symbol']} price from on-chain quote: ${price0:.6f}")
+                # Derive price0 from quote: 1 token0 = (quote_0to1 / 10**decimals1) token1
+                price0 = self.derive_price_from_quote(
+                    token0_info["symbol"], quote_0to1, token1_info["symbol"],
+                    decimals1, decimals0
+                )
+                if price0 and price0 > 0:
+                    self.derived_prices[token0_info["symbol"]] = price0
+                    print(f"  💡 Derived {token0_info['symbol']} = ${price0:.6f} from {token1_info['symbol']} quote")
 
             if not price1 and price0:
-                # Derive price1 from quote: 1 token1 = X token0
-                # price1_usd = (quote_1to0 / 10**decimals0) * price0
-                price1 = (quote_1to0 / (10 ** decimals0)) * price0
-                if price1 > 0:
-                    print(f"  💡 Derived {token1_info['symbol']} price from on-chain quote: ${price1:.6f}")
+                # Derive price1 from quote: 1 token1 = (quote_1to0 / 10**decimals0) token0
+                price1 = self.derive_price_from_quote(
+                    token1_info["symbol"], quote_1to0, token0_info["symbol"],
+                    decimals0, decimals1
+                )
+                if price1 and price1 > 0:
+                    self.derived_prices[token1_info["symbol"]] = price1
+                    print(f"  💡 Derived {token1_info['symbol']} = ${price1:.6f} from {token0_info['symbol']} quote")
 
             # Calculate TVL if we have prices
             if price0 and price1:
                 amount0 = reserve0 / (10 ** decimals0)
                 amount1 = reserve1 / (10 ** decimals1)
                 tvl_usd = (amount0 * price0) + (amount1 * price1)
+                print(f"     Reserves: {amount0:.2f} {token0_info['symbol']} (${amount0 * price0:,.0f}) + {amount1:.2f} {token1_info['symbol']} (${amount1 * price1:,.0f}) = ${tvl_usd:,.0f}")
             else:
                 # No way to calculate TVL without prices
                 print(f"  ⚠️  Skipping {token0_info['symbol']}/{token1_info['symbol']} on {dex} - no USD price available for both tokens")
@@ -354,21 +425,31 @@ class PriceDataFetcher:
                 return None
 
             # STEP 4: NOW get TVL data (only if quotes succeeded)
-            price0 = self.price_fetcher.get_price(token0_info["symbol"])
-            price1 = self.price_fetcher.get_price(token1_info["symbol"])
+            price0 = self.get_token_price(token0_info["symbol"])
+            price1 = self.get_token_price(token1_info["symbol"])
+
+            print(f"     Prices: {token0_info['symbol']}=${price0 if price0 else 'NONE'}, {token1_info['symbol']}=${price1 if price1 else 'NONE'}")
 
             # Try to derive missing prices from on-chain quotes
             if not price0 and price1:
-                # Derive price0 from quote: 1 token0 = X token1
-                price0 = (quote_0to1 / (10 ** decimals1)) * price1
-                if price0 > 0:
-                    print(f"  💡 Derived {token0_info['symbol']} price from on-chain quote: ${price0:.6f}")
+                # Derive price0 from quote
+                price0 = self.derive_price_from_quote(
+                    token0_info["symbol"], quote_0to1, token1_info["symbol"],
+                    decimals1, decimals0
+                )
+                if price0 and price0 > 0:
+                    self.derived_prices[token0_info["symbol"]] = price0
+                    print(f"  💡 Derived {token0_info['symbol']} = ${price0:.6f} from {token1_info['symbol']} quote")
 
             if not price1 and price0:
-                # Derive price1 from quote: 1 token1 = X token0
-                price1 = (quote_1to0 / (10 ** decimals0)) * price0
-                if price1 > 0:
-                    print(f"  💡 Derived {token1_info['symbol']} price from on-chain quote: ${price1:.6f}")
+                # Derive price1 from quote
+                price1 = self.derive_price_from_quote(
+                    token1_info["symbol"], quote_1to0, token0_info["symbol"],
+                    decimals0, decimals1
+                )
+                if price1 and price1 > 0:
+                    self.derived_prices[token1_info["symbol"]] = price1
+                    print(f"  💡 Derived {token1_info['symbol']} = ${price1:.6f} from {token0_info['symbol']} quote")
 
             # Calculate TVL if we have prices
             if price0 and price1:
@@ -523,6 +604,16 @@ class PriceDataFetcher:
         print(f"   From cache: {cached_count:,} (pair: 1hr, TVL: 3hr)")
         print(f"   From blockchain: {valid_pools - cached_count:,}")
         print(f"{Fore.CYAN}{'='*80}{Style.RESET_ALL}\n")
+
+        # Show derived prices
+        if self.derived_prices:
+            print(f"\n{Fore.CYAN}{'='*80}")
+            print(f"💡 ON-CHAIN DERIVED PRICES")
+            print(f"{'='*80}{Style.RESET_ALL}")
+            for token, price in sorted(self.derived_prices.items()):
+                anchor = "🔗 ANCHOR" if token in ["USDC", "USDT", "DAI"] else "✅ DERIVED"
+                print(f"   {anchor} {token:10s} = ${price:>12.6f}")
+            print(f"{Fore.CYAN}{'='*80}{Style.RESET_ALL}\n")
 
         # Save cache
         self.cache.flush_all()

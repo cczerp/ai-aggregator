@@ -35,7 +35,18 @@ class ArbFinder:
             'sushiswap': 30,
             'uniswap_v3': None,  # V3 has per-pool fees
             'retro': 20,
-            'dystopia': 20
+            'dystopia': 20,
+            # NEW DEXES
+            'apeswap': 20,
+            'dfyn': 30,
+            'polycat': 20,
+            'jetswap': 30,
+            'waultswap': 20,
+            'kyber_dmm': 8,
+            'meshswap': 30,
+            'polydex': 30,
+            'dinoswap': 25,
+            'mm_finance': 17,
         }
 
         print(f"{Fore.GREEN}✅ Arb Finder initialized (min profit: ${min_profit_usd}){Style.RESET_ALL}")
