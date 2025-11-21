@@ -129,7 +129,7 @@ def get_bot() -> PolygonArbBot:
     global _bot_instance
     if _bot_instance is None:
         _bot_instance = PolygonArbBot(
-            min_tvl=float(os.getenv("MIN_TVL_USD", "3000")),
+            min_tvl=float(os.getenv("MIN_TVL_USD", "150")),
             scan_interval=60,
             auto_execute=AUTO_EXECUTE
         )

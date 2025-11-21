@@ -26,7 +26,10 @@ class CrossDEXComparator:
             min_profit_bps: Minimum profit in basis points (60 = 0.6%)
         """
         self.rpc_manager = rpc_manager
-        self.w3 = rpc_manager.get_web3()
+        endpoint = rpc_manager.get_available_endpoint("primary")
+        if not endpoint:
+            raise Exception("No RPC endpoint available")
+        self.w3 = rpc_manager.get_web3(endpoint)
         self.min_profit_bps = min_profit_bps
 
         print(f"{Fore.GREEN}✅ Cross-DEX Comparator initialized{Style.RESET_ALL}")
