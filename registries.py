@@ -94,6 +94,37 @@ TOKENS = {
         "decimals": 18,
         "symbol": "YFI",
         "name": "yearn.finance"
+    },
+    # NEW TOKENS - Expanded coverage
+    "GRT": {
+        "address": "0x5fe2B58c013d7601147DcdD68C143A77499f5531",
+        "decimals": 18,
+        "symbol": "GRT",
+        "name": "The Graph"
+    },
+    "BAL": {
+        "address": "0x9a71012B13CA4d3D0Cdc72A177DF3ef03b0E76A3",
+        "decimals": 18,
+        "symbol": "BAL",
+        "name": "Balancer"
+    },
+    "GHST": {
+        "address": "0x385Eeac5cB85A38A9a07A70c73e0a3271CfB54A7",
+        "decimals": 18,
+        "symbol": "GHST",
+        "name": "Aavegotchi"
+    },
+    "SAND": {
+        "address": "0xBbba073C31bF03b8ACf7c28EF0738DeCF3695683",
+        "decimals": 18,
+        "symbol": "SAND",
+        "name": "The Sandbox"
+    },
+    "MANA": {
+        "address": "0xA1c57f48F0Deb89f569dFbE6E2B7f46D33606fD4",
+        "decimals": 18,
+        "symbol": "MANA",
+        "name": "Decentraland"
     }
 }
 
@@ -163,6 +194,76 @@ DEXES = {
         "type": "dodo",
         "version": 2,
         "fee": 0.003
+    },
+    # NEW DEXES - Expanded coverage
+    "ApeSwap": {  # ApeSwap V2
+        "router": "0xC0788A3aD43d79aa53B09c2EaCc313A787d1d607",
+        "factory": "0xCf083Be4164828f00cAE704EC15a36D711491284",
+        "version": 0,  # V2
+        "type": "v2",
+        "fee": 0.002  # 0.2%
+    },
+    "Dfyn": {  # Dfyn V2
+        "router": "0xA102072A4C07F06EC3B4900FDC4C7B80b6c57429",
+        "factory": "0xE7Fb3e833eFE5F9c441105EB65Ef8b261266423B",
+        "version": 0,  # V2
+        "type": "v2",
+        "fee": 0.003
+    },
+    "Polycat": {  # Polycat V2
+        "router": "0x94930a328162957FF1dd48900aF67B5439336cBD",
+        "factory": "0x477Ce834Ae6b7aB003cCe4BC4d8697763FF456FA",
+        "version": 0,  # V2
+        "type": "v2",
+        "fee": 0.002
+    },
+    "JetSwap": {  # JetSwap V2
+        "router": "0x5C6EC38fb0e2609672BDf628B1fD605A523E5923",
+        "factory": "0x668ad0ed2622C62E24f0d5ab6B6Ac1b9D2cD4AC7",
+        "version": 0,  # V2
+        "type": "v2",
+        "fee": 0.003
+    },
+    "WaultSwap": {  # WaultSwap V2
+        "router": "0x3a1D87f206D12415f5b0A33E786967680AAb4f6d",
+        "factory": "0xa98ea6356A316b44Bf710D5f9b6b4eA0081409Ef",
+        "version": 0,  # V2
+        "type": "v2",
+        "fee": 0.002
+    },
+    "Kyber_DMM": {  # Kyber Dynamic Market Maker
+        "router": "0x546C79662E028B661dFB4767664d0273184E4dD1",
+        "factory": "0x5F1fe642060B5B9658C15721Ea22E982643c095c",
+        "type": "kyber_dmm",
+        "fee": 0.0008  # Dynamic, 0.08% typical
+    },
+    "Meshswap": {  # Meshswap V2
+        "router": "0x10f4A785F458Bc144e3706575924889954946639",
+        "factory": "0x9F3044f7F9FC8bC9eD615d54845b4577B833282d",
+        "version": 0,  # V2
+        "type": "v2",
+        "fee": 0.003
+    },
+    "Polydex": {  # Polydex V2
+        "router": "0xC6a28f9a04FbE65390e614714F7a8Cd3e5bC6655",
+        "factory": "0x26cc089b5859c3C6170b84e9E49194E2401e62dE",
+        "version": 0,  # V2
+        "type": "v2",
+        "fee": 0.003
+    },
+    "DinoSwap": {  # DinoSwap V2 (Fossil Farms)
+        "router": "0x6AC823102CB347e4f2858B4c5b1b7462da1596eD",
+        "factory": "0x624Ccf581371F8A4493e6AbDE46412002555A1b6",
+        "version": 0,  # V2
+        "type": "v2",
+        "fee": 0.0025  # 0.25%
+    },
+    "MM_Finance": {  # MM Finance (Cronos origin, also on Polygon)
+        "router": "0x145677FC4d9b8F19B5D56d1820c48e0443049a30",
+        "factory": "0xd590cC180601AEcD6eeADD9B7f2B7611519544f4",
+        "version": 0,  # V2
+        "type": "v2",
+        "fee": 0.0017  # 0.17%
     }
 }
 

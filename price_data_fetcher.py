@@ -41,6 +41,12 @@ class CoinGeckoPriceFetcher:
         "SNX": "havven",
         "YFI": "yearn-finance",
         "QUICK": "quickswap",
+        # NEW TOKENS
+        "GRT": "the-graph",
+        "BAL": "balancer",
+        "GHST": "aavegotchi",
+        "SAND": "the-sandbox",
+        "MANA": "decentraland",
     }
 
     def __init__(self, cache_duration: int = 300):
