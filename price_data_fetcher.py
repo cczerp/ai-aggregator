@@ -218,6 +218,8 @@ class PriceDataFetcher:
             price0 = self.price_fetcher.get_price(token0_info["symbol"])
             price1 = self.price_fetcher.get_price(token1_info["symbol"])
 
+            print(f"     CoinGecko: {token0_info['symbol']}=${price0 if price0 else 'NONE'}, {token1_info['symbol']}=${price1 if price1 else 'NONE'}")
+
             # Try to derive missing prices from on-chain quotes
             if not price0 and price1:
                 # Derive price0 from quote: 1 token0 = X token1
@@ -238,6 +240,7 @@ class PriceDataFetcher:
                 amount0 = reserve0 / (10 ** decimals0)
                 amount1 = reserve1 / (10 ** decimals1)
                 tvl_usd = (amount0 * price0) + (amount1 * price1)
+                print(f"     Reserves: {amount0:.2f} {token0_info['symbol']} (${amount0 * price0:,.0f}) + {amount1:.2f} {token1_info['symbol']} (${amount1 * price1:,.0f}) = ${tvl_usd:,.0f}")
             else:
                 # No way to calculate TVL without prices
                 print(f"  ⚠️  Skipping {token0_info['symbol']}/{token1_info['symbol']} on {dex} - no USD price available for both tokens")
@@ -356,6 +359,8 @@ class PriceDataFetcher:
             # STEP 4: NOW get TVL data (only if quotes succeeded)
             price0 = self.price_fetcher.get_price(token0_info["symbol"])
             price1 = self.price_fetcher.get_price(token1_info["symbol"])
+
+            print(f"     CoinGecko: {token0_info['symbol']}=${price0 if price0 else 'NONE'}, {token1_info['symbol']}=${price1 if price1 else 'NONE'}")
 
             # Try to derive missing prices from on-chain quotes
             if not price0 and price1:
