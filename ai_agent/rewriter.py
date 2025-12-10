@@ -1,0 +1,174 @@
+"""Rewrite generator that transforms advisor/auditor findings into patches."""
+
+from __future__ import annotations
+
+import json
+from dataclasses import dataclass
+from string import Template
+from typing import Any, Dict, List, Optional
+
+from .diff_engine import DiffBundle, DiffEngine
+
+
+@dataclass
+class RewriteProposal:
+    """Represents a suggested rewrite for a specific issue."""
+
+    title: str
+    file_path: str
+    original_preview: str
+    rewritten_code: str
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "title": self.title,
+            "file_path": self.file_path,
+            "original_preview": self.original_preview,
+            "rewritten_code": self.rewritten_code,
+        }
+
+
+class RewriteTemplate:
+    """Lightweight template engine based on :class:`string.Template`."""
+
+    def __init__(self, template: str) -> None:
+        self.template = Template(template)
+
+    def render(self, **context: Any) -> str:
+        return self.template.safe_substitute(**context)
+
+
+class Rewriter:
+    """Produces rewritten functions and diff bundles without touching disk."""
+
+    def __init__(self, root: str = ".") -> None:
+        self.root = root
+        self.diff_engine = DiffEngine()
+        self.templates = {
+            "deduplicate": RewriteTemplate(
+                """def ${canonical_name}(*args, **kwargs):\n    \"\"\"Shared implementation extracted from: ${sources}.\"\"\"\n    # TODO: replace placeholders with real logic from the duplicates\n    result = None\n    for handler in ${handler_list}:\n        result = handler(*args, **kwargs)\n    return result\n"""
+            ),
+            "loop_optimization": RewriteTemplate(
+                """for ${item} in ${iterable}:\n    # Use generators/chunked reads to avoid range(len(...))\n    ${body}\n"""
+            ),
+            "module_facade": RewriteTemplate(
+                """class ${facade_name}:\n    \"\"\"Thin coordination layer to break circular imports.\"\"\"\n\n    def __init__(self, *providers):\n        self.providers = providers\n\n    def execute(self, *args, **kwargs):\n        for provider in self.providers:\n            if hasattr(provider, \"execute\"):\n                return provider.execute(*args, **kwargs)\n        raise RuntimeError(\"No provider handled the request\")\n"""
+            ),
+        }
+
+    # ------------------------------------------------------------------
+    def generate(self, advisor_report: Dict[str, Any], auditor_report: Dict[str, Any]) -> Dict[str, Any]:
+        proposals = self._generate_rewrite_proposals(advisor_report)
+        module_designs = self._generate_module_designs(auditor_report)
+        refactor_plan = self._generate_refactor_plan(advisor_report, auditor_report)
+        diff_suggestions = self._build_diff_suggestions(proposals)
+        return {
+            "rewritten_functions": [p.to_dict() for p in proposals],
+            "alternative_module_designs": module_designs,
+            "proposed_refactors": refactor_plan,
+            "diff_suggestions": [bundle.as_dict() for bundle in diff_suggestions],
+        }
+
+    # ------------------------------------------------------------------
+    def _generate_rewrite_proposals(
+        self, advisor_report: Dict[str, Any]
+    ) -> List[RewriteProposal]:
+        issues = advisor_report.get("issues", {})
+        proposals: List[RewriteProposal] = []
+
+        for duplicate in issues.get("duplicate_logic", []):
+            occurrences = duplicate.get("occurrences", [])
+            if len(occurrences) < 2:
+                continue
+            canonical = occurrences[0]
+            handler_list = [f"{occ['file']}::{occ['function']}" for occ in occurrences]
+            rewritten_code = self.templates["deduplicate"].render(
+                canonical_name=f"optimized_{canonical['function']}",
+                sources=", ".join(handler_list),
+                handler_list=handler_list,
+            )
+            proposals.append(
+                RewriteProposal(
+                    title=f"Consolidate {canonical['function']}",
+                    file_path=canonical["file"],
+                    original_preview=canonical.get("preview", ""),
+                    rewritten_code=rewritten_code,
+                )
+            )
+
+        for loop_issue in issues.get("inefficient_loops", []):
+            rewritten_code = self.templates["loop_optimization"].render(
+                item="item",
+                iterable="optimized_stream(iterable)",
+                body="# Move heavy transformation outside the loop",
+            )
+            proposals.append(
+                RewriteProposal(
+                    title=f"Optimize loop at {loop_issue['file']}:{loop_issue['line']}",
+                    file_path=loop_issue["file"],
+                    original_preview="\n".join(loop_issue.get("details", [])),
+                    rewritten_code=rewritten_code,
+                )
+            )
+        return proposals
+
+    def _generate_module_designs(self, auditor_report: Dict[str, Any]) -> List[Dict[str, Any]]:
+        suggestions: List[Dict[str, Any]] = []
+        diagnostics = auditor_report.get("diagnostics", {})
+        for cycle in diagnostics.get("circular_imports", []):
+            cycle_chain = cycle.get("cycle", [])
+            if not cycle_chain:
+                continue
+            facade_name = "Facade" + str(abs(hash(tuple(cycle_chain))))[:6]
+            suggestions.append(
+                {
+                    "description": "Introduce orchestration facade to break import cycle",
+                    "modules": cycle_chain,
+                    "facade": self.templates["module_facade"].render(facade_name=facade_name),
+                }
+            )
+        for hotspot in diagnostics.get("computational_hotspots", []):
+            suggestions.append(
+                {
+                    "description": "Split hotspot function into pipeline steps",
+                    "context": hotspot,
+                    "refactor": "Extract parsing, validation, and IO into dedicated helpers",
+                }
+            )
+        return suggestions
+
+    def _generate_refactor_plan(
+        self, advisor_report: Dict[str, Any], auditor_report: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        duplicate_count = len(advisor_report.get("issues", {}).get("duplicate_logic", []))
+        hotspot_count = len(auditor_report.get("diagnostics", {}).get("computational_hotspots", []))
+        plan = {
+            "deduplication_priority": duplicate_count,
+            "performance_priority": hotspot_count,
+            "steps": [
+                "Address duplicate logic before performance tweaks",
+                "Apply loop rewrites suggested by advisor",
+                "Use auditor hotspot data to focus refactors",
+            ],
+        }
+        return plan
+
+    def _build_diff_suggestions(self, proposals: List[RewriteProposal]) -> List[DiffBundle]:
+        bundles: List[DiffBundle] = []
+        for proposal in proposals:
+            original = proposal.original_preview or "# original snippet unavailable\n"
+            bundle = self.diff_engine.create_diff(
+                original=original,
+                updated=proposal.rewritten_code,
+                file_path=proposal.file_path,
+            )
+            bundles.append(bundle)
+        return bundles
+
+
+def run_rewriter(advisor_report: Dict[str, Any], auditor_report: Dict[str, Any]) -> Dict[str, Any]:
+    """Convenience wrapper that serializes the generated plan."""
+
+    rewrites = Rewriter()
+    output = rewrites.generate(advisor_report, auditor_report)
+    return json.loads(json.dumps(output))
