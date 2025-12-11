@@ -217,10 +217,11 @@ class AIAgentDriver:
         )
 
 
-def build_driver(root: str = ".") -> AIAgentDriver:
+def build_driver(root: str = ".", attach_trading: bool = True) -> AIAgentDriver:
     """Factory helper used by integration hooks."""
 
     driver = AIAgentDriver(root=root)
-    driver.trading = build_trading_adapter()
+    if attach_trading:
+        driver.trading = build_trading_adapter()
     driver.auto_improvement_cycle(include_dex_growth=True)
     return driver
