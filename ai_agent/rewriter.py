@@ -46,10 +46,7 @@ class Rewriter:
         self.diff_engine = DiffEngine()
         self.templates = {
             "deduplicate": RewriteTemplate(
-                """def ${canonical_name}(*args, **kwargs):\n    \"\"\"Shared implementation extracted from: ${sources}.\"\"\"\n    # TODO: replace placeholders with real logic from the duplicates\n    result = None\n    for handler in ${handler_list}:\n        result = handler(*args, **kwargs)\n    return result\n"""
-            ),
-            "loop_optimization": RewriteTemplate(
-                """for ${item} in ${iterable}:\n    # Use generators/chunked reads to avoid range(len(...))\n    ${body}\n"""
+                """def ${canonical_name}(*args, **kwargs):\n    \"\"\"Shared implementation extracted from: ${sources}.\"\"\"\n    handlers = [${handler_list}]\n    result = None\n    for handler in handlers:\n        result = handler(*args, **kwargs)\n    return result\n"""
             ),
             "module_facade": RewriteTemplate(
                 """class ${facade_name}:\n    \"\"\"Thin coordination layer to break circular imports.\"\"\"\n\n    def __init__(self, *providers):\n        self.providers = providers\n\n    def execute(self, *args, **kwargs):\n        for provider in self.providers:\n            if hasattr(provider, \"execute\"):\n                return provider.execute(*args, **kwargs)\n        raise RuntimeError(\"No provider handled the request\")\n"""
@@ -89,11 +86,11 @@ class Rewriter:
             if len(occurrences) < 2:
                 continue
             canonical = occurrences[0]
-            handler_list = [f"{occ['file']}::{occ['function']}" for occ in occurrences]
+            handler_list = [occ["function"] for occ in occurrences]
             rewritten_code = self.templates["deduplicate"].render(
-                canonical_name=f"optimized_{canonical['function']}",
+                canonical_name=f"{canonical['function']}_shared",
                 sources=", ".join(handler_list),
-                handler_list=handler_list,
+                handler_list=", ".join(handler_list),
             )
             proposals.append(
                 RewriteProposal(
@@ -104,20 +101,6 @@ class Rewriter:
                 )
             )
 
-        for loop_issue in issues.get("inefficient_loops", []):
-            rewritten_code = self.templates["loop_optimization"].render(
-                item="item",
-                iterable="optimized_stream(iterable)",
-                body="# Move heavy transformation outside the loop",
-            )
-            proposals.append(
-                RewriteProposal(
-                    title=f"Optimize loop at {loop_issue['file']}:{loop_issue['line']}",
-                    file_path=loop_issue["file"],
-                    original_preview="\n".join(loop_issue.get("details", [])),
-                    rewritten_code=rewritten_code,
-                )
-            )
         return proposals
 
     def _generate_module_designs(self, auditor_report: Dict[str, Any]) -> List[Dict[str, Any]]:

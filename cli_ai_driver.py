@@ -8,18 +8,28 @@ from pprint import pprint
 from ai_agent.driver import build_driver
 
 
-if __name__ == "__main__":
+def main() -> None:
     driver = build_driver(".")
-    print("Running AI self-improvement cycle...")
-    improvements = driver.get_pending_improvements()
-    print("\n=== Advisor/Auditor Summary ===")
-    print(json.dumps(improvements.get("analysis", {}), indent=2))
+    print("Running Elroy's auto-improvement cycle...\n")
+    driver.auto_improvement_cycle(include_dex_growth=True)
 
-    print("\n=== Rewrite & Patch Suggestions ===")
-    pprint(improvements.get("rewrites", {}))
+    while True:
+        overview = driver.current_proposal_overview()
+        print(overview)
+        if "No proposals" in overview:
+            break
+        choice = input("\nDecision (yes / no / file): ").strip().lower()
+        response = driver.respond_to_proposal(choice)
+        print(f"\n{response}\n")
+        if response.startswith("Full file:"):
+            follow_up = input("Decision after viewing file (yes / no): ").strip().lower()
+            response = driver.respond_to_proposal(follow_up)
+            print(f"\n{response}\n")
+        if "Proposal rejected" in response or "Change applied" in response:
+            continue_check = input("Review next queued issue? (y/n): ").strip().lower()
+            if continue_check != "y":
+                break
 
-    if improvements.get("dex_plan"):
-        print("\n=== DEX Expansion Plan ===")
-        pprint(improvements["dex_plan"])
 
-    print("\nUse driver.show_patches_for_approval() in a Python shell if you want to apply any diff.")
+if __name__ == "__main__":
+    main()
