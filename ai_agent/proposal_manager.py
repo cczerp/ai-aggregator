@@ -6,7 +6,7 @@ import os
 import ast
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
+from typing import Any, Dict, Iterable, List, Optional, Sequence, Set, Tuple
 
 from .diff_engine import DiffBundle, DiffEngine, DiffOperation
 
@@ -53,6 +53,7 @@ class ProposalManager:
         self.history: List[Tuple[Proposal, str]] = []
         self.awaiting_file_response: Optional[Proposal] = None
         self.awaiting_split_confirmation: Optional[Proposal] = None
+        self._seen_duplicate_fingerprints: Set[str] = set()
 
     # ------------------------------------------------------------------
     # Queue + formatting helpers
@@ -66,6 +67,7 @@ class ProposalManager:
 
     def reset_queue(self) -> None:
         self.queue.clear()
+        self._seen_duplicate_fingerprints.clear()
 
     def enqueue_changes_from_rewrites(self, rewrites: Dict[str, Any]) -> None:
         diff_suggestions = rewrites.get("diff_suggestions", [])
@@ -94,6 +96,11 @@ class ProposalManager:
             occurrences = issue.get("occurrences", [])
             if len(occurrences) < 2:
                 continue
+            fingerprint = issue.get("fingerprint") or self._make_duplicate_fingerprint(occurrences)
+            if fingerprint in self._seen_duplicate_fingerprints:
+                print(f"[ProposalManager] Duplicate fingerprint already queued: {fingerprint}")
+                continue
+            self._seen_duplicate_fingerprints.add(fingerprint)
             first = occurrences[0]
             second = occurrences[1]
             payload = {
@@ -103,7 +110,8 @@ class ProposalManager:
                 "file_b": second.get("file"),
                 "line_b": second.get("line", 0),
                 "snippet_b": second.get("preview", ""),
-                "fingerprint": issue.get("fingerprint"),
+                "fingerprint": fingerprint,
+                "occurrences": occurrences,
             }
             proposal = Proposal(
                 summary="Unify duplicated logic",
@@ -175,6 +183,9 @@ class ProposalManager:
             f"File A: {payload.get('file_a')} : {payload.get('line_a')}\n"
             f"File B: {payload.get('file_b')} : {payload.get('line_b')}"
         )
+        occurrences = payload.get("occurrences") or []
+        if occurrences:
+            lines.append(f"Occurrences detected: {len(occurrences)} (will unify all matching copies together)")
         lines.append("Duplicate Snippets:")
         snippet_a = payload.get("snippet_a", "").strip()
         snippet_b = payload.get("snippet_b", "").strip()
@@ -287,6 +298,15 @@ class ProposalManager:
         if justification:
             return True
         return False
+
+    @staticmethod
+    def _make_duplicate_fingerprint(occurrences: Sequence[Dict[str, Any]]) -> str:
+        key_parts: List[str] = []
+        for entry in occurrences[:4]:
+            key_parts.append(
+                f"{entry.get('file', 'unknown')}:{entry.get('line', 0)}:{entry.get('preview', '')[:40]}"
+            )
+        return "|".join(key_parts)
 
     def _proposal_from_diff(self, bundle_dict: Dict[str, Any]) -> Proposal:
         summary = f"Adjust {bundle_dict.get('file_path')} for analyzer findings"
