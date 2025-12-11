@@ -14,6 +14,7 @@ from .diff_engine import DiffBundle, DiffEngine, DiffOperation
 from .evolution import EvolutionEngine
 from .hooks.trading_adapter import build_trading_adapter
 from .planner import Planner
+from .proposal_manager import ProposalManager
 from .rewriter import Rewriter
 
 
@@ -31,6 +32,7 @@ class AIAgentDriver:
         self.dex_expander = DexExpansionPlanner(os.path.join(self.root, "pool_registry.json"))
         self.diff_engine = DiffEngine()
         self.patch_applier = PatchApplier(self.root)
+        self.proposals = ProposalManager(self.patch_applier, root=self.root)
         self.trading: Dict[str, Any] = {}
         self.pending_improvements: Dict[str, Any] = {}
         self._last_advisor_report: Optional[Dict[str, Any]] = None
@@ -57,6 +59,8 @@ class AIAgentDriver:
             "strategy": strategy,
         }
         self.pending_improvements["analysis"] = result
+        duplicates = advisor_report.get("issues", {}).get("duplicate_logic", [])
+        self.proposals.enqueue_duplicates(duplicates)
         return result
 
     def generate_rewrite_options(
@@ -71,6 +75,7 @@ class AIAgentDriver:
         )
         self._last_rewrites = rewrites
         self.pending_improvements["rewrites"] = rewrites
+        self.proposals.enqueue_changes_from_rewrites(rewrites)
         return rewrites
 
     def show_patches_for_approval(self, limit: Optional[int] = None) -> List[Dict[str, Any]]:
@@ -126,6 +131,7 @@ class AIAgentDriver:
     def auto_improvement_cycle(self, include_dex_growth: bool = True) -> Dict[str, Any]:
         """Continuously collect analysis + rewrite suggestions without prompting."""
 
+        self.proposals.reset_queue()
         analysis = self.run_full_analysis()
         dex_plan = []
         if include_dex_growth:
@@ -179,6 +185,15 @@ class AIAgentDriver:
         # Every successful/failed trade should trigger another improvement pass
         self.auto_improvement_cycle(include_dex_growth=True)
         return plan
+
+    # ------------------------------------------------------------------
+    # Proposal interaction
+    # ------------------------------------------------------------------
+    def current_proposal_overview(self) -> str:
+        return self.proposals.format_current_proposal()
+
+    def respond_to_proposal(self, choice: str) -> str:
+        return self.proposals.respond(choice)
 
     # ------------------------------------------------------------------
     def _bundle_from_dict(self, payload: Dict[str, Any]) -> DiffBundle:
