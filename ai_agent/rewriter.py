@@ -57,17 +57,25 @@ class Rewriter:
         }
 
     # ------------------------------------------------------------------
-    def generate(self, advisor_report: Dict[str, Any], auditor_report: Dict[str, Any]) -> Dict[str, Any]:
+    def generate(
+        self,
+        advisor_report: Dict[str, Any],
+        auditor_report: Dict[str, Any],
+        dex_plan: Optional[List[Dict[str, Any]]] = None,
+    ) -> Dict[str, Any]:
         proposals = self._generate_rewrite_proposals(advisor_report)
         module_designs = self._generate_module_designs(auditor_report)
         refactor_plan = self._generate_refactor_plan(advisor_report, auditor_report)
         diff_suggestions = self._build_diff_suggestions(proposals)
-        return {
+        result = {
             "rewritten_functions": [p.to_dict() for p in proposals],
             "alternative_module_designs": module_designs,
             "proposed_refactors": refactor_plan,
             "diff_suggestions": [bundle.as_dict() for bundle in diff_suggestions],
         }
+        if dex_plan:
+            result["dex_expansion_plan"] = dex_plan
+        return result
 
     # ------------------------------------------------------------------
     def _generate_rewrite_proposals(
@@ -166,9 +174,13 @@ class Rewriter:
         return bundles
 
 
-def run_rewriter(advisor_report: Dict[str, Any], auditor_report: Dict[str, Any]) -> Dict[str, Any]:
+def run_rewriter(
+    advisor_report: Dict[str, Any],
+    auditor_report: Dict[str, Any],
+    dex_plan: Optional[List[Dict[str, Any]]] = None,
+) -> Dict[str, Any]:
     """Convenience wrapper that serializes the generated plan."""
 
     rewrites = Rewriter()
-    output = rewrites.generate(advisor_report, auditor_report)
+    output = rewrites.generate(advisor_report, auditor_report, dex_plan=dex_plan)
     return json.loads(json.dumps(output))
