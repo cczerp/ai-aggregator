@@ -9,7 +9,7 @@ from ai_agent.driver import build_driver
 
 
 def main() -> None:
-    driver = build_driver(".")
+    driver = build_driver(".", attach_trading=False)
     print("Running Elroy's auto-improvement cycle...\n")
     driver.auto_improvement_cycle(include_dex_growth=True)
 
