@@ -7,6 +7,7 @@ __all__ = [
     "apply_patch",
     "rewriter",
     "planner",
+    "dex_expander",
     "evolution",
     "driver",
 ]
