@@ -11,6 +11,7 @@ from .auditor import Auditor
 from .apply_patch import PatchApplier
 from .diff_engine import DiffBundle, DiffEngine, DiffOperation
 from .evolution import EvolutionEngine
+from .hooks.trading_adapter import build_trading_adapter
 from .planner import Planner
 from .rewriter import Rewriter
 
@@ -28,6 +29,7 @@ class AIAgentDriver:
         self.evolution = EvolutionEngine()
         self.diff_engine = DiffEngine()
         self.patch_applier = PatchApplier(self.root)
+        self.trading: Dict[str, Any] = {}
         self._last_advisor_report: Optional[Dict[str, Any]] = None
         self._last_auditor_report: Optional[Dict[str, Any]] = None
         self._last_rewrites: Optional[Dict[str, Any]] = None
@@ -107,6 +109,39 @@ class AIAgentDriver:
             self.evolution.update_advisor_accuracy(advisor_accuracy)
         return self.evolution.plan_next_strategy(self.mode)
 
+    def start_trading(self, mode: str = "auto") -> Any:
+        """Proxy into the trading adapter using the requested mode."""
+
+        if not self.trading:
+            raise RuntimeError("Trading adapter unavailable; ensure build_driver attached it")
+        if mode == "scan":
+            return self.trading["scan"]()
+        if mode == "execute":
+            opportunities = self.trading["scan"]()
+            if opportunities:
+                return self.trading["execute"](opportunities[0])
+            return None
+        return self.trading["auto"]()
+
+    def record_trade_outcome(
+        self, results_dict: Dict[str, Any], file_modified: str = "Zscan_mgr.py"
+    ) -> Dict[str, Any]:
+        """Feed live trading outcomes back into the evolution engine."""
+
+        return self.run_evolution_cycle(
+            applied_results=[
+                {
+                    "file": file_modified,
+                    "diff_id": "auto_trade_patch",
+                    "outcome": "success"
+                    if results_dict.get("profit", 0) > 0
+                    else "fail",
+                    "metrics": results_dict,
+                }
+            ],
+            advisor_accuracy=0.90,
+        )
+
     # ------------------------------------------------------------------
     def _bundle_from_dict(self, payload: Dict[str, Any]) -> DiffBundle:
         operations = [
@@ -129,4 +164,6 @@ class AIAgentDriver:
 def build_driver(root: str = ".") -> AIAgentDriver:
     """Factory helper used by integration hooks."""
 
-    return AIAgentDriver(root=root)
+    driver = AIAgentDriver(root=root)
+    driver.trading = build_trading_adapter()
+    return driver

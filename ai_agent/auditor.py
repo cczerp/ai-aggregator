@@ -118,7 +118,7 @@ class Auditor:
         for name in imports:
             if not name:
                 continue
-            normalized.add(name.lstrip(\".\"))  # remove relative prefix, keep module segments
+            normalized.add(name.lstrip("."))  # remove relative prefix, keep module segments
         return normalized
 
     def _scan_function_complexity(
