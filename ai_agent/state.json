@@ -1,0 +1,17 @@
+{
+  "advisor_accuracy": [],
+  "rewrite_history": [],
+  "failed_rewrites": [],
+  "strategies": {
+    "MODE_B": {
+      "risk": "conservative",
+      "preferred_changes": ["docstring_fixes", "micro_optimizations"],
+      "auto_apply": false
+    },
+    "MODE_D": {
+      "risk": "progressive",
+      "preferred_changes": ["architectural", "parallelization"],
+      "auto_apply": false
+    }
+  }
+}
