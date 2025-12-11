@@ -120,23 +120,23 @@ class AIAgentDriver:
         if advisor_accuracy is not None:
             self.evolution.update_advisor_accuracy(advisor_accuracy)
         plan = self.evolution.plan_next_strategy(self.mode)
-        self.pending_improvements[\"evolution_strategy\"] = plan
+        self.pending_improvements["evolution_strategy"] = plan
         return plan
 
     def auto_improvement_cycle(self, include_dex_growth: bool = True) -> Dict[str, Any]:
-        \"\"\"Continuously collect analysis + rewrite suggestions without prompting.\"\"\"
+        """Continuously collect analysis + rewrite suggestions without prompting."""
 
         analysis = self.run_full_analysis()
         dex_plan = []
         if include_dex_growth:
             dex_plan = self.dex_expander.recommend_new_dexes(limit=1)
         rewrites = self.generate_rewrite_options(dex_plan=dex_plan)
-        payload = {\"analysis\": analysis, \"rewrites\": rewrites, \"dex_plan\": dex_plan}
+        payload = {"analysis": analysis, "rewrites": rewrites, "dex_plan": dex_plan}
         self.pending_improvements = payload
         return payload
 
     def get_pending_improvements(self) -> Dict[str, Any]:
-        \"\"\"Expose the most recent auto-generated improvement suggestions.\"\"\"
+        """Expose the most recent auto-generated improvement suggestions."""
 
         if not self.pending_improvements:
             return self.auto_improvement_cycle(include_dex_growth=False)
