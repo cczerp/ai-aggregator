@@ -52,6 +52,7 @@ class ProposalManager:
         self.queue: List[Proposal] = []
         self.history: List[Tuple[Proposal, str]] = []
         self.awaiting_file_response: Optional[Proposal] = None
+        self.awaiting_split_confirmation: Optional[Proposal] = None
 
     # ------------------------------------------------------------------
     # Queue + formatting helpers
@@ -192,6 +193,34 @@ class ProposalManager:
         if proposal is None:
             return "No proposals pending."
         choice = choice.strip().lower()
+
+        if self.awaiting_file_response:
+            if choice not in {"yes", "no"}:
+                return "After viewing the file, please answer yes or no."
+            target = self.awaiting_file_response
+            self.awaiting_file_response = None
+            if choice == "yes":
+                result = self._apply_proposal(target)
+                self.history.append((target, "accepted"))
+                self.queue.pop(0)
+                return result
+            self.history.append((target, "rejected"))
+            self.queue.pop(0)
+            return "Proposal rejected after file review."
+
+        if self.awaiting_split_confirmation:
+            if choice not in {"yes", "no"}:
+                return "Accept split? (yes / no)"
+            target = self.awaiting_split_confirmation
+            self.awaiting_split_confirmation = None
+            if choice == "yes":
+                self.history.append((target, "accepted"))
+                self.queue.pop(0)
+                return self._format_split_plan(target, accepted=True)
+            self.history.append((target, "rejected"))
+            self.queue.pop(0)
+            return "Split plan declined. Proposal dismissed."
+
         if proposal.duplicate_payload:
             valid = {"yes", "no", "file a", "file b"}
         else:
@@ -201,6 +230,9 @@ class ProposalManager:
         if choice.startswith("file"):
             return self._handle_file_request(proposal, choice)
         if choice == "yes":
+            if proposal.split_plan:
+                self.awaiting_split_confirmation = proposal
+                return self._format_split_plan(proposal, accepted=False)
             result = self._apply_proposal(proposal)
             self.history.append((proposal, "accepted"))
             self.queue.pop(0)
@@ -234,9 +266,12 @@ class ProposalManager:
     def _highlight_content(content: str, target_line: int) -> str:
         lines = content.splitlines()
         highlighted: List[str] = []
+        chunk_size = 200
         for idx, text in enumerate(lines, 1):
             marker = "=>" if idx == target_line else "  "
             highlighted.append(f"{marker} {idx:04d}: {text}")
+            if idx % chunk_size == 0:
+                highlighted.append("\n---- Next Chunk ----\n")
         return "\n".join(highlighted)
 
     # ------------------------------------------------------------------
@@ -267,9 +302,6 @@ class ProposalManager:
             impact="behavior change likely" if operations else "benign",
             behavior_warning=bool(operations),
         )
-        plan = self._build_split_plan(proposal.file_path)
-        if plan:
-            proposal.split_plan = plan
         return proposal
 
     def _apply_proposal(self, proposal: Proposal) -> str:
@@ -295,6 +327,23 @@ class ProposalManager:
             operations=operations,
             conflicts=payload.get("conflicts", []),
         )
+
+    def _format_split_plan(self, proposal: Proposal, accepted: bool) -> str:
+        if not proposal.split_plan:
+            return "No split plan available."
+        header = "Splitting Plan:\n"
+        groups = proposal.split_plan.get("groups", [])
+        lines = [header, "Function Groups:"]
+        for idx, group in enumerate(groups, 1):
+            lines.append(f"{idx}. {group['name']} — {group['lines']} lines")
+            for func in group["functions"]:
+                lines.append(f"   - {func}")
+        lines.append(f"\nDependencies:\n{proposal.split_plan.get('dependencies', 'N/A')}")
+        if not accepted:
+            lines.append("\nAccept split? (yes / no)")
+        else:
+            lines.append("\nSplit acknowledged. Proceed with file reorganization per plan.")
+        return "\n".join(lines)
 
     def _build_split_plan(self, file_path: str) -> Optional[Dict[str, Any]]:
         abs_path = file_path if os.path.isabs(file_path) else os.path.join(self.root, file_path)

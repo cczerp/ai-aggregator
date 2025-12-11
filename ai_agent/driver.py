@@ -193,7 +193,10 @@ class AIAgentDriver:
         return self.proposals.format_current_proposal()
 
     def respond_to_proposal(self, choice: str) -> str:
-        return self.proposals.respond(choice)
+        response = self.proposals.respond(choice)
+        if self.proposals.current_proposal() is None:
+            self.auto_improvement_cycle(include_dex_growth=True)
+        return response
 
     # ------------------------------------------------------------------
     def _bundle_from_dict(self, payload: Dict[str, Any]) -> DiffBundle:
