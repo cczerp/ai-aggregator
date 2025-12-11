@@ -58,7 +58,10 @@ class ProposalManager:
     # Queue + formatting helpers
     # ------------------------------------------------------------------
     def enqueue(self, proposal: Proposal) -> None:
-        self._guard_system_path(proposal)
+        if not self._guard_system_path(proposal):
+            print(f"[ProposalManager] Skipping system path proposal: {proposal.file_path}")
+            self.history.append((proposal, "skipped (system path guard)"))
+            return
         self.queue.append(proposal)
 
     def reset_queue(self) -> None:
@@ -277,15 +280,13 @@ class ProposalManager:
     # ------------------------------------------------------------------
     # Internal helpers
     # ------------------------------------------------------------------
-    def _guard_system_path(self, proposal: Proposal) -> None:
+    def _guard_system_path(self, proposal: Proposal) -> bool:
         if not _is_system_path(proposal.file_path):
-            return
+            return True
         justification = proposal.justification
         if justification:
-            return
-        raise ValueError(
-            f"System folder change blocked for {proposal.file_path}. Justification required."
-        )
+            return True
+        return False
 
     def _proposal_from_diff(self, bundle_dict: Dict[str, Any]) -> Proposal:
         summary = f"Adjust {bundle_dict.get('file_path')} for analyzer findings"
