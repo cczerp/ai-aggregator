@@ -507,7 +507,8 @@ class ProposalManager:
             return False
         count = self._session_fingerprint_counts.get(key, 0)
         self._session_fingerprint_counts[key] = count + 1
-        if count >= 1:
+        # Allow up to 5 attempts before blocking (count >= 5 means 6th attempt)
+        if count >= 5:
             print(f"[ProposalManager] Session loop detected for {proposal.summary}; suppressing.")
             self.history.append((proposal, "skipped (session loop)"))
             self._record_feedback(proposal, "skipped", {"reason": "session_loop"})
