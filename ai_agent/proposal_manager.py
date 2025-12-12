@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
-import os
 import ast
+import os
 import hashlib
 import json
+import sysconfig
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Set, Tuple
@@ -16,11 +17,49 @@ from .feedback import FeedbackStore, FeedbackStats
 SYSTEM_FOLDERS = {"venv", "site-packages", "Lib", "AppData", "node_modules"}
 MAX_FILE_LINES = 800
 STAR_DIVIDER = "=" * 80
+ALLOWED_PROPOSAL_TYPES = {
+    "bugfix",
+    "missing_import",
+    "unreachable_code",
+    "unsafe_logic",
+    "performance",
+    "security",
+}
+STD_LIB_PATHS: Set[Path] = {
+    Path(path).resolve()
+    for path in {
+        sysconfig.get_paths().get("stdlib"),
+        sysconfig.get_paths().get("platstdlib"),
+    }
+    if path
+}
+TRADING_GUARD_SNIPPET = """# Enforce slippage + deadline guards before transmitting the tx
+slippage_bps = getattr(opportunity, "max_slippage_bps", 0) or 0
+if not 0 < slippage_bps <= 500:
+    raise ValueError("Rejecting trade: missing or unsafe slippage guard")
+deadline = getattr(opportunity, "deadline", None)
+if deadline is None or deadline <= 0:
+    raise ValueError("Rejecting trade: deadline required before sending transaction")
+"""
 
 
 def _is_system_path(path: str) -> bool:
     parts = Path(path).parts
-    return any(part in SYSTEM_FOLDERS for part in parts)
+    if any(part in SYSTEM_FOLDERS for part in parts):
+        return True
+    try:
+        candidate = Path(path)
+        if not candidate.is_absolute():
+            candidate = (Path.cwd() / candidate).resolve()
+        else:
+            candidate = candidate.resolve()
+    except OSError:
+        return False
+    candidate_str = str(candidate)
+    for root in STD_LIB_PATHS:
+        if candidate_str.startswith(str(root)):
+            return True
+    return False
 
 
 @dataclass
@@ -43,6 +82,8 @@ class Proposal:
     identifier: Optional[str] = None
     content_hash: Optional[str] = None
     history_stats: Optional[FeedbackStats] = None
+    proposal_type: Optional[str] = None
+    function_name: Optional[str] = None
 
     def location_display(self) -> str:
         return f"{self.file_path} : {self.line}"
@@ -61,6 +102,7 @@ class ProposalManager:
         self.awaiting_file_response: Optional[Proposal] = None
         self.awaiting_split_confirmation: Optional[Proposal] = None
         self._seen_duplicate_fingerprints: Set[str] = set()
+        self._session_fingerprint_counts: Dict[str, int] = {}
 
     # ------------------------------------------------------------------
     # Queue + formatting helpers
@@ -71,6 +113,33 @@ class ProposalManager:
             self.history.append((proposal, "skipped (system path guard)"))
             self._record_feedback(proposal, "skipped", {"reason": "system_path"})
             return
+        proposal.proposal_type = self._infer_proposal_type(proposal)
+        snippet_hash = self._proposal_snippet_hash(proposal)
+        proposal.content_hash = proposal.content_hash or snippet_hash
+        file_signature = self._file_signature(proposal.file_path)
+
+        if not self._is_allowed_category(proposal):
+            print(f"[ProposalManager] Disallowed proposal type for {proposal.summary}")
+            self.history.append((proposal, "skipped (disallowed type)"))
+            self._record_feedback(
+                proposal,
+                "skipped",
+                {"reason": "disallowed_type", "proposal_type": proposal.proposal_type},
+            )
+            return
+
+        if self._should_block_rejection(proposal, snippet_hash, file_signature):
+            self.history.append((proposal, "skipped (rejection cache)"))
+            self._record_feedback(
+                proposal,
+                "skipped",
+                {"reason": "rejection_cache", "proposal_type": proposal.proposal_type},
+            )
+            return
+
+        if self._is_session_loop(proposal, snippet_hash, file_signature):
+            return
+
         allow, note, stats = self.feedback.should_enqueue(proposal.identifier, proposal.content_hash)
         proposal.history_stats = stats
         if not allow:
@@ -85,6 +154,7 @@ class ProposalManager:
     def reset_queue(self) -> None:
         self.queue.clear()
         self._seen_duplicate_fingerprints.clear()
+        self._session_fingerprint_counts.clear()
 
     def enqueue_changes_from_rewrites(self, rewrites: Dict[str, Any]) -> None:
         diff_suggestions = rewrites.get("diff_suggestions", [])
@@ -121,6 +191,15 @@ class ProposalManager:
             unique_occurrences = self._dedupe_occurrences(occurrences)
             if len(unique_occurrences) < 2:
                 continue
+            file_set = {entry.get("file") for entry in unique_occurrences if entry.get("file")}
+            if len(file_set) > 1:
+                print(
+                    f"[ProposalManager] Skipping cross-file dedup plan ({fingerprint}) to respect role separation."
+                )
+                continue
+            if fingerprint and self.feedback.duplication_blocked(fingerprint, [str(path) for path in file_set]):
+                print(f"[ProposalManager] Duplication between {file_set} marked intentional; skipping.")
+                continue
             if fingerprint in self._seen_duplicate_fingerprints:
                 print(f"[ProposalManager] Duplicate fingerprint already queued: {fingerprint}")
                 continue
@@ -146,7 +225,7 @@ class ProposalManager:
             }
             proposal = Proposal(
                 summary=f"Unify duplicated logic ({len(unique_occurrences)} copies)",
-                file_path=payload["file_a"],
+                file_path=self._relpath(payload["file_a"]),
                 line=payload["line_a"],
                 duplicate_payload=payload,
                 reason="Remove duplicate functions to simplify maintenance",
@@ -154,6 +233,38 @@ class ProposalManager:
                 identifier=f"duplicate:{fingerprint}",
                 content_hash=self._hash_payload(payload),
             )
+            self.enqueue(proposal)
+
+    def enqueue_trading_risks(self, trading_risks: Sequence[Dict[str, Any]]) -> None:
+        for risk in trading_risks:
+            file_path = risk.get("file")
+            if not file_path:
+                continue
+            rel_path = self._relpath(file_path)
+            function = risk.get("function")
+            line = int(risk.get("line", 1))
+            details = risk.get("details") or []
+            detail_suffix = ""
+            if details:
+                joined = ", ".join(sorted({str(item) for item in details}))
+                detail_suffix = f"\n# Transactions detected: {joined}"
+            summary = f"Harden trade execution guards in {function or rel_path}"
+            identifier = f"trading-risk:{rel_path}:{function or line}"
+            manual_text = TRADING_GUARD_SNIPPET + detail_suffix
+            proposal = Proposal(
+                summary=summary,
+                file_path=rel_path,
+                line=line,
+                reason=risk.get("risk", "transaction submission lacks safety guard"),
+                impact="safety critical",
+                manual_text=manual_text,
+                identifier=identifier,
+                proposal_type="security",
+                function_name=function,
+            )
+            proposal.content_hash = hashlib.sha256(
+                f"{identifier}:{manual_text}".encode("utf-8", "ignore")
+            ).hexdigest()
             self.enqueue(proposal)
 
     def star_wars_queue(self) -> str:
@@ -272,6 +383,11 @@ class ProposalManager:
             self.history.append((target, "rejected"))
             self.queue.pop(0)
             self._record_feedback(target, "rejected", {"context": "after_file"})
+            self._record_rejection_entry(
+                target,
+                {"context": "after_file"},
+                mark_duplicate_intentional=bool(target.duplicate_payload),
+            )
             return "Proposal rejected after file review."
 
         if self.awaiting_split_confirmation:
@@ -287,6 +403,11 @@ class ProposalManager:
             self.history.append((target, "rejected"))
             self.queue.pop(0)
             self._record_feedback(target, "rejected", {"context": "split_plan"})
+            self._record_rejection_entry(
+                target,
+                {"context": "split_plan"},
+                mark_duplicate_intentional=bool(target.duplicate_payload),
+            )
             return "Split plan declined. Proposal dismissed."
 
         if proposal.duplicate_payload:
@@ -308,6 +429,11 @@ class ProposalManager:
         self.history.append((proposal, "rejected"))
         self.queue.pop(0)
         self._record_feedback(proposal, "rejected", {"context": "direct"})
+        self._record_rejection_entry(
+            proposal,
+            {"context": "direct"},
+            mark_duplicate_intentional=bool(proposal.duplicate_payload),
+        )
         return "Proposal rejected. Moving to next issue."
 
     def _handle_file_request(self, proposal: Proposal, choice: str) -> str:
@@ -353,6 +479,77 @@ class ProposalManager:
         if justification:
             return True
         return False
+
+    def _should_block_rejection(
+        self, proposal: Proposal, snippet_hash: Optional[str], file_signature: str
+    ) -> bool:
+        if not snippet_hash or not self.feedback:
+            return False
+        cache_entry = self.feedback.has_active_rejection(
+            file_path=proposal.file_path,
+            proposal_type=proposal.proposal_type or "bugfix",
+            snippet_hash=snippet_hash,
+            file_signature=file_signature,
+        )
+        if cache_entry:
+            print(
+                "[ProposalManager] Rejection cache suppressing proposal "
+                f"{proposal.summary} ({proposal.file_path})."
+            )
+            return True
+        return False
+
+    def _is_session_loop(
+        self, proposal: Proposal, snippet_hash: Optional[str], file_signature: str
+    ) -> bool:
+        key = self._session_key(proposal, snippet_hash)
+        if not key:
+            return False
+        count = self._session_fingerprint_counts.get(key, 0)
+        self._session_fingerprint_counts[key] = count + 1
+        if count >= 1:
+            print(f"[ProposalManager] Session loop detected for {proposal.summary}; suppressing.")
+            self.history.append((proposal, "skipped (session loop)"))
+            self._record_feedback(proposal, "skipped", {"reason": "session_loop"})
+            self._record_rejection_entry(
+                proposal,
+                {"reason": "session_loop"},
+                snippet_hash=snippet_hash,
+                file_signature=file_signature,
+            )
+            return True
+        return False
+
+    def _session_key(self, proposal: Proposal, snippet_hash: Optional[str]) -> Optional[str]:
+        if proposal.identifier and proposal.content_hash:
+            return f"{proposal.identifier}:{proposal.content_hash}"
+        if snippet_hash:
+            return f"{proposal.file_path}:{snippet_hash}"
+        return None
+
+    @staticmethod
+    def _is_allowed_category(proposal: Proposal) -> bool:
+        return (proposal.proposal_type or "bugfix") in ALLOWED_PROPOSAL_TYPES
+
+    def _infer_proposal_type(self, proposal: Proposal) -> str:
+        if proposal.proposal_type in ALLOWED_PROPOSAL_TYPES:
+            return proposal.proposal_type  # type: ignore[return-value]
+        text = f"{proposal.summary} {proposal.reason}".lower()
+        if proposal.duplicate_payload:
+            return "performance"
+        if "import" in text:
+            return "missing_import"
+        if "unreachable" in text or "dead code" in text:
+            return "unreachable_code"
+        if any(keyword in text for keyword in {"unsafe", "race", "thread", "lock"}):
+            return "unsafe_logic"
+        if any(keyword in text for keyword in {"perf", "optimiz", "latency", "speed"}):
+            return "performance"
+        if any(keyword in text for keyword in {"security", "vulnerab", "risk", "exploit"}):
+            return "security"
+        if any(keyword in text for keyword in {"bug", "error", "exception", "fix"}):
+            return "bugfix"
+        return "bugfix"
 
     @staticmethod
     def _make_duplicate_fingerprint(occurrences: Sequence[Dict[str, Any]]) -> str:
@@ -434,6 +631,63 @@ class ProposalManager:
             seen.add(key)
             unique.append(entry)
         return unique
+
+    def _proposal_snippet_hash(self, proposal: Proposal) -> str:
+        basis = ""
+        if proposal.diff_bundle:
+            basis = proposal.diff_bundle.get("diff_text", "")
+        elif proposal.manual_text:
+            basis = proposal.manual_text
+        elif proposal.duplicate_payload:
+            basis = proposal.duplicate_payload.get("fingerprint", "")
+        if not basis:
+            basis = f"{proposal.summary}:{proposal.file_path}:{proposal.line}"
+        return hashlib.sha256(basis.encode("utf-8", "ignore")).hexdigest()
+
+    def _file_signature(self, file_path: str) -> str:
+        abs_path = self._abs_path(file_path)
+        try:
+            with open(abs_path, "rb") as handle:
+                data = handle.read()
+        except OSError:
+            return "missing"
+        return hashlib.sha256(data).hexdigest()
+
+    def _record_rejection_entry(
+        self,
+        proposal: Proposal,
+        metadata: Optional[Dict[str, Any]],
+        *,
+        snippet_hash: Optional[str] = None,
+        file_signature: Optional[str] = None,
+        mark_duplicate_intentional: bool = False,
+    ) -> None:
+        if not self.feedback:
+            return
+        proposal_type = self._infer_proposal_type(proposal)
+        snippet = snippet_hash or self._proposal_snippet_hash(proposal)
+        signature = file_signature or self._file_signature(proposal.file_path)
+        self.feedback.record_rejection_marker(
+            file_path=proposal.file_path,
+            proposal_type=proposal_type,
+            snippet_hash=snippet,
+            file_signature=signature,
+            function_name=proposal.function_name,
+            identifier=proposal.identifier,
+            metadata=metadata,
+        )
+        if mark_duplicate_intentional and proposal.duplicate_payload:
+            fingerprint = proposal.duplicate_payload.get("fingerprint")
+            files = [
+                occurrence.get("file")
+                for occurrence in proposal.duplicate_payload.get("occurrences", [])
+                if occurrence.get("file")
+            ]
+            if fingerprint:
+                self.feedback.record_duplication_intentional(
+                    fingerprint,
+                    [self._relpath(path) for path in files if path],
+                )
 
     def _build_duplicate_merge_plan(
         self, occurrences: Sequence[Dict[str, Any]]
