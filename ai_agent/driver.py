@@ -12,6 +12,7 @@ from .apply_patch import PatchApplier
 from .dex_expander import DexExpansionPlanner
 from .diff_engine import DiffBundle, DiffEngine, DiffOperation
 from .evolution import EvolutionEngine
+from .feedback import FeedbackStore
 from .hooks.trading_adapter import build_trading_adapter
 from .planner import Planner
 from .proposal_manager import ProposalManager
@@ -32,7 +33,8 @@ class AIAgentDriver:
         self.dex_expander = DexExpansionPlanner(os.path.join(self.root, "pool_registry.json"))
         self.diff_engine = DiffEngine()
         self.patch_applier = PatchApplier(self.root)
-        self.proposals = ProposalManager(self.patch_applier, root=self.root)
+        self.feedback = FeedbackStore(os.path.join(self.root, "ai_agent", "state.json"))
+        self.proposals = ProposalManager(self.patch_applier, root=self.root, feedback_store=self.feedback)
         self.trading: Dict[str, Any] = {}
         self.pending_improvements: Dict[str, Any] = {}
         self._last_advisor_report: Optional[Dict[str, Any]] = None

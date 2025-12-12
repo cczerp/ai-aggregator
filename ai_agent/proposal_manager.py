@@ -5,11 +5,13 @@ from __future__ import annotations
 import os
 import ast
 import hashlib
+import json
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Set, Tuple
 
 from .diff_engine import DiffBundle, DiffEngine, DiffOperation
+from .feedback import FeedbackStore, FeedbackStats
 
 SYSTEM_FOLDERS = {"venv", "site-packages", "Lib", "AppData", "node_modules"}
 MAX_FILE_LINES = 800
@@ -38,6 +40,9 @@ class Proposal:
     split_plan: Optional[Dict[str, Any]] = None
     justification: Optional[str] = None
     manual_text: Optional[str] = None
+    identifier: Optional[str] = None
+    content_hash: Optional[str] = None
+    history_stats: Optional[FeedbackStats] = None
 
     def location_display(self) -> str:
         return f"{self.file_path} : {self.line}"
@@ -46,10 +51,11 @@ class Proposal:
 class ProposalManager:
     """Enforces Elroy's proposal/approval rules and queueing semantics."""
 
-    def __init__(self, patch_applier, root: str = ".") -> None:
+    def __init__(self, patch_applier, root: str = ".", feedback_store: Optional[FeedbackStore] = None) -> None:
         self.root = os.path.abspath(root)
         self.patch_applier = patch_applier
         self.diff_engine = DiffEngine()
+        self.feedback = feedback_store or FeedbackStore(os.path.join(self.root, "ai_agent", "state.json"))
         self.queue: List[Proposal] = []
         self.history: List[Tuple[Proposal, str]] = []
         self.awaiting_file_response: Optional[Proposal] = None
@@ -63,7 +69,17 @@ class ProposalManager:
         if not self._guard_system_path(proposal):
             print(f"[ProposalManager] Skipping system path proposal: {proposal.file_path}")
             self.history.append((proposal, "skipped (system path guard)"))
+            self._record_feedback(proposal, "skipped", {"reason": "system_path"})
             return
+        allow, note, stats = self.feedback.should_enqueue(proposal.identifier, proposal.content_hash)
+        proposal.history_stats = stats
+        if not allow:
+            print(f"[ProposalManager] Skipping {proposal.summary}: {note}")
+            self.history.append((proposal, "skipped (history)"))
+            self._record_feedback(proposal, "skipped", {"reason": "history_block", "note": note})
+            return
+        if stats and stats.rejected > stats.accepted:
+            proposal.reason += f"\n[History] Previous outcomes: {stats.accepted} accepted / {stats.rejected} rejected."
         self.queue.append(proposal)
 
     def reset_queue(self) -> None:
@@ -135,6 +151,8 @@ class ProposalManager:
                 duplicate_payload=payload,
                 reason="Remove duplicate functions to simplify maintenance",
                 impact="benign",
+                identifier=f"duplicate:{fingerprint}",
+                content_hash=self._hash_payload(payload),
             )
             self.enqueue(proposal)
 
@@ -180,6 +198,11 @@ class ProposalManager:
             lines.append("Warning:\nThis change modifies runtime behavior.")
         lines.append(f"Reason (technical):\n{proposal.reason}")
         lines.append(f"Impact:\n{proposal.impact}")
+        history = proposal.history_stats
+        if history:
+            lines.append(
+                f"Learning Signal:\naccepted {history.accepted} · rejected {history.rejected} · confidence {history.confidence:.0%}"
+            )
         if proposal.related_changes:
             related_lines = ["These two changes are directly related:"]
             for idx, summary in enumerate(proposal.related_changes, 1):
@@ -217,6 +240,11 @@ class ProposalManager:
             lines.append(diff_preview)
         lines.append(f"Reason (technical):\n{proposal.reason}")
         lines.append(f"Impact:\n{proposal.impact}")
+        history = proposal.history_stats
+        if history:
+            lines.append(
+                f"Learning Signal:\naccepted {history.accepted} · rejected {history.rejected} · confidence {history.confidence:.0%}"
+            )
         lines.append(
             "Options:\n[yes] unify\n[no] keep separate\n[file A] view file A\n[file B] view file B"
         )
@@ -243,6 +271,7 @@ class ProposalManager:
                 return result
             self.history.append((target, "rejected"))
             self.queue.pop(0)
+            self._record_feedback(target, "rejected", {"context": "after_file"})
             return "Proposal rejected after file review."
 
         if self.awaiting_split_confirmation:
@@ -253,9 +282,11 @@ class ProposalManager:
             if choice == "yes":
                 self.history.append((target, "accepted"))
                 self.queue.pop(0)
+                self._record_feedback(target, "accepted", {"context": "split_plan"})
                 return self._format_split_plan(target, accepted=True)
             self.history.append((target, "rejected"))
             self.queue.pop(0)
+            self._record_feedback(target, "rejected", {"context": "split_plan"})
             return "Split plan declined. Proposal dismissed."
 
         if proposal.duplicate_payload:
@@ -276,6 +307,7 @@ class ProposalManager:
             return result
         self.history.append((proposal, "rejected"))
         self.queue.pop(0)
+        self._record_feedback(proposal, "rejected", {"context": "direct"})
         return "Proposal rejected. Moving to next issue."
 
     def _handle_file_request(self, proposal: Proposal, choice: str) -> str:
@@ -339,14 +371,22 @@ class ProposalManager:
         operations = bundle_dict.get("operations", [])
         if operations:
             start_line = operations[0].get("start", 0) + 1
+        diff_text = bundle_dict.get("diff_text", "")
+        file_path = bundle_dict.get("file_path", "unknown")
+        content_hash = hashlib.sha256(
+            f"{file_path}:{diff_text}".encode("utf-8", "ignore")
+        ).hexdigest()
+        identifier = bundle_dict.get("fingerprint") or f"diff:{content_hash}"
         proposal = Proposal(
             summary=summary,
-            file_path=bundle_dict.get("file_path", "unknown"),
+            file_path=file_path,
             line=start_line,
             diff_bundle=bundle_dict,
             reason="Align code with advisor/auditor recommendations",
             impact="behavior change likely" if operations else "benign",
             behavior_warning=bool(operations),
+            identifier=identifier,
+            content_hash=content_hash,
         )
         return proposal
 
@@ -549,6 +589,23 @@ class ProposalManager:
                 return handle.readlines()
         except OSError:
             return []
+
+    def _record_feedback(self, proposal: Proposal, decision: str, metadata: Optional[Dict[str, Any]]) -> None:
+        if not proposal.identifier or not proposal.content_hash:
+            return
+        self.feedback.record_outcome(
+            identifier=proposal.identifier,
+            content_hash=proposal.content_hash,
+            decision=decision,
+            summary=proposal.summary,
+            file_path=proposal.file_path,
+            metadata=metadata,
+        )
+
+    @staticmethod
+    def _hash_payload(payload: Dict[str, Any]) -> str:
+        serialized = json.dumps(payload, sort_keys=True)
+        return hashlib.sha256(serialized.encode("utf-8")).hexdigest()
 
     def _format_split_plan(self, proposal: Proposal, accepted: bool) -> str:
         if not proposal.split_plan:
