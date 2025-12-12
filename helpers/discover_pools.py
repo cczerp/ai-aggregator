@@ -1,239 +1,159 @@
 #!/usr/bin/env python3
 """
-Dynamic Pool Discovery Script with Persistent Cache
-- Caches "no pool found" results per DEX to avoid re-checking
-- Only re-checks failed pairs after 30 days
-- Outputs to pool_registry.json and failed_pairs.json
+Pool Discovery Script
+Scans DEX factory contracts for PairCreated events to discover all active pools
 """
 
-from web3 import Web3
 import json
-import os
-import time
-from dotenv import load_dotenv
-from itertools import combinations
 import sys
+import os
+from pathlib import Path
+from typing import Dict, List
+from web3 import Web3
+from colorama import Fore, Style, init
 
-# Import from registries
-from registries import TOKENS, DEXES, get_token_address, get_all_token_symbols
+# Add parent directory to path
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
-load_dotenv()
+from registries import DEXES, TOKENS
+from rpc_mgr import RPCManager
 
-# Initialize Web3
-w3 = Web3(Web3.HTTPProvider(f"https://polygon-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_API_KEY')}"))
+init(autoreset=True)
 
-# Cache settings
-FAILED_PAIRS_FILE = "failed_pairs.json"
-RECHECK_AFTER_DAYS = 30  # Re-check failed pairs after 30 days
-
-# ABIs
-V2_FACTORY_ABI = [{"constant": True, "inputs": [{"internalType": "address", "name": "tokenA", "type": "address"}, {"internalType": "address", "name": "tokenB", "type": "address"}], "name": "getPair", "outputs": [{"internalType": "address", "name": "pair", "type": "address"}], "type": "function"}]
-V3_FACTORY_ABI = [{"inputs": [{"internalType": "address", "name": "tokenA", "type": "address"}, {"internalType": "address", "name": "tokenB", "type": "address"}, {"internalType": "uint24", "name": "fee", "type": "uint24"}], "name": "getPool", "outputs": [{"internalType": "address", "name": "pool", "type": "address"}], "stateMutability": "view", "type": "function"}]
-ALGEBRA_FACTORY_ABI = [{"inputs": [{"internalType": "address", "name": "tokenA", "type": "address"}, {"internalType": "address", "name": "tokenB", "type": "address"}], "name": "poolByPair", "outputs": [{"internalType": "address", "name": "pool", "type": "address"}], "stateMutability": "view", "type": "function"}]
-
-
-def load_failed_pairs():
-    """Load the persistent cache of pairs with no pools"""
-    if os.path.exists(FAILED_PAIRS_FILE):
-        with open(FAILED_PAIRS_FILE, 'r') as f:
-            return json.load(f)
-    return {}
-
-
-def save_failed_pairs(failed_pairs):
-    """Save the cache of pairs with no pools"""
-    with open(FAILED_PAIRS_FILE, 'w') as f:
-        json.dump(failed_pairs, f, indent=2)
+# Uniswap V2 Factory ABI (PairCreated event)
+FACTORY_ABI = [
+    {
+        "anonymous": False,
+        "inputs": [
+            {"indexed": True, "name": "token0", "type": "address"},
+            {"indexed": True, "name": "token1", "type": "address"},
+            {"indexed": False, "name": "pair", "type": "address"},
+            {"indexed": False, "name": "", "type": "uint256"}
+        ],
+        "name": "PairCreated",
+        "type": "event"
+    }
+]
 
 
-def should_check_pair(failed_pairs, dex_name, pair_name):
-    """Check if we should query this DEX+pair combo"""
-    if dex_name not in failed_pairs:
-        return True
-    if pair_name not in failed_pairs[dex_name]:
-        return True
-    # Check if it's been more than RECHECK_AFTER_DAYS
-    last_checked = failed_pairs[dex_name][pair_name]
-    days_since = (time.time() - last_checked) / 86400
-    return days_since > RECHECK_AFTER_DAYS
+class PoolDiscoverer:
+    """Discovers pools by scanning factory contracts for PairCreated events"""
 
+    def __init__(self, rpc_manager: RPCManager):
+        self.rpc_manager = rpc_manager
+        endpoint = rpc_manager.get_available_endpoint("primary")
+        if not endpoint:
+            raise Exception("No RPC endpoint available")
+        self.w3 = rpc_manager.get_web3(endpoint)
 
-def mark_pair_as_failed(failed_pairs, dex_name, pair_name):
-    """Mark a DEX+pair combo as having no pool"""
-    if dex_name not in failed_pairs:
-        failed_pairs[dex_name] = {}
-    failed_pairs[dex_name][pair_name] = time.time()
+        # Token address -> symbol mapping
+        self.address_to_symbol = {}
+        for symbol, info in TOKENS.items():
+            self.address_to_symbol[info["address"].lower()] = symbol
 
+        print(f"{Fore.GREEN}✅ Pool Discoverer initialized{Style.RESET_ALL}")
+        print(f"   Tracking {len(TOKENS)} tokens across {len(DEXES)} DEXes")
 
-def generate_trading_pairs(token_symbols, focus_tokens=["USDT", "USDC", "WETH", "WPOL"]):
-    pairs = set()
-    for token in token_symbols:
-        for focus_token in focus_tokens:
-            if token != focus_token:
-                pairs.add(tuple(sorted([token, focus_token])))
-    major_tokens = ["WBTC", "DAI", "UNI", "AAVE", "LINK", "SUSHI", "QUICK", "CRV"]
-    available_majors = [t for t in major_tokens if t in token_symbols]
-    for t1, t2 in combinations(available_majors, 2):
-        pairs.add(tuple(sorted([t1, t2])))
-    return [(t0, t1) for t0, t1 in sorted(pairs)]
+    def get_token_symbol(self, address: str) -> str:
+        """Get token symbol from address, or return shortened address if unknown"""
+        addr_lower = address.lower()
+        if addr_lower in self.address_to_symbol:
+            return self.address_to_symbol[addr_lower]
+        return f"{address[:6]}...{address[-4:]}"
 
+    def discover_v2_pools(
+        self,
+        dex_name: str,
+        factory_address: str,
+        from_block: int = 0,
+        to_block: str = 'latest',
+        chunk_size: int = 10000
+    ) -> List[Dict]:
+        """
+        Discover V2 pools by scanning PairCreated events
+        """
+        print(f"\n{Fore.CYAN}{'='*80}")
+        print(f"🔍 DISCOVERING POOLS: {dex_name}")
+        print(f"{'='*80}{Style.RESET_ALL}")
+        print(f"   Factory: {factory_address}")
+        print(f"   Blocks: {from_block} → {to_block}")
 
-def discover_v2_pool(factory_address, token0, token1):
-    try:
-        factory = w3.eth.contract(address=Web3.to_checksum_address(factory_address), abi=V2_FACTORY_ABI)
-        pool = factory.functions.getPair(Web3.to_checksum_address(get_token_address(token0)), Web3.to_checksum_address(get_token_address(token1))).call()
-        if pool != "0x0000000000000000000000000000000000000000":
-            return pool
-        return None
-    except:
-        return None
+        factory = self.w3.eth.contract(
+            address=Web3.to_checksum_address(factory_address),
+            abi=FACTORY_ABI
+        )
 
+        # Get current block if using 'latest'
+        if to_block == 'latest':
+            to_block = self.w3.eth.block_number
 
-def discover_v3_pool(factory_address, token0, token1, fee):
-    try:
-        factory = w3.eth.contract(address=Web3.to_checksum_address(factory_address), abi=V3_FACTORY_ABI)
-        pool = factory.functions.getPool(Web3.to_checksum_address(get_token_address(token0)), Web3.to_checksum_address(get_token_address(token1)), fee).call()
-        if pool != "0x0000000000000000000000000000000000000000":
-            return pool
-        return None
-    except:
-        return None
+        discovered_pools = []
+        tracked_pools = []
 
+        # Scan in chunks
+        current_block = from_block
 
-def discover_algebra_pool(factory_address, token0, token1):
-    try:
-        factory = w3.eth.contract(address=Web3.to_checksum_address(factory_address), abi=ALGEBRA_FACTORY_ABI)
-        pool = factory.functions.poolByPair(Web3.to_checksum_address(get_token_address(token0)), Web3.to_checksum_address(get_token_address(token1))).call()
-        if pool != "0x0000000000000000000000000000000000000000":
-            return pool
-        return None
-    except:
-        return None
+        while current_block < to_block:
+            chunk_end = min(current_block + chunk_size, to_block)
 
+            try:
+                events = factory.events.PairCreated.get_logs(
+                    fromBlock=current_block,
+                    toBlock=chunk_end
+                )
 
-def discover_pools_for_dex(dex_name, dex_config, pairs, failed_pairs, stats):
-    dex_pools = {}
-    dex_type = dex_config.get("type", "")
-    print(f"\n🔍 {dex_name.upper()} ({dex_type})")
-    
-    if dex_type in ["curve", "balancer", "dodo"]:
-        print(f"   ⏭️ Skipping - requires special handling")
-        return dex_pools
-    
-    for token0, token1 in pairs:
-        pair_name = f"{token0}/{token1}"
-        if token0 not in TOKENS or token1 not in TOKENS:
-            continue
-        
-        if not should_check_pair(failed_pairs, dex_name, pair_name):
-            stats["cache_skipped"] += 1
-            continue
-        
-        print(f"  {pair_name}...", end=" ")
-        stats["checked"] += 1
-        
-        if dex_type == "v2":
-            pool = discover_v2_pool(dex_config["factory"], token0, token1)
-            if pool:
-                dex_pools[pair_name] = {"pool": pool, "token0": get_token_address(token0), "token1": get_token_address(token1), "type": "v2"}
-                print(f"✅ {pool[:10]}...")
-                stats["found"] += 1
-            else:
-                print("❌")
-                mark_pair_as_failed(failed_pairs, dex_name, pair_name)
-        
-        elif dex_type == "v3":
-            fee_tiers = dex_config.get("fee_tiers", [500, 3000, 10000])
-            pair_pools = {}
-            for fee in fee_tiers:
-                pool = discover_v3_pool(dex_config["factory"], token0, token1, fee)
-                if pool:
-                    pair_pools[str(fee)] = {"pool": pool, "token0": get_token_address(token0), "token1": get_token_address(token1), "fee": fee, "type": "v3"}
-            if pair_pools:
-                dex_pools[pair_name] = pair_pools
-                print(f"✅ {len(pair_pools)} pools")
-                stats["found"] += len(pair_pools)
-            else:
-                print("❌")
-                mark_pair_as_failed(failed_pairs, dex_name, pair_name)
-        
-        elif dex_type == "v3_algebra":
-            pool = discover_algebra_pool(dex_config["factory"], token0, token1)
-            if pool:
-                dex_pools[pair_name] = {"pool": pool, "token0": get_token_address(token0), "token1": get_token_address(token1), "type": "v3_algebra"}
-                print(f"✅ {pool[:10]}...")
-                stats["found"] += 1
-            else:
-                print("❌")
-                mark_pair_as_failed(failed_pairs, dex_name, pair_name)
-    
-    return dex_pools
+                for event in events:
+                    token0 = event['args']['token0']
+                    token1 = event['args']['token1']
+                    pair = event['args']['pair']
 
+                    token0_symbol = self.get_token_symbol(token0)
+                    token1_symbol = self.get_token_symbol(token1)
 
-def discover_all_pools():
-    registry = {}
-    stats = {"checked": 0, "found": 0, "cache_skipped": 0}
-    
-    print("=" * 80)
-    print("DYNAMIC POOL DISCOVERY (WITH CACHE)")
-    print("=" * 80)
-    
-    failed_pairs = load_failed_pairs()
-    print(f"💾 Cache: {sum(len(p) for p in failed_pairs.values())} known failed pairs")
-    
-    token_symbols = get_all_token_symbols()
-    pairs = generate_trading_pairs(token_symbols)
-    print(f"🔗 {len(pairs)} pairs to check across DEXes\n")
-    
-    discoverable_dexes = {n: c for n, c in DEXES.items() if c.get("type") not in ["curve", "balancer", "dodo"]}
-    
-    for dex_name, dex_config in discoverable_dexes.items():
-        registry[dex_name] = discover_pools_for_dex(dex_name, dex_config, pairs, failed_pairs, stats)
-    
-    save_failed_pairs(failed_pairs)
-    return registry, stats, failed_pairs
+                    pool_data = {
+                        'dex': dex_name,
+                        'pair_address': pair,
+                        'token0': token0,
+                        'token1': token1,
+                        'token0_symbol': token0_symbol,
+                        'token1_symbol': token1_symbol,
+                        'block_number': event['blockNumber'],
+                    }
 
+                    discovered_pools.append(pool_data)
 
-def save_registry(registry):
-    with open("pool_registry.json", 'w') as f:
-        json.dump(registry, f, indent=2)
+                    # Only track if both tokens are in our registry
+                    if (token0.lower() in self.address_to_symbol and
+                        token1.lower() in self.address_to_symbol):
+                        tracked_pools.append(pool_data)
+                        print(f"  ✅ {token0_symbol}/{token1_symbol} → {pair[:10]}...")
 
+                progress = ((chunk_end - from_block) / (to_block - from_block)) * 100
+                print(f"  📊 Progress: {progress:.1f}%", end='\r')
 
-def print_summary(registry, stats, failed_pairs):
-    print("\n" + "=" * 80)
-    print("DISCOVERY SUMMARY")
-    print("=" * 80)
-    print(f"📊 Pairs checked:        {stats['checked']:,}")
-    print(f"   Pools found:          {stats['found']:,}")
-    print(f"   Cache skipped:        {stats['cache_skipped']:,}")
-    print(f"   Cache efficiency:     {(stats['cache_skipped'] / max(stats['checked'] + stats['cache_skipped'], 1)) * 100:.1f}%")
-    
-    print(f"\n🦄 Pools per DEX:")
-    total = 0
-    for dex, pairs in registry.items():
-        count = sum(1 if "pool" in p else len(p) for p in pairs.values())
-        if count > 0:
-            print(f"   {dex:20s}: {count:3d} pools")
-            total += count
-    print(f"   {'─' * 40}\n   {'TOTAL':20s}: {total:3d} pools")
-    
-    print(f"\n💾 Failed Pairs Cache:")
-    for dex, pairs in sorted(failed_pairs.items()):
-        if pairs:
-            print(f"   {dex:20s}: {len(pairs)} failed pairs")
-    
-    print("\n✅ Files created:")
-    print("   • pool_registry.json (valid pools)")
-    print("   • failed_pairs.json (cache)")
-    print(f"\n💡 Next run will skip {sum(len(p) for p in failed_pairs.values())} cached failures for 30 days")
-    print("=" * 80)
+                current_block = chunk_end + 1
+
+            except Exception as e:
+                print(f"\n  ⚠️  Error at block {current_block}: {str(e)[:80]}")
+                current_block = chunk_end + 1
+
+        print(f"\n\n{Fore.GREEN}✅ Discovery complete!{Style.RESET_ALL}")
+        print(f"   Total pools found: {len(discovered_pools)}")
+        print(f"   Tracked pools: {len(tracked_pools)}")
+
+        return tracked_pools
 
 
 if __name__ == "__main__":
-    if not os.getenv('ALCHEMY_API_KEY'):
-        print("❌ ERROR: ALCHEMY_API_KEY not found in .env")
-        sys.exit(1)
-    
-    registry, stats, failed_pairs = discover_all_pools()
-    save_registry(registry)
-    print_summary(registry, stats, failed_pairs)
+    rpc_mgr = RPCManager()
+    discoverer = PoolDiscoverer(rpc_mgr)
+
+    # Example: Discover QuickSwap pools from last 10000 blocks
+    current_block = discoverer.w3.eth.block_number
+    pools = discoverer.discover_v2_pools(
+        dex_name='QuickSwap_V2',
+        factory_address=DEXES['QuickSwap_V2']['factory'],
+        from_block=current_block - 10000
+    )
+
+    print(f"\n💾 Discovered {len(pools)} QuickSwap pools")

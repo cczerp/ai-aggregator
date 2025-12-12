@@ -129,7 +129,7 @@ class PriceDataFetcher:
         rpc_manager: RPCManager,
         cache: Cache,
         pool_registry_path: str = "./pool_registry.json",
-        min_tvl_usd: float = 3000
+        min_tvl_usd: float = 150
     ):
         self.rpc_manager = rpc_manager
         self.cache = cache
@@ -229,6 +229,19 @@ class PriceDataFetcher:
             token1_info = self._get_token_info(token1_addr)
 
             if not token0_info or not token1_info:
+                return None
+
+            # WPOL FILTER: Only allow WPOL pools from high-quality DEXes
+            # (prevents low-liquidity garbage pools from poisoning the graph)
+            allowed_wpol_dexes = ["QuickSwap_V2", "SushiSwap", "Uniswap_V3"]
+            wpol_symbols = ["WPOL", "WMATIC"]
+
+            token0_symbol = token0_info["symbol"]
+            token1_symbol = token1_info["symbol"]
+            has_wpol = token0_symbol in wpol_symbols or token1_symbol in wpol_symbols
+
+            if has_wpol and dex not in allowed_wpol_dexes:
+                print(f"  ⚠️  Skipping {token0_symbol}/{token1_symbol} on {dex} - WPOL only allowed on {allowed_wpol_dexes}")
                 return None
 
             decimals0 = token0_info["decimals"]
@@ -367,6 +380,19 @@ class PriceDataFetcher:
             token1_info = self._get_token_info(token1_addr)
 
             if not token0_info or not token1_info:
+                return None
+
+            # WPOL FILTER: Only allow WPOL pools from high-quality DEXes
+            # (prevents low-liquidity garbage pools from poisoning the graph)
+            allowed_wpol_dexes = ["QuickSwap_V2", "SushiSwap", "Uniswap_V3"]
+            wpol_symbols = ["WPOL", "WMATIC"]
+
+            token0_symbol = token0_info["symbol"]
+            token1_symbol = token1_info["symbol"]
+            has_wpol = token0_symbol in wpol_symbols or token1_symbol in wpol_symbols
+
+            if has_wpol and dex not in allowed_wpol_dexes:
+                print(f"  ⚠️  Skipping {token0_symbol}/{token1_symbol} on {dex} - WPOL only allowed on {allowed_wpol_dexes}")
                 return None
 
             decimals0 = token0_info["decimals"]
