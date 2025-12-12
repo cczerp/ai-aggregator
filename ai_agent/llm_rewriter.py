@@ -67,6 +67,7 @@ class LLMRewriter:
         model: Optional[str] = None,
         temperature: float = 0.15,
         feedback: Optional[Any] = None,
+        api_key: Optional[str] = None,
     ) -> None:
         self.root = os.path.abspath(root)
         self.model = model or os.getenv("AI_REWRITER_MODEL", "gpt-4.1")
@@ -75,8 +76,17 @@ class LLMRewriter:
         self.feedback = feedback
         if OpenAI is None:
             raise LLMRewriteError("openai package is not installed. Please add openai>=1.0.0.")
+        resolved_key = (
+            api_key
+            or os.getenv("ELROY_OPENAI_API_KEY")
+            or os.getenv("OPENAI_API_KEY")
+        )
+        if not resolved_key:
+            raise LLMRewriteError(
+                "Missing ELROY_OPENAI_API_KEY (preferred) or OPENAI_API_KEY for LLM rewriter."
+            )
         try:
-            self.client = OpenAI()
+            self.client = OpenAI(api_key=resolved_key)
         except Exception as exc:  # pragma: no cover - defensive init
             raise LLMRewriteError(f"Unable to initialize OpenAI client: {exc}") from exc
 
