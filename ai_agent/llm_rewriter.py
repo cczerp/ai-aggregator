@@ -206,6 +206,9 @@ class LLMRewriter:
         # Get feedback context to learn from previous rejections
         feedback_context = self._get_feedback_context(rel_path, target.issue_type)
 
+        # Get boosted categories the user loves - prioritize finding more of these
+        boosted_categories = self._get_boosted_categories()
+
         payload = {
             "issue_type": target.issue_type,
             "file_path": rel_path,
@@ -233,6 +236,11 @@ class LLMRewriter:
         }
         if feedback_context:
             payload["learning_context"] = feedback_context
+        if boosted_categories:
+            payload["user_preferences"] = {
+                "note": "The user consistently accepts these types of changes. Look for more opportunities like these.",
+                "boosted_categories": boosted_categories,
+            }
         return json.dumps(payload, indent=2)
 
     def _get_feedback_context(self, file_path: str, issue_type: str) -> Optional[Dict[str, Any]]:
@@ -265,6 +273,12 @@ class LLMRewriter:
             "note": "The user previously rejected similar proposals. Avoid these patterns.",
             "rejected_examples": similar_rejections,
         }
+
+    def _get_boosted_categories(self) -> List[str]:
+        """Get categories the user loves - tell LLM to actively seek more of these."""
+        if not self.feedback:
+            return []
+        return self.feedback.get_boosted_categories()
 
     def _call_model(self, user_prompt: str) -> Dict[str, Any]:
         messages = [
