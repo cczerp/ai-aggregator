@@ -83,7 +83,7 @@ class GraphArbitrageAutomation:
         logger.info(f"{'='*80}{Style.RESET_ALL}\n")
 
         # Load configuration from environment with fallbacks
-        self.min_tvl = min_tvl or float(os.getenv("MIN_TVL_USD", "3000"))
+        self.min_tvl = min_tvl or float(os.getenv("MIN_TVL_USD", "150"))
         self.scan_interval = scan_interval or int(os.getenv("SCAN_INTERVAL_SECONDS", "60"))
         self.auto_execute = auto_execute if auto_execute is not None else \
                            os.getenv("AUTO_EXECUTE", "false").lower() in ("true", "1", "yes")
@@ -342,7 +342,7 @@ def main():
     try:
         # Initialize automation
         automation = GraphArbitrageAutomation(
-            min_tvl=float(os.getenv("MIN_TVL_USD", "3000")),
+            min_tvl=float(os.getenv("MIN_TVL_USD", "150")),
             scan_interval=int(os.getenv("SCAN_INTERVAL_SECONDS", "60")),
             auto_execute=os.getenv("AUTO_EXECUTE", "false").lower() in ("true", "1", "yes"),
             use_graph_method=True  # Always use graph method

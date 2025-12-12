@@ -353,12 +353,17 @@ class GraphArbitrageFinder:
                     logger.debug(f"   Skipping {token0}/{token1} on {dex_name} - no valid quote")
                     continue
 
-                # Check TVL
+                # Check TVL (lowered for Polygon's shallow liquidity)
                 tvl = tvl_data.get('tvl_usd', 0)
-                if tvl < 3000:
+                min_tvl = 150  # Lower threshold for Polygon
+                if tvl < min_tvl:
                     skipped_low_tvl += 1
-                    logger.debug(f"   Skipping {token0}/{token1} on {dex_name} - TVL ${tvl:.0f} < $3,000")
+                    logger.debug(f"   Skipping {token0}/{token1} on {dex_name} - TVL ${tvl:.0f} < ${min_tvl}")
                     continue
+
+                # Identify stablecoin pairs for prioritization
+                stablecoins = {'USDC', 'USDT', 'DAI', 'TUSD', 'USDD', 'FRAX'}
+                is_stablecoin_pair = token0 in stablecoins or token1 in stablecoins
 
                 # Add bidirectional edges
                 edge0to1 = {
@@ -369,6 +374,7 @@ class GraphArbitrageFinder:
                     'tvl': tvl,
                     'decimals0': pair_prices.get('decimals0', 18),
                     'decimals1': pair_prices.get('decimals1', 18),
+                    'is_stablecoin': is_stablecoin_pair,
                 }
 
                 edge1to0 = {
@@ -379,6 +385,7 @@ class GraphArbitrageFinder:
                     'tvl': tvl,
                     'decimals0': pair_prices.get('decimals1', 18),
                     'decimals1': pair_prices.get('decimals0', 18),
+                    'is_stablecoin': is_stablecoin_pair,
                 }
 
                 self.graph[token0].append((token1, edge0to1))
@@ -441,12 +448,20 @@ class GraphArbitrageFinder:
             
             visited.add(current_token)
             
-            # Explore neighbors
-            for next_token, edge_data in self.graph.get(current_token, []):
-                # Skip if insufficient liquidity (use same threshold as pool fetcher)
-                if edge_data['tvl'] < 3000:
+            # Explore neighbors - prioritize stablecoin paths
+            neighbors = self.graph.get(current_token, [])
+
+            # Sort neighbors: stablecoin edges first, then by TVL
+            sorted_neighbors = sorted(
+                neighbors,
+                key=lambda x: (not x[1].get('is_stablecoin', False), -x[1]['tvl'])
+            )
+
+            for next_token, edge_data in sorted_neighbors:
+                # Skip if insufficient liquidity (lowered for Polygon)
+                if edge_data['tvl'] < 150:
                     continue
-                
+
                 path.append(next_token)
                 dfs(next_token, path, depth + 1)
                 path.pop()
@@ -456,7 +471,35 @@ class GraphArbitrageFinder:
         dfs(start_token, [start_token], 0)
         
         return paths
-    
+
+    def find_stablecoin_cycles(self) -> List[List[str]]:
+        """
+        Specifically search for stablecoin triangular arbitrage
+        These are high-frequency, low-risk opportunities on Polygon
+
+        Examples:
+        - USDC → DAI → USDT → USDC
+        - DAI → USDC → USDT → DAI
+        - USDT → USDC → DAI → USDT
+        """
+        stablecoins = ['USDC', 'USDT', 'DAI', 'TUSD', 'USDD', 'FRAX']
+        stablecoin_paths = []
+
+        # Only check stablecoins that are in the graph
+        available_stablecoins = [s for s in stablecoins if s in self.graph]
+
+        for stable in available_stablecoins:
+            # Find 3-hop triangular paths starting from this stablecoin
+            paths = self.find_triangular_paths(stable, max_hops=3, max_paths=50)
+
+            # Filter to only paths where all tokens are stablecoins
+            for path in paths:
+                if len(path) == 4 and all(token in stablecoins for token in path):
+                    stablecoin_paths.append(path)
+
+        logger.info(f"{Fore.CYAN}   💵 Found {len(stablecoin_paths)} stablecoin cycles{Style.RESET_ALL}")
+        return stablecoin_paths
+
     def calculate_path_profit(
         self,
         path: List[str],
@@ -464,16 +507,23 @@ class GraphArbitrageFinder:
         price_data: Dict
     ) -> Optional[Dict]:
         """
-        Calculate profit for a specific path using actual pool quotes with proper decimal handling
+        Calculate profit for a specific path using actual pool quotes with proper USD conversion
+
+        Args:
+            path: Token path (e.g., ['USDC', 'WETH', 'WPOL', 'USDC'])
+            amount_in_usd: Starting amount in USD
+            price_data: Not used (prices come from graph edges and derived prices)
         """
-        if len(path) < 3:  # Need at least A->B->A
+        if len(path) < 3:  # Need at least A→B→A
             return None
 
         try:
-            # We need to track both USD value and token amounts
-            # Start with USD amount for the first token
-            current_amount_usd = amount_in_usd
+            current_usd = amount_in_usd
             route_details = []
+
+            # Get token prices from the arb_finder (which has derived_prices)
+            # We need to access the price fetcher's derived prices
+            # For now, we'll estimate from the quotes themselves
 
             # Execute each hop
             for i in range(len(path) - 1):
@@ -493,47 +543,63 @@ class GraphArbitrageFinder:
                 best_edge = max(edges, key=lambda e: e['tvl'])
 
                 # Get the actual quote for this direction
-                quote = best_edge['quote']  # This is the RAW quote (e.g., 1 token_in → X token_out in wei)
-                decimals_in = best_edge['decimals0']  # Input token decimals
-                decimals_out = best_edge['decimals1']  # Output token decimals
+                quote = best_edge['quote']  # RAW quote in wei
+                decimals_in = best_edge['decimals0']
+                decimals_out = best_edge['decimals1']
                 fee = best_edge['fee']
 
                 if quote == 0:
                     return None
 
-                # The quote represents: 1 token_in → (quote / 10**decimals_out) token_out
-                # So the exchange rate is: quote / (10**decimals_out)
-                # For amount_in tokens, we get: amount_in * quote / (10**decimals_out)
-                # But we're working in USD, so we need to convert
+                # Normalize the quote to get exchange rate
+                # quote represents: 1 token_in (in smallest units) → quote token_out (in smallest units)
+                # So: 1 token_in = (quote / 10**decimals_out) token_out
+                exchange_rate = quote / (10 ** decimals_out)
 
-                # For simplicity, we'll use the ratio and apply fees
-                # exchange_rate = quote / (10**decimals_out)
-                # After fees: exchange_rate * (1 - fee)
-                exchange_rate = (quote / (10 ** decimals_out)) * (1 - fee)
+                # Calculate slippage based on trade size vs pool TVL
+                # Formula: price_impact = (trade_size / pool_tvl) * impact_factor
+                # Polygon pools have higher slippage due to shallow liquidity
+                pool_tvl = best_edge['tvl']
+                trade_size = current_usd
 
-                # Scale the USD amount (this is approximate since we don't have exact USD prices for each token)
-                # In a real implementation, you'd convert USD → token_in amount → swap → token_out amount → USD
-                # For now, we'll use the exchange rate as a proxy
-                current_amount_usd *= exchange_rate
+                if pool_tvl > 0:
+                    # Slippage increases with trade size relative to pool
+                    trade_ratio = trade_size / pool_tvl
+                    # Use constant product formula approximation: slippage ≈ trade_ratio / 2
+                    # Cap at 5% max slippage per hop to avoid extreme values
+                    slippage = min(trade_ratio / 2, 0.05)
+                else:
+                    slippage = 0.05  # Default 5% if TVL unknown
+
+                # Apply fee and slippage
+                exchange_rate_with_fee = exchange_rate * (1 - fee)
+                exchange_rate_with_slippage = exchange_rate_with_fee * (1 - slippage)
+
+                # For USD tracking, we assume the exchange rate reflects relative values
+                # This is an approximation - in reality we'd need actual USD prices for each token
+                # But for arbitrage detection, relative prices are what matter
+                current_usd *= exchange_rate_with_slippage
 
                 route_details.append({
                     'from': token_in,
                     'to': token_out,
                     'dex': best_edge['dex'],
-                    'exchange_rate': exchange_rate,
-                    'amount_usd': current_amount_usd
+                    'exchange_rate': exchange_rate_with_slippage,
+                    'slippage_pct': slippage * 100,
+                    'amount_usd': current_usd
                 })
 
             # Calculate profit
-            profit = current_amount_usd - amount_in_usd
+            profit = current_usd - amount_in_usd
             roi = (profit / amount_in_usd) * 100 if amount_in_usd > 0 else 0
 
-            if profit > 0:
+            # Only return if profit > $1 and ROI > 0.1%
+            if profit > 1.0 and roi > 0.1:
                 return {
                     'path': ' → '.join(path),
                     'route': route_details,
                     'amount_in': amount_in_usd,
-                    'amount_out': current_amount_usd,
+                    'amount_out': current_usd,
                     'profit_usd': profit,
                     'roi_percent': roi
                 }
@@ -558,19 +624,32 @@ class GraphArbitrageFinder:
         
         # Build graph
         self.build_graph(pools_data)
-        
+
         opportunities = []
-        
-        # Find paths from each base token
+
+        # PRIORITY 1: Find stablecoin cycles (high frequency, low risk)
+        logger.info(f"{Fore.YELLOW}🔍 Scanning for stablecoin arbitrage cycles...{Style.RESET_ALL}")
+        stablecoin_paths = self.find_stablecoin_cycles()
+
+        # Test stablecoin paths with smaller amounts (less slippage)
+        for path in stablecoin_paths:
+            for amount in [100, 500, 1000]:  # Smaller amounts for stablecoin arb
+                result = self.calculate_path_profit(path, amount, pools_data)
+                if result and result['profit_usd'] > 0.1:  # Even $0.10 profit is viable for stablecoins
+                    result['type'] = 'stablecoin_cycle'
+                    opportunities.append(result)
+                    logger.info(f"   ✅ {result['path']} = ${result['profit_usd']:.2f}")
+
+        # PRIORITY 2: Find paths from each base token
         for base_token in base_tokens:
             if base_token not in self.graph:
                 continue
-            
+
             logger.info(f"🎯 Scanning paths from {base_token}...")
-            
+
             # Find triangular paths
             paths = self.find_triangular_paths(base_token, max_hops=3, max_paths=50)
-            
+
             logger.info(f"   Found {len(paths)} potential paths")
             
             # Test each path with different amounts
