@@ -81,25 +81,9 @@ class Rewriter:
         issues = advisor_report.get("issues", {})
         proposals: List[RewriteProposal] = []
 
-        for duplicate in issues.get("duplicate_logic", []):
-            occurrences = duplicate.get("occurrences", [])
-            if len(occurrences) < 2:
-                continue
-            canonical = occurrences[0]
-            handler_list = [occ["function"] for occ in occurrences]
-            rewritten_code = self.templates["deduplicate"].render(
-                canonical_name=f"{canonical['function']}_shared",
-                sources=", ".join(handler_list),
-                handler_list=", ".join(handler_list),
-            )
-            proposals.append(
-                RewriteProposal(
-                    title=f"Consolidate {canonical['function']}",
-                    file_path=canonical["file"],
-                    original_preview=canonical.get("preview", ""),
-                    rewritten_code=rewritten_code,
-                )
-            )
+        # Duplicate logic is now handled entirely by ProposalManager merge plans.
+        # We skip generating auto-rewrite patches here to avoid producing broken wrappers.
+        # Future advisor issues (non-duplicate) can add rewrite proposals below.
 
         return proposals
 
