@@ -4,9 +4,10 @@ from __future__ import annotations
 
 import os
 import ast
+import hashlib
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
+from typing import Any, Dict, Iterable, List, Optional, Sequence, Set, Tuple
 
 from .diff_engine import DiffBundle, DiffEngine, DiffOperation
 
@@ -53,6 +54,7 @@ class ProposalManager:
         self.history: List[Tuple[Proposal, str]] = []
         self.awaiting_file_response: Optional[Proposal] = None
         self.awaiting_split_confirmation: Optional[Proposal] = None
+        self._seen_duplicate_fingerprints: Set[str] = set()
 
     # ------------------------------------------------------------------
     # Queue + formatting helpers
@@ -66,6 +68,7 @@ class ProposalManager:
 
     def reset_queue(self) -> None:
         self.queue.clear()
+        self._seen_duplicate_fingerprints.clear()
 
     def enqueue_changes_from_rewrites(self, rewrites: Dict[str, Any]) -> None:
         diff_suggestions = rewrites.get("diff_suggestions", [])
@@ -90,12 +93,28 @@ class ProposalManager:
             self.enqueue(proposal)
 
     def enqueue_duplicates(self, duplicate_issues: Sequence[Dict[str, Any]]) -> None:
+        grouped: Dict[str, List[Dict[str, Any]]] = {}
         for issue in duplicate_issues:
             occurrences = issue.get("occurrences", [])
             if len(occurrences) < 2:
                 continue
-            first = occurrences[0]
-            second = occurrences[1]
+            fingerprint = issue.get("fingerprint") or self._make_duplicate_fingerprint(occurrences)
+            grouped.setdefault(fingerprint, []).extend(occurrences)
+
+        for fingerprint, occurrences in grouped.items():
+            unique_occurrences = self._dedupe_occurrences(occurrences)
+            if len(unique_occurrences) < 2:
+                continue
+            if fingerprint in self._seen_duplicate_fingerprints:
+                print(f"[ProposalManager] Duplicate fingerprint already queued: {fingerprint}")
+                continue
+            self._seen_duplicate_fingerprints.add(fingerprint)
+
+            unique_occurrences.sort(key=lambda item: (str(item.get("file")), item.get("line", 0)))
+            first = unique_occurrences[0]
+            second = unique_occurrences[1]
+
+            merge_actions, merge_plan, diff_preview = self._build_duplicate_merge_plan(unique_occurrences)
             payload = {
                 "file_a": first.get("file"),
                 "line_a": first.get("line", 0),
@@ -103,10 +122,14 @@ class ProposalManager:
                 "file_b": second.get("file"),
                 "line_b": second.get("line", 0),
                 "snippet_b": second.get("preview", ""),
-                "fingerprint": issue.get("fingerprint"),
+                "fingerprint": fingerprint,
+                "occurrences": unique_occurrences,
+                "merge_plan": merge_plan,
+                "merge_actions": merge_actions,
+                "diff_preview": diff_preview,
             }
             proposal = Proposal(
-                summary="Unify duplicated logic",
+                summary=f"Unify duplicated logic ({len(unique_occurrences)} copies)",
                 file_path=payload["file_a"],
                 line=payload["line_a"],
                 duplicate_payload=payload,
@@ -175,12 +198,23 @@ class ProposalManager:
             f"File A: {payload.get('file_a')} : {payload.get('line_a')}\n"
             f"File B: {payload.get('file_b')} : {payload.get('line_b')}"
         )
+        occurrences = payload.get("occurrences") or []
+        if occurrences:
+            lines.append(f"Occurrences detected: {len(occurrences)} (will unify all matching copies together)")
         lines.append("Duplicate Snippets:")
         snippet_a = payload.get("snippet_a", "").strip()
         snippet_b = payload.get("snippet_b", "").strip()
         lines.append(f"<<< File A >>>\n{snippet_a}\n<<< File B >>>\n{snippet_b}")
         unified = payload.get("snippet_a", "").strip() or payload.get("snippet_b", "").strip()
         lines.append(f"Proposed Unification:\n{unified}")
+        plan = payload.get("merge_plan")
+        if plan:
+            lines.append("Merge Plan:")
+            lines.append(plan)
+        diff_preview = payload.get("diff_preview")
+        if diff_preview:
+            lines.append("Planned Changes (preview):")
+            lines.append(diff_preview)
         lines.append(f"Reason (technical):\n{proposal.reason}")
         lines.append(f"Impact:\n{proposal.impact}")
         lines.append(
@@ -288,6 +322,17 @@ class ProposalManager:
             return True
         return False
 
+    @staticmethod
+    def _make_duplicate_fingerprint(occurrences: Sequence[Dict[str, Any]]) -> str:
+        key_parts: List[str] = []
+        for entry in occurrences[:4]:
+            preview = entry.get("preview", "")
+            digest = hashlib.sha256(preview.encode("utf-8", errors="ignore")).hexdigest()
+            key_parts.append(
+                f"{entry.get('file', 'unknown')}:{entry.get('line', 0)}:{digest[:16]}"
+            )
+        return "|".join(key_parts)
+
     def _proposal_from_diff(self, bundle_dict: Dict[str, Any]) -> Proposal:
         summary = f"Adjust {bundle_dict.get('file_path')} for analyzer findings"
         start_line = 1
@@ -310,6 +355,15 @@ class ProposalManager:
             bundle = self._bundle_from_dict(proposal.diff_bundle)
             backup = self.patch_applier.apply_patch(bundle, create_backup=True)
             return f"Change applied. Backup stored at {backup}."
+        if proposal.duplicate_payload:
+            merge_actions = proposal.duplicate_payload.get("merge_actions") or []
+            if merge_actions:
+                applied: List[str] = []
+                for action in merge_actions:
+                    bundle = self._bundle_from_dict(action["bundle"])
+                    backup = self.patch_applier.apply_patch(bundle, create_backup=True)
+                    applied.append(f"{action['description']} (backup: {backup or 'none'})")
+                return "Merged duplicates:\n" + "\n".join(applied)
         return "Proposal acknowledged. No automatic code modifications performed."
 
     def _bundle_from_dict(self, payload: Dict[str, Any]) -> DiffBundle:
@@ -328,6 +382,173 @@ class ProposalManager:
             operations=operations,
             conflicts=payload.get("conflicts", []),
         )
+
+    @staticmethod
+    def _dedupe_occurrences(occurrences: Sequence[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        seen: Set[Tuple[str, str, int]] = set()
+        unique: List[Dict[str, Any]] = []
+        for entry in occurrences:
+            key = (str(entry.get("file")), str(entry.get("function")), int(entry.get("line", 0)))
+            if key in seen:
+                continue
+            seen.add(key)
+            unique.append(entry)
+        return unique
+
+    def _build_duplicate_merge_plan(
+        self, occurrences: Sequence[Dict[str, Any]]
+    ) -> Tuple[List[Dict[str, Any]], str, str]:
+        if not occurrences:
+            return [], "No merge plan available.", ""
+
+        canonical = occurrences[0]
+        merge_actions: List[Dict[str, Any]] = []
+        plan_lines = [
+            f"• Keep canonical definition in {self._relpath(canonical.get('file'))} @ line {canonical.get('line', 0)}"
+        ]
+        diff_previews: List[str] = []
+
+        for entry in occurrences[1:]:
+            file_path = entry.get("file")
+            if not file_path:
+                continue
+            rel_path = self._relpath(file_path)
+            if file_path == canonical.get("file"):
+                action = self._plan_remove_function(entry)
+                if action:
+                    merge_actions.append(action)
+                    plan_lines.append(f"• Remove duplicate in {rel_path} (line {entry.get('line', 0)})")
+                    diff_previews.append(action["bundle"].get("diff_text", ""))
+                else:
+                    plan_lines.append(
+                        f"• Review duplicate in {rel_path}; unable to auto-remove safely."
+                    )
+                continue
+
+            if self._files_identical(canonical.get("file"), file_path):
+                action = self._plan_delete_file(file_path)
+                if action:
+                    merge_actions.append(action)
+                    plan_lines.append(f"• Remove duplicate file {rel_path}")
+                    diff_previews.append(action["bundle"].get("diff_text", ""))
+                else:
+                    plan_lines.append(f"• Review duplicate file {rel_path}; delete manually.")
+            else:
+                plan_lines.append(
+                    f"• Cross-file duplicate between {self._relpath(canonical.get('file'))} "
+                    f"and {rel_path}; manual review required."
+                )
+
+        plan_text = "\n".join(plan_lines)
+        diff_text = "\n".join(text for text in diff_previews if text).strip()
+        return merge_actions, plan_text, diff_text
+
+    def _plan_remove_function(self, occurrence: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        file_path = occurrence.get("file")
+        function_name = occurrence.get("function")
+        line_number = occurrence.get("line", 0)
+        if not file_path or not function_name or not line_number:
+            return None
+        abs_path = self._abs_path(file_path)
+        lines = self._read_file_lines(abs_path)
+        if not lines:
+            return None
+
+        start, end = self._locate_function_span(abs_path, function_name, line_number)
+        if start is None or end is None or end <= start:
+            return None
+        updated_lines = lines[:start] + lines[end:]
+        rel_path = self._relpath(file_path)
+        bundle = self.diff_engine.create_diff(lines, updated_lines, rel_path)
+        if not bundle.diff_text.strip():
+            return None
+        return {
+            "description": f"Remove duplicate {function_name} in {rel_path}",
+            "bundle": bundle.as_dict(),
+        }
+
+    def _plan_delete_file(self, file_path: str) -> Optional[Dict[str, Any]]:
+        abs_path = self._abs_path(file_path)
+        lines = self._read_file_lines(abs_path)
+        if not lines:
+            return None
+        rel_path = self._relpath(file_path)
+        bundle = self.diff_engine.create_diff(lines, [], rel_path)
+        if not bundle.diff_text.strip():
+            return None
+        return {
+            "description": f"Remove duplicate file {rel_path}",
+            "bundle": bundle.as_dict(),
+        }
+
+    def _locate_function_span(
+        self, abs_path: str, function_name: str, line_number: int
+    ) -> Tuple[Optional[int], Optional[int]]:
+        try:
+            with open(abs_path, "r", encoding="utf-8") as handle:
+                source = handle.read()
+        except OSError:
+            return None, None
+        try:
+            tree = ast.parse(source)
+        except SyntaxError:
+            return None, None
+        target: Optional[ast.FunctionDef] = None
+        for node in ast.walk(tree):
+            if isinstance(node, ast.FunctionDef) and node.name == function_name and node.lineno == line_number:
+                target = node
+                break
+        if target is None:
+            return None, None
+        end_lineno = self._node_end_lineno(target)
+        if end_lineno is None:
+            return None, None
+        return target.lineno - 1, end_lineno
+
+    @staticmethod
+    def _node_end_lineno(node: ast.AST) -> Optional[int]:
+        end_lineno = getattr(node, "end_lineno", None)
+        if end_lineno:
+            return end_lineno
+        body = getattr(node, "body", None)
+        if isinstance(body, list) and body:
+            for child in reversed(body):
+                child_end = ProposalManager._node_end_lineno(child)
+                if child_end:
+                    return child_end
+        return getattr(node, "lineno", None)
+
+    def _files_identical(self, path_a: Optional[str], path_b: Optional[str]) -> bool:
+        if not path_a or not path_b:
+            return False
+        abs_a = self._abs_path(path_a)
+        abs_b = self._abs_path(path_b)
+        try:
+            with open(abs_a, "rb") as handle_a, open(abs_b, "rb") as handle_b:
+                return handle_a.read() == handle_b.read()
+        except OSError:
+            return False
+
+    def _abs_path(self, path: str) -> str:
+        if os.path.isabs(path):
+            return path
+        return os.path.join(self.root, path)
+
+    def _relpath(self, path: Optional[str]) -> str:
+        if not path:
+            return "unknown"
+        abs_path = self._abs_path(path)
+        try:
+            return os.path.relpath(abs_path, self.root)
+        except ValueError:
+            return abs_path
+
+    def _read_file_lines(self, abs_path: str) -> List[str]:
+        try:
+            with open(abs_path, "r", encoding="utf-8") as handle:
+                return handle.readlines()
+        except OSError:
+            return []
 
     def _format_split_plan(self, proposal: Proposal, accepted: bool) -> str:
         if not proposal.split_plan:
