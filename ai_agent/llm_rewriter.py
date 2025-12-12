@@ -49,7 +49,7 @@ class IssueTarget:
 class LLMRewriter:
     """High-level interface that asks an LLM for guarded rewrite suggestions."""
 
-    MAX_ISSUES = 4
+    MAX_ISSUES = 20  # Increased from 4 to process more issues per cycle
     SUPPORTED_ISSUES = {
         "inefficient_loops",
         "outdated_patterns",
@@ -203,6 +203,12 @@ class LLMRewriter:
     def _build_user_prompt(
         self, target: IssueTarget, rel_path: str, snippet: str
     ) -> str:
+        # Get feedback context to learn from previous rejections
+        feedback_context = self._get_feedback_context(rel_path, target.issue_type)
+
+        # Get boosted categories the user loves - prioritize finding more of these
+        boosted_categories = self._get_boosted_categories()
+
         payload = {
             "issue_type": target.issue_type,
             "file_path": rel_path,
@@ -228,7 +234,51 @@ class LLMRewriter:
                 ],
             },
         }
+        if feedback_context:
+            payload["learning_context"] = feedback_context
+        if boosted_categories:
+            payload["user_preferences"] = {
+                "note": "The user consistently accepts these types of changes. Look for more opportunities like these.",
+                "boosted_categories": boosted_categories,
+            }
         return json.dumps(payload, indent=2)
+
+    def _get_feedback_context(self, file_path: str, issue_type: str) -> Optional[Dict[str, Any]]:
+        """Extract recent rejection patterns to guide LLM away from failed approaches."""
+        if not self.feedback:
+            return None
+
+        # Get recent proposal history from feedback store
+        history = self.feedback.state.get("proposal_history", [])
+        if not history:
+            return None
+
+        # Find rejections for similar file/issue combinations
+        similar_rejections = []
+        for entry in reversed(history[-50:]):  # Last 50 entries
+            if entry.get("decision") != "rejected":
+                continue
+            if entry.get("file_path") == file_path or entry.get("metadata", {}).get("issue_type") == issue_type:
+                similar_rejections.append({
+                    "summary": entry.get("summary", "Unknown change"),
+                    "reason": entry.get("metadata", {}).get("reason", "User rejected"),
+                })
+            if len(similar_rejections) >= 3:  # Max 3 examples
+                break
+
+        if not similar_rejections:
+            return None
+
+        return {
+            "note": "The user previously rejected similar proposals. Avoid these patterns.",
+            "rejected_examples": similar_rejections,
+        }
+
+    def _get_boosted_categories(self) -> List[str]:
+        """Get categories the user loves - tell LLM to actively seek more of these."""
+        if not self.feedback:
+            return []
+        return self.feedback.get_boosted_categories()
 
     def _call_model(self, user_prompt: str) -> Dict[str, Any]:
         messages = [

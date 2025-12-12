@@ -114,6 +114,18 @@ class ProposalManager:
             self._record_feedback(proposal, "skipped", {"reason": "system_path"})
             return
         proposal.proposal_type = self._infer_proposal_type(proposal)
+
+        # Category-level intelligence: skip categories user consistently rejects
+        issue_type = None
+        if proposal.duplicate_payload:
+            issue_type = "duplicate_logic"
+        should_suggest, reason = self.feedback.should_suggest_category(proposal.proposal_type, issue_type)
+        if not should_suggest:
+            print(f"[ProposalManager] Skipping {proposal.proposal_type}: {reason}")
+            self.history.append((proposal, f"skipped (category suppressed: {reason})"))
+            self._record_feedback(proposal, "skipped", {"reason": "category_suppressed", "detail": reason})
+            return
+
         snippet_hash = self._proposal_snippet_hash(proposal)
         proposal.content_hash = proposal.content_hash or snippet_hash
         file_signature = self._file_signature(proposal.file_path)
@@ -379,10 +391,11 @@ class ProposalManager:
                 result = self._apply_proposal(target)
                 self.history.append((target, "accepted"))
                 self.queue.pop(0)
+                self._record_feedback(target, "accepted", self._build_feedback_metadata(target, "after_file"))
                 return result
             self.history.append((target, "rejected"))
             self.queue.pop(0)
-            self._record_feedback(target, "rejected", {"context": "after_file"})
+            self._record_feedback(target, "rejected", self._build_feedback_metadata(target, "after_file"))
             self._record_rejection_entry(
                 target,
                 {"context": "after_file"},
@@ -398,11 +411,11 @@ class ProposalManager:
             if choice == "yes":
                 self.history.append((target, "accepted"))
                 self.queue.pop(0)
-                self._record_feedback(target, "accepted", {"context": "split_plan"})
+                self._record_feedback(target, "accepted", self._build_feedback_metadata(target, "split_plan"))
                 return self._format_split_plan(target, accepted=True)
             self.history.append((target, "rejected"))
             self.queue.pop(0)
-            self._record_feedback(target, "rejected", {"context": "split_plan"})
+            self._record_feedback(target, "rejected", self._build_feedback_metadata(target, "split_plan"))
             self._record_rejection_entry(
                 target,
                 {"context": "split_plan"},
@@ -425,10 +438,11 @@ class ProposalManager:
             result = self._apply_proposal(proposal)
             self.history.append((proposal, "accepted"))
             self.queue.pop(0)
+            self._record_feedback(proposal, "accepted", self._build_feedback_metadata(proposal, "direct"))
             return result
         self.history.append((proposal, "rejected"))
         self.queue.pop(0)
-        self._record_feedback(proposal, "rejected", {"context": "direct"})
+        self._record_feedback(proposal, "rejected", self._build_feedback_metadata(proposal, "direct"))
         self._record_rejection_entry(
             proposal,
             {"context": "direct"},
@@ -507,7 +521,8 @@ class ProposalManager:
             return False
         count = self._session_fingerprint_counts.get(key, 0)
         self._session_fingerprint_counts[key] = count + 1
-        if count >= 1:
+        # Allow up to 5 attempts before blocking (count >= 5 means 6th attempt)
+        if count >= 5:
             print(f"[ProposalManager] Session loop detected for {proposal.summary}; suppressing.")
             self.history.append((proposal, "skipped (session loop)"))
             self._record_feedback(proposal, "skipped", {"reason": "session_loop"})
@@ -855,6 +870,22 @@ class ProposalManager:
             file_path=proposal.file_path,
             metadata=metadata,
         )
+
+    def _build_feedback_metadata(self, proposal: Proposal, context: str) -> Dict[str, Any]:
+        """Build comprehensive metadata for learning from user decisions."""
+        metadata = {"context": context, "proposal_type": proposal.proposal_type}
+
+        # Extract issue type for better pattern recognition
+        if proposal.duplicate_payload:
+            metadata["issue_type"] = "duplicate_logic"
+        elif "math" in proposal.summary.lower() or "calculation" in proposal.summary.lower():
+            metadata["issue_type"] = "inefficient_math"
+        elif "import" in proposal.summary.lower():
+            metadata["issue_type"] = "unused_imports"
+        elif "loop" in proposal.summary.lower():
+            metadata["issue_type"] = "inefficient_loops"
+
+        return metadata
 
     @staticmethod
     def _hash_payload(payload: Dict[str, Any]) -> str:

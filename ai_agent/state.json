@@ -5,13 +5,22 @@
   "strategies": {
     "MODE_B": {
       "risk": "conservative",
-      "preferred_changes": ["docstring_fixes", "micro_optimizations"],
+      "preferred_changes": [
+        "docstring_fixes",
+        "micro_optimizations"
+      ],
       "auto_apply": false
     },
     "MODE_D": {
       "risk": "progressive",
-      "preferred_changes": ["architectural", "parallelization"],
+      "preferred_changes": [
+        "architectural",
+        "parallelization"
+      ],
       "auto_apply": false
     }
-  }
+  },
+  "proposal_history": [],
+  "rejection_cache": [],
+  "duplication_intentional": []
 }
