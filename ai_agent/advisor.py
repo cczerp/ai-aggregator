@@ -16,6 +16,27 @@ IGNORED_DIRECTORIES: Set[str] = {
     "dist",
     ".mypy_cache",
 }
+TRADING_FILE_KEYWORDS = {"arb", "dex", "trade", "router", "swap", "liquidity", "pool"}
+EXECUTION_PREFIXES = ("execute", "run_trade", "fill", "trade", "arb", "swap", "submit")
+TRANSACTION_ATTRS = {
+    "send_raw_transaction",
+    "send_transaction",
+    "transact",
+    "build_transaction",
+    "transfer",
+    "swap_exact_tokens_for_tokens",
+    "swap_exact_eth_for_tokens",
+    "execute_trade",
+}
+SAFETY_KEYWORDS = {
+    "slippage",
+    "deadline",
+    "max_loss",
+    "min_output",
+    "price_impact",
+    "gas_limit",
+    "max_drawdown",
+}
 
 
 @dataclass
@@ -63,6 +84,7 @@ class Advisor:
             "unused_imports": [],
             "redundant_class_logic": [],
             "parse_errors": [],
+            "trading_risks": [],
         }
 
     # ------------------------------------------------------------------
@@ -91,6 +113,9 @@ class Advisor:
             )
             self._issues["redundant_class_logic"].extend(
                 self._detect_redundant_class_logic(path, tree)
+            )
+            self._issues["trading_risks"].extend(
+                self._detect_trading_risks(path, tree)
             )
 
         duplicates = self._detect_duplicate_logic()
@@ -367,6 +392,69 @@ class Advisor:
                         }
                     )
         return issues
+
+    def _detect_trading_risks(self, file_path: str, tree: ast.AST) -> List[Dict[str, Any]]:
+        if not self._looks_like_trading_file(file_path):
+            return []
+        risks: List[Dict[str, Any]] = []
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.FunctionDef):
+                continue
+            if not self._is_execution_function(node.name):
+                continue
+            tx_calls = self._collect_transaction_calls(node)
+            if not tx_calls:
+                continue
+            if self._function_has_safety_guards(node):
+                continue
+            risks.append(
+                {
+                    "file": file_path,
+                    "function": node.name,
+                    "line": node.lineno,
+                    "risk": "transaction submission lacks slippage/deadline guard",
+                    "details": sorted(tx_calls),
+                }
+            )
+        return risks
+
+    @staticmethod
+    def _is_execution_function(name: str) -> bool:
+        lowered = name.lower()
+        return any(lowered.startswith(prefix) for prefix in EXECUTION_PREFIXES)
+
+    @staticmethod
+    def _looks_like_trading_file(file_path: str) -> bool:
+        lowered = file_path.lower()
+        return any(keyword in lowered for keyword in TRADING_FILE_KEYWORDS)
+
+    @staticmethod
+    def _collect_transaction_calls(func: ast.FunctionDef) -> Set[str]:
+        calls: Set[str] = set()
+        for node in ast.walk(func):
+            if isinstance(node, ast.Attribute):
+                attr = node.attr.lower()
+                if attr in TRANSACTION_ATTRS:
+                    calls.add(attr)
+            elif isinstance(node, ast.Call) and isinstance(node.func, ast.Name):
+                name = node.func.id.lower()
+                if name in TRANSACTION_ATTRS:
+                    calls.add(name)
+        return calls
+
+    @staticmethod
+    def _function_has_safety_guards(func: ast.FunctionDef) -> bool:
+        for node in ast.walk(func):
+            label = None
+            if isinstance(node, ast.Name):
+                label = node.id
+            elif isinstance(node, ast.Attribute):
+                label = node.attr
+            elif isinstance(node, ast.Constant) and isinstance(node.value, str):
+                label = node.value
+            if label and any(keyword in label.lower() for keyword in SAFETY_KEYWORDS):
+                return True
+        return False
 
 
 def run_advisor(root: str = ".") -> Dict[str, Any]:
