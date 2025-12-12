@@ -33,4 +33,7 @@ Thumbs.db
 build/
 dist/
 *.spec
+# === Backup / Mistake Files ===
+*.bak.*
+Flask)
 ".env" 
