@@ -72,6 +72,9 @@ class AIAgentDriver:
         self.pending_improvements["analysis"] = result
         duplicates = advisor_report.get("issues", {}).get("duplicate_logic", [])
         self.proposals.enqueue_duplicates(duplicates)
+        trading_risks = advisor_report.get("issues", {}).get("trading_risks", [])
+        if trading_risks:
+            self.proposals.enqueue_trading_risks(trading_risks)
         return result
 
     def generate_rewrite_options(

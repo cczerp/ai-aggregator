@@ -6,7 +6,7 @@ import json
 import os
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 DEFAULT_STATE: Dict[str, Any] = {
     "advisor_accuracy": [],
@@ -25,6 +25,8 @@ DEFAULT_STATE: Dict[str, Any] = {
         },
     },
     "proposal_history": [],
+    "rejection_cache": [],
+    "duplication_intentional": [],
 }
 
 
@@ -97,13 +99,91 @@ class FeedbackStore:
             last_content_hash=last.get("content_hash"),
         )
 
-    def should_enqueue(self, identifier: Optional[str], content_hash: Optional[str]) -> Tuple[bool, Optional[str], Optional[FeedbackStats]]:
+    def should_enqueue(
+        self, identifier: Optional[str], content_hash: Optional[str]
+    ) -> Tuple[bool, Optional[str], Optional[FeedbackStats]]:
         stats = self.stats_for(identifier) if identifier else None
         if not stats or not content_hash:
             return True, None, stats
         if stats.last_decision == "rejected" and stats.last_content_hash == content_hash:
             return False, "Previously rejected in identical form.", stats
         return True, None, stats
+
+    # ------------------------------------------------------------------
+    # Rejection cache helpers
+    # ------------------------------------------------------------------
+    def record_rejection_marker(
+        self,
+        *,
+        file_path: str,
+        proposal_type: str,
+        snippet_hash: str,
+        file_signature: str,
+        function_name: Optional[str],
+        identifier: Optional[str],
+        metadata: Optional[Dict[str, Any]] = None,
+    ) -> None:
+        cache = self.state.setdefault("rejection_cache", [])
+        entry = {
+            "file_path": file_path,
+            "proposal_type": proposal_type,
+            "snippet_hash": snippet_hash,
+            "file_signature": file_signature,
+            "function": function_name,
+            "identifier": identifier,
+            "timestamp": datetime.utcnow().isoformat() + "Z",
+        }
+        if metadata:
+            entry["metadata"] = metadata
+        cache.append(entry)
+        # Keep cache bounded so state file stays small
+        if len(cache) > 500:
+            del cache[: len(cache) - 500]
+        self._save()
+
+    def has_active_rejection(
+        self,
+        *,
+        file_path: str,
+        proposal_type: str,
+        snippet_hash: str,
+        file_signature: str,
+    ) -> Optional[Dict[str, Any]]:
+        cache = self.state.setdefault("rejection_cache", [])
+        for entry in reversed(cache):
+            if entry.get("file_path") != file_path:
+                continue
+            if entry.get("proposal_type") != proposal_type:
+                continue
+            if entry.get("snippet_hash") != snippet_hash:
+                continue
+            if entry.get("file_signature") == file_signature:
+                return entry
+        return None
+
+    def record_duplication_intentional(
+        self, fingerprint: str, files: Optional[List[str]] = None
+    ) -> None:
+        entries = self.state.setdefault("duplication_intentional", [])
+        record = {"fingerprint": fingerprint}
+        if files:
+            record["files"] = sorted({str(path) for path in files})
+        entries.append(record)
+        # Cap the list similar to the rejection cache
+        if len(entries) > 200:
+            del entries[: len(entries) - 200]
+        self._save()
+
+    def duplication_blocked(self, fingerprint: str, files: List[str]) -> bool:
+        entries = self.state.setdefault("duplication_intentional", [])
+        normalized = sorted({str(path) for path in files})
+        for entry in entries:
+            if entry.get("fingerprint") == fingerprint:
+                return True
+            entry_files = entry.get("files")
+            if entry_files and sorted(entry_files) == normalized:
+                return True
+        return False
 
     # ------------------------------------------------------------------
     def _load(self) -> Dict[str, Any]:
