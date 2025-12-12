@@ -16,6 +16,7 @@ from .feedback import FeedbackStore
 from .hooks.trading_adapter import build_trading_adapter
 from .planner import Planner
 from .proposal_manager import ProposalManager
+from .llm_rewriter import LLMRewriter, LLMRewriteError
 from .rewriter import Rewriter
 
 
@@ -27,13 +28,13 @@ class AIAgentDriver:
         self.mode = "MODE_B"
         self.advisor = Advisor(self.root)
         self.auditor = Auditor(self.root)
-        self.rewriter = Rewriter(self.root)
         self.planner = Planner(self.root, os.path.join(self.root, "logs"))
         self.evolution = EvolutionEngine()
         self.dex_expander = DexExpansionPlanner(os.path.join(self.root, "pool_registry.json"))
         self.diff_engine = DiffEngine()
         self.patch_applier = PatchApplier(self.root)
         self.feedback = FeedbackStore(os.path.join(self.root, "ai_agent", "state.json"))
+        self.rewriter = self._build_rewriter()
         self.proposals = ProposalManager(self.patch_applier, root=self.root, feedback_store=self.feedback)
         self.trading: Dict[str, Any] = {}
         self.pending_improvements: Dict[str, Any] = {}
@@ -41,6 +42,14 @@ class AIAgentDriver:
         self._last_auditor_report: Optional[Dict[str, Any]] = None
         self._last_rewrites: Optional[Dict[str, Any]] = None
         self._last_strategy: Optional[Dict[str, Any]] = None
+    def _build_rewriter(self) -> Rewriter:
+        api_key_present = bool(os.getenv("OPENAI_API_KEY"))
+        if api_key_present:
+            try:
+                return LLMRewriter(self.root, feedback=self.feedback)
+            except LLMRewriteError as exc:
+                print(f"[AIAgentDriver] LLM rewriter unavailable: {exc}. Falling back to template engine.")
+        return Rewriter(self.root)
 
     # ------------------------------------------------------------------
     def set_mode(self, mode: str) -> None:
