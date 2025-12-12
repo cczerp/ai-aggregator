@@ -43,7 +43,7 @@ class AIAgentDriver:
         self._last_rewrites: Optional[Dict[str, Any]] = None
         self._last_strategy: Optional[Dict[str, Any]] = None
     def _build_rewriter(self) -> Rewriter:
-        api_key = os.getenv("ELROY_OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY")
+        api_key = os.getenv("OPENAI_KEY") or os.getenv("OPENAI_API_KEY")
         if api_key:
             try:
                 return LLMRewriter(self.root, feedback=self.feedback, api_key=api_key)

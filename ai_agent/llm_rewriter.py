@@ -76,11 +76,7 @@ class LLMRewriter:
         self.feedback = feedback
         if OpenAI is None:
             raise LLMRewriteError("openai package is not installed. Please add openai>=1.0.0.")
-        resolved_key = (
-            api_key
-            or os.getenv("ELROY_OPENAI_API_KEY")
-            or os.getenv("OPENAI_API_KEY")
-        )
+        resolved_key = api_key or os.getenv("OPENAI_KEY") or os.getenv("OPENAI_API_KEY")
         if not resolved_key:
             raise LLMRewriteError(
                 "Missing ELROY_OPENAI_API_KEY (preferred) or OPENAI_API_KEY for LLM rewriter."
