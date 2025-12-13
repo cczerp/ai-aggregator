@@ -382,6 +382,20 @@ class ProposalManager:
             return "No proposals pending."
         choice = choice.strip().lower()
 
+        # Parse rejection reasons: "no - reason here" or "no because reason"
+        rejection_reason = None
+        if choice.startswith("no"):
+            if " - " in choice:
+                rejection_reason = choice.split(" - ", 1)[1].strip()
+                choice = "no"
+            elif " because " in choice:
+                rejection_reason = choice.split(" because ", 1)[1].strip()
+                choice = "no"
+            elif len(choice) > 3 and choice[2:3] in {" ", ":"} and len(choice) > 4:
+                # "no: reason" or "no reason"
+                rejection_reason = choice[3:].strip() if choice[2] == ":" else choice[3:].strip()
+                choice = "no"
+
         if self.awaiting_file_response:
             if choice not in {"yes", "no"}:
                 return "After viewing the file, please answer yes or no."
@@ -395,13 +409,17 @@ class ProposalManager:
                 return result
             self.history.append((target, "rejected"))
             self.queue.pop(0)
-            self._record_feedback(target, "rejected", self._build_feedback_metadata(target, "after_file"))
+            metadata = self._build_feedback_metadata(target, "after_file")
+            if rejection_reason:
+                metadata["rejection_reason"] = rejection_reason
+            self._record_feedback(target, "rejected", metadata)
             self._record_rejection_entry(
                 target,
-                {"context": "after_file"},
+                {"context": "after_file", "rejection_reason": rejection_reason},
                 mark_duplicate_intentional=bool(target.duplicate_payload),
             )
-            return "Proposal rejected after file review."
+            reason_note = f" (Reason: {rejection_reason})" if rejection_reason else ""
+            return f"Proposal rejected after file review{reason_note}."
 
         if self.awaiting_split_confirmation:
             if choice not in {"yes", "no"}:
@@ -415,19 +433,27 @@ class ProposalManager:
                 return self._format_split_plan(target, accepted=True)
             self.history.append((target, "rejected"))
             self.queue.pop(0)
-            self._record_feedback(target, "rejected", self._build_feedback_metadata(target, "split_plan"))
+            metadata = self._build_feedback_metadata(target, "split_plan")
+            if rejection_reason:
+                metadata["rejection_reason"] = rejection_reason
+            self._record_feedback(target, "rejected", metadata)
             self._record_rejection_entry(
                 target,
-                {"context": "split_plan"},
+                {"context": "split_plan", "rejection_reason": rejection_reason},
                 mark_duplicate_intentional=bool(target.duplicate_payload),
             )
-            return "Split plan declined. Proposal dismissed."
+            reason_note = f" (Reason: {rejection_reason})" if rejection_reason else ""
+            return f"Split plan declined{reason_note}. Proposal dismissed."
 
         if proposal.duplicate_payload:
             valid = {"yes", "no", "file a", "file b"}
         else:
             valid = {"yes", "no", "file"}
-        if choice not in valid:
+
+        # Allow "no - reason" format, extract base choice
+        base_choice = choice.split()[0] if " " in choice else choice
+
+        if base_choice not in valid and not choice.startswith("file"):
             return f"Invalid choice. Options: {', '.join(sorted(valid))}."
         if choice.startswith("file"):
             return self._handle_file_request(proposal, choice)
@@ -442,13 +468,17 @@ class ProposalManager:
             return result
         self.history.append((proposal, "rejected"))
         self.queue.pop(0)
-        self._record_feedback(proposal, "rejected", self._build_feedback_metadata(proposal, "direct"))
+        metadata = self._build_feedback_metadata(proposal, "direct")
+        if rejection_reason:
+            metadata["rejection_reason"] = rejection_reason
+        self._record_feedback(proposal, "rejected", metadata)
         self._record_rejection_entry(
             proposal,
-            {"context": "direct"},
+            {"context": "direct", "rejection_reason": rejection_reason},
             mark_duplicate_intentional=bool(proposal.duplicate_payload),
         )
-        return "Proposal rejected. Moving to next issue."
+        reason_note = f" (Reason: {rejection_reason})" if rejection_reason else ""
+        return f"Proposal rejected{reason_note}. Moving to next issue."
 
     def _handle_file_request(self, proposal: Proposal, choice: str) -> str:
         target_file = proposal.file_path
