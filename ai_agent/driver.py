@@ -18,6 +18,7 @@ from .planner import Planner
 from .proposal_manager import ProposalManager
 from .llm_rewriter import LLMRewriter, LLMRewriteError
 from .rewriter import Rewriter
+from .trader_monitor import TraderMonitor, TraderIssue
 
 
 class AIAgentDriver:
@@ -36,6 +37,7 @@ class AIAgentDriver:
         self.feedback = FeedbackStore(os.path.join(self.root, "ai_agent", "state.json"))
         self.rewriter = self._build_rewriter()
         self.proposals = ProposalManager(self.patch_applier, root=self.root, feedback_store=self.feedback)
+        self.trader_monitor = TraderMonitor(self.root)
         self.trading: Dict[str, Any] = {}
         self.pending_improvements: Dict[str, Any] = {}
         self._last_advisor_report: Optional[Dict[str, Any]] = None
@@ -149,8 +151,19 @@ class AIAgentDriver:
         analysis = self.run_full_analysis()
         dex_plan = []
         if include_dex_growth:
-            dex_plan = self.dex_expander.recommend_new_dexes(limit=1)
+            # AGGRESSIVE: Get up to 5 DEX recommendations instead of just 1
+            # If there's no other work to do, focus on DEX expansion
+            dex_plan = self.dex_expander.recommend_new_dexes(limit=5)
         rewrites = self.generate_rewrite_options(dex_plan=dex_plan)
+
+        # If no proposals were generated, be PROACTIVE about DEX expansion
+        if len(self.proposals.queue) == 0 and dex_plan:
+            print("[AIAgentDriver] No code issues found - focusing on DEX expansion")
+            # DEX proposals were created but might have been filtered - check again
+            if len(self.proposals.queue) == 0:
+                print("[AIAgentDriver] Creating manual DEX expansion proposals")
+                self._create_dex_expansion_proposals(dex_plan)
+
         payload = {"analysis": analysis, "rewrites": rewrites, "dex_plan": dex_plan}
         self.pending_improvements = payload
         return payload
@@ -183,6 +196,16 @@ class AIAgentDriver:
     ) -> Dict[str, Any]:
         """Feed live trading outcomes back into the evolution engine."""
 
+        # PROACTIVE: Monitor for trade failures and auto-generate fixes
+        if results_dict.get("error"):
+            self._handle_trade_error(results_dict)
+
+        # Analyze trade for potential issues
+        issues = self.trader_monitor.analyze_trade_failure(results_dict)
+        if issues:
+            print(f"[AIAgentDriver] Detected {len(issues)} trading issues")
+            self._create_proposals_from_issues(issues)
+
         plan = self.run_evolution_cycle(
             applied_results=[
                 {
@@ -200,6 +223,55 @@ class AIAgentDriver:
         self.auto_improvement_cycle(include_dex_growth=True)
         return plan
 
+    def _handle_trade_error(self, results_dict: Dict[str, Any]) -> None:
+        """Handle trading errors proactively."""
+        error = results_dict.get("error", "")
+        traceback = results_dict.get("traceback", "")
+
+        print(f"[AIAgentDriver] Trade error detected: {error[:100]}")
+        issues = self.trader_monitor.analyze_error(error, traceback)
+
+        if issues:
+            critical = [i for i in issues if i.severity == "critical"]
+            if critical:
+                print(f"[AIAgentDriver] CRITICAL: {len(critical)} issues need immediate fixing")
+            self._create_proposals_from_issues(issues)
+
+    def _create_proposals_from_issues(self, issues: List[TraderIssue]) -> None:
+        """Create proposals from detected trader issues."""
+        from .proposal_manager import Proposal
+
+        for issue in issues:
+            if issue.severity == "info":
+                continue  # Skip non-actionable issues
+
+            summary = f"Fix {issue.issue_type}: {issue.message}"
+            reason = (
+                f"Issue detected during trading execution.\n"
+                f"Type: {issue.issue_type}\n"
+                f"Severity: {issue.severity}\n"
+                f"Suggested fix: {issue.suggested_fix}"
+            )
+
+            proposal = Proposal(
+                summary=summary,
+                file_path=issue.file_path or "unknown",
+                line=issue.line or 1,
+                diff_bundle=None,
+                reason=reason,
+                impact="Prevents trading errors and improves reliability",
+            )
+            proposal.proposal_type = "bugfix" if issue.severity == "critical" else "performance"
+            proposal.identifier = f"trader_issue:{issue.issue_type}"
+            proposal.content_hash = self.proposals._hash_payload({
+                "type": issue.issue_type,
+                "message": issue.message,
+                "file": issue.file_path,
+            })
+            proposal.manual_text = issue.suggested_fix
+            self.proposals.enqueue(proposal)
+            print(f"[AIAgentDriver] Queued fix for {issue.issue_type}")
+
     # ------------------------------------------------------------------
     # Proposal interaction
     # ------------------------------------------------------------------
@@ -211,6 +283,35 @@ class AIAgentDriver:
         if self.proposals.current_proposal() is None:
             self.auto_improvement_cycle(include_dex_growth=True)
         return response
+
+    def _create_dex_expansion_proposals(self, dex_plan: List[Dict[str, Any]]) -> None:
+        """Manually create DEX expansion proposals if none were generated."""
+        from .proposal_manager import Proposal
+
+        for plan in dex_plan:
+            dex_name = plan.get("dex")
+            template = plan.get("code_template", "")
+            validation_steps = plan.get("validation_steps", [])
+
+            reason = (
+                f"Expand liquidity sources by integrating {dex_name}.\n"
+                f"Validation steps:\n" + "\n".join(validation_steps)
+            )
+
+            proposal = Proposal(
+                summary=f"Integrate {dex_name} DEX for additional arbitrage opportunities",
+                file_path="pool_registry.json",
+                line=1,
+                diff_bundle=None,
+                reason=reason,
+                impact="Increases available liquidity venues and arbitrage opportunities",
+            )
+            proposal.manual_text = template
+            proposal.proposal_type = "performance"
+            proposal.identifier = f"dex_expansion:{dex_name}"
+            proposal.content_hash = self.proposals._hash_payload({"dex": dex_name, "template": template})
+            self.proposals.enqueue(proposal)
+            print(f"[AIAgentDriver] Queued DEX expansion: {dex_name}")
 
     # ------------------------------------------------------------------
     def _bundle_from_dict(self, payload: Dict[str, Any]) -> DiffBundle:
