@@ -12,6 +12,19 @@ from registries import DEXES, TOKENS
 POOL_REGISTRY_DEFAULT = os.path.join(os.getcwd(), "pool_registry.json")
 
 
+def _get_pool_discoverer():
+    """Lazy import pool discoverer to avoid circular dependencies."""
+    try:
+        from helpers.discover_pools import PoolDiscoverer
+        from rpc_mgr import RPCManager
+
+        rpc_mgr = RPCManager()
+        return PoolDiscoverer(rpc_mgr)
+    except Exception as e:
+        print(f"[DexExpander] Warning: Could not initialize PoolDiscoverer: {e}")
+        return None
+
+
 @dataclass
 class DexStatus:
     """Represents validation information for a single DEX."""
@@ -119,17 +132,98 @@ class DexExpansionPlanner:
         return required
 
     def _build_template(self, dex_name: str) -> str:
+        """Build template with REAL pool address discovered from factory contract."""
         dex_info = DEXES[dex_name]
         sample_pair = self._suggest_pair()
-        return (
-            f"# Add to pool_registry.json under \"{dex_name}\"\n"
-            f"\"{sample_pair['label']}\": {{\n"
-            f"  \"pool\": \"<POOL_ADDRESS>\",\n"
-            f"  \"token0\": \"{sample_pair['token0']}\",\n"
-            f"  \"token1\": \"{sample_pair['token1']}\",\n"
-            f"  \"type\": \"{dex_info.get('type', 'v2')}\"\n"
-            "}\n"
-        )
+        dex_type = dex_info.get('type', 'v2')
+
+        # Try to discover real pool address
+        pool_address = self._discover_pool_address(dex_name, sample_pair)
+
+        if pool_address:
+            return (
+                f"# Add to pool_registry.json under \"{dex_name}\"\n"
+                f"\"{sample_pair['label']}\": {{\n"
+                f"  \"pool\": \"{pool_address}\",  # REAL ADDRESS (auto-discovered)\n"
+                f"  \"token0\": \"{sample_pair['token0']}\",\n"
+                f"  \"token1\": \"{sample_pair['token1']}\",\n"
+                f"  \"type\": \"{dex_type}\"\n"
+                "}\n"
+            )
+        else:
+            # Fallback: Provide discovery command instead of placeholder
+            factory = dex_info.get('factory')
+            if factory:
+                return (
+                    f"# Add to pool_registry.json under \"{dex_name}\"\n"
+                    f"# DISCOVERY COMMAND:\n"
+                    f"# python helpers/discover_pools.py {dex_name}\n"
+                    f"# Then manually add the discovered pool address below:\n"
+                    f"\"{sample_pair['label']}\": {{\n"
+                    f"  \"pool\": \"RUN_DISCOVERY_FIRST\",  # Factory: {factory}\n"
+                    f"  \"token0\": \"{sample_pair['token0']}\",\n"
+                    f"  \"token1\": \"{sample_pair['token1']}\",\n"
+                    f"  \"type\": \"{dex_type}\"\n"
+                    "}\n"
+                )
+            else:
+                return (
+                    f"# Add to pool_registry.json under \"{dex_name}\"\n"
+                    f"# NO FACTORY - Manual lookup required\n"
+                    f"\"{sample_pair['label']}\": {{\n"
+                    f"  \"pool\": \"MANUAL_LOOKUP_REQUIRED\",\n"
+                    f"  \"token0\": \"{sample_pair['token0']}\",\n"
+                    f"  \"token1\": \"{sample_pair['token1']}\",\n"
+                    f"  \"type\": \"{dex_type}\"\n"
+                    "}\n"
+                )
+
+    def _discover_pool_address(self, dex_name: str, pair_info: Dict[str, str]) -> Optional[str]:
+        """Attempt to discover real pool address from factory contract."""
+        dex_info = DEXES[dex_name]
+        factory_address = dex_info.get('factory')
+        dex_type = dex_info.get('type', 'v2')
+
+        if not factory_address or dex_type not in {'v2', 'v3_algebra'}:
+            return None
+
+        try:
+            discoverer = _get_pool_discoverer()
+            if not discoverer:
+                return None
+
+            # Scan last 50000 blocks for this pair
+            current_block = discoverer.w3.eth.block_number
+            from_block = max(0, current_block - 50000)
+
+            print(f"[DexExpander] Discovering {dex_name} pool for {pair_info['label']}...")
+            pools = discoverer.discover_v2_pools(
+                dex_name=dex_name,
+                factory_address=factory_address,
+                from_block=from_block,
+                chunk_size=5000
+            )
+
+            # Find matching pool
+            token0_lower = pair_info['token0'].lower()
+            token1_lower = pair_info['token1'].lower()
+
+            for pool in pools:
+                pool_t0 = pool['token0'].lower()
+                pool_t1 = pool['token1'].lower()
+
+                # Match either token0/token1 or token1/token0 (pairs can be reversed)
+                if (pool_t0 == token0_lower and pool_t1 == token1_lower) or \
+                   (pool_t0 == token1_lower and pool_t1 == token0_lower):
+                    print(f"[DexExpander] ✅ Found pool: {pool['pair_address']}")
+                    return pool['pair_address']
+
+            print(f"[DexExpander] ⚠️  No pool found for {pair_info['label']}")
+            return None
+
+        except Exception as e:
+            print(f"[DexExpander] Discovery failed: {e}")
+            return None
 
     def _suggest_pair(self) -> Dict[str, str]:
         stable = TOKENS.get("USDC") or next(iter(TOKENS.values()))
